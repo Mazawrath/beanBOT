@@ -19,3 +19,13 @@ dependencies {
     implementation group: 'de.btobastian.sdcf4j', name: 'sdcf4j-javacord', version: 'v1.0.10'
     compile group: 'com.rethinkdb', name: 'rethinkdb-driver', version: '2.3.3'
 }
+
+jar {
+    manifest {
+        archiveName = 'beanBOT.jar'
+        attributes 'Main-Class': 'com.mazawrath.beanbot.Main',
+                'Class-Path': configurations.runtime.files.collect { "lib/$it.name" }.join(' '),
+                'Implementation-Version': project.version
+    }
+    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {}
+}

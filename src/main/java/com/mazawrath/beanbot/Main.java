@@ -3,6 +3,7 @@ package com.mazawrath.beanbot;
 import com.mazawrath.beanbot.commands.GivemodCommand;
 import com.mazawrath.beanbot.commands.beancoin.BeanbalanaceCommand;
 import com.mazawrath.beanbot.commands.beancoin.BeanbetCommand;
+import com.mazawrath.beanbot.commands.copypasta.ThirtyPercentWinrateCommand;
 import com.mazawrath.beanbot.commands.copypasta.Top500Command;
 import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.CommandHandler;
@@ -24,10 +25,17 @@ public class Main {
             cmdHandler.setDefaultPrefix(".");
 
             // Register commands
-            cmdHandler.registerCommand(new GivemodCommand(null));
+
+            // Copypasta
             cmdHandler.registerCommand(new Top500Command(points));
+            cmdHandler.registerCommand(new GivemodCommand(points));
+            cmdHandler.registerCommand(new ThirtyPercentWinrateCommand(points));
+
+            // beanCoin
             cmdHandler.registerCommand(new BeanbalanaceCommand(points));
-            cmdHandler.registerCommand(new BeanbetCommand(points));
+
+            // Command currently doesn't work
+            //cmdHandler.registerCommand(new BeanbetCommand(points));
         });
     }
 }

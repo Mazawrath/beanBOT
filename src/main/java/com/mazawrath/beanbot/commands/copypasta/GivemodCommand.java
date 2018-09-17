@@ -11,23 +11,22 @@ import org.javacord.api.entity.user.User;
 import java.util.Random;
 
 public class GivemodCommand implements CommandExecutor {
+    private Points points;
+
+    public GivemodCommand(Points points) {
+        this.points = points;
+    }
+
     @Command(
             aliases = {"givemod"},
             usage = ".givemod",
             description = "Rolls a 10,000 sided die to randomly give mod.",
             privateMessages = false
     )
-    private Points points;
-
-    public GivemodCommand(Points pointsPassed) {
-        points = pointsPassed;
-    }
 
     public void onCommand(Message command, String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
-
         if (points.removePoints(author.getIdAsString(), server.getIdAsString(), 10)) {
             final String[] messsage = {""};
-
                 if (author.getIdAsString().equals("112653978432503808")) {
                     messsage[0] = "You rolled a 10000. You have to get 10,000. Congrats, you're now a mod!";
                 }
