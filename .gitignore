@@ -18,6 +18,14 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# IDEA stuff
+.gradle/*
+.idea/*
+build/*
+
+
+launch.sh
+
 # =========================
 # Operating System Files
 # =========================
