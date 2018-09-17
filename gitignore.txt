@@ -1,0 +1,15 @@
+# volatile Gradle files
+/.gradle/
+/build/
+
+# Eclipse project files
+/.classpath
+/.project
+/.settings/
+
+# IntelliJ IDEA project files
+/.idea/
+/*/out/
+*.iml
+*.ipr
+*.iws
