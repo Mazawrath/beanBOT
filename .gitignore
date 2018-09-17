@@ -22,6 +22,11 @@ $RECYCLE.BIN/
 .gradle/*
 .idea/*
 build/*
+gradle/
+gradlew
+gradlew.bat
+out/
+.gradle*
 
 
 launch.sh

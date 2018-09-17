@@ -25,7 +25,7 @@ public class GivemodCommand implements CommandExecutor {
 
     public void onCommand(Message command, String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
 
-        //if (points.removePoints(author.getIdAsString(), server.getIdAsString(), 10)) {
+        if (points.removePoints(author.getIdAsString(), server.getIdAsString(), 10)) {
             final String[] messsage = {""};
 
                 if (author.getIdAsString().equals("112653978432503808")) {
@@ -37,7 +37,7 @@ public class GivemodCommand implements CommandExecutor {
                     messsage[0] = "You rolled a " + n + ". You have to get 10,000. Sorry, try again!";
                 }
                 serverTextChannel.sendMessage(messsage[0]);
-        //} else
+        } else
             serverTextChannel.sendMessage("You do not have enough beanCoin for this command.");
     }
 }
