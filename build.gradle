@@ -2,6 +2,7 @@ group 'mazawrath'
 version '2.0.0'
 
 apply plugin: 'java'
+apply plugin: 'application'
 
 sourceCompatibility = 1.8
 
