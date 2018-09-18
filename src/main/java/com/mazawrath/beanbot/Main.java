@@ -2,6 +2,7 @@ package com.mazawrath.beanbot;
 
 import com.mazawrath.beanbot.commands.GivemodCommand;
 import com.mazawrath.beanbot.commands.ReactCommand;
+import com.mazawrath.beanbot.commands.UserinfoCommand;
 import com.mazawrath.beanbot.commands.beancoin.BeanFreeCommand;
 import com.mazawrath.beanbot.commands.beancoin.BeanbalanaceCommand;
 import com.mazawrath.beanbot.commands.beancoin.BeanbetCommand;
@@ -14,9 +15,9 @@ import org.javacord.api.DiscordApiBuilder;
 
 public class Main {
     public static void main(String[] args) {
-        Points points = new Points();
+        Points dbConn = new Points();
 
-        points.connectDatabase();
+        dbConn.connectDatabase();
         String token = args[0];
 
         new DiscordApiBuilder().setToken(token).login().thenAccept(api -> {
@@ -29,15 +30,16 @@ public class Main {
             // Register commands
 
             // Copypasta
-            cmdHandler.registerCommand(new Top500Command(points));
-            cmdHandler.registerCommand(new GivemodCommand(points));
-            cmdHandler.registerCommand(new ThirtyPercentWinrateCommand(points));
+            cmdHandler.registerCommand(new Top500Command(dbConn));
+            cmdHandler.registerCommand(new GivemodCommand(dbConn));
+            cmdHandler.registerCommand(new ThirtyPercentWinrateCommand(dbConn));
             // beanCoin
-            cmdHandler.registerCommand(new BeanbalanaceCommand(points));
-            cmdHandler.registerCommand(new BeanFreeCommand(points));
-            cmdHandler.registerCommand(new BeanbetCommand(points));
+            cmdHandler.registerCommand(new BeanbalanaceCommand(dbConn));
+            cmdHandler.registerCommand(new BeanFreeCommand(dbConn));
+            cmdHandler.registerCommand(new BeanbetCommand(dbConn));
             // Other
-            cmdHandler.registerCommand(new ReactCommand(points));
+            cmdHandler.registerCommand(new ReactCommand(dbConn));
+            cmdHandler.registerCommand(new UserinfoCommand(dbConn));
         });
     }
 }
