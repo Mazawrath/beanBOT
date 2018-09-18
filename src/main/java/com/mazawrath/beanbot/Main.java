@@ -2,10 +2,7 @@ package com.mazawrath.beanbot;
 
 import com.mazawrath.beanbot.commands.*;
 import com.mazawrath.beanbot.commands.GivemodCommand;
-import com.mazawrath.beanbot.commands.beancoin.BeanboardCommand;
-import com.mazawrath.beanbot.commands.beancoin.BeanfreeCommand;
-import com.mazawrath.beanbot.commands.beancoin.BeanbalanaceCommand;
-import com.mazawrath.beanbot.commands.beancoin.BeanbetCommand;
+import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
 import com.mazawrath.beanbot.commands.maza.MazapostchangelogCommand;
 import com.mazawrath.beanbot.utilities.Points;
@@ -41,6 +38,7 @@ public class Main {
             cmdHandler.registerCommand(new BeanfreeCommand(dbConn));
             cmdHandler.registerCommand(new BeanbetCommand(dbConn));
             cmdHandler.registerCommand(new BeanboardCommand(dbConn));
+            cmdHandler.registerCommand(new BeanTransferCommand(dbConn));
             // Mazawrath commands
             cmdHandler.registerCommand(new MazapostchangelogCommand());
             // Other
