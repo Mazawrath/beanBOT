@@ -19,23 +19,26 @@ public class MazapostchangelogCommand implements CommandExecutor {
         if (author.isBotOwner()) {
             server.getTextChannelById(id).ifPresent(serverTextChannel -> {
                 serverTextChannel.sendMessage(getRecentChangeLog());
-                serverTextChannel.sendMessage("Changelog sent to " + serverTextChannel.getName() + ".");
+                serverTextChannel2.sendMessage("Changelog sent to " + serverTextChannel.getName() + ".");
             });
         } else
+            // There is no better var name than this and if you think otherwise you're wrong.
             serverTextChannel2.sendMessage("Only Mazawrath can send this message.");
     }
 
-    String getRecentChangeLog() {
+    private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
                 "**2.0.0**\n" +
                 "\n" +
                 "**New**\n" +
                 "\t- beanBOT has been reworked from the ground up.\n" +
                 "\t\t- \n" +
+                "\t- beanBOT is now open source on https://github.com/Mazawrath/beanBOT\n" +
 //                "\t- Created the Bean Market.\n" +
 //                "\t\t*Use `.beanmarket` to get started.*\n" +
 //                "\t- Added `.beaninvest`.\n" +
                 "\t- Added `.blessed`.\n" +
+                "\t- Added `.stfu`" +
                 "\n" +
                 "**Changes**\n" +
                 "\t- Changed the chances of winning on `.beanbet` from 25% to 35%.\n" +
