@@ -1,5 +1,6 @@
 package com.mazawrath.beanbot;
 
+import com.mazawrath.beanbot.commands.*;
 import com.mazawrath.beanbot.commands.GivemodCommand;
 import com.mazawrath.beanbot.commands.ReactCommand;
 import com.mazawrath.beanbot.commands.ServerInfoCommand;
@@ -42,6 +43,7 @@ public class Main {
             cmdHandler.registerCommand(new ReactCommand(dbConn));
             cmdHandler.registerCommand(new UserinfoCommand(dbConn));
             cmdHandler.registerCommand(new ServerInfoCommand(dbConn));
+            cmdHandler.registerCommand(new HelpCommand(cmdHandler));
         });
     }
 }

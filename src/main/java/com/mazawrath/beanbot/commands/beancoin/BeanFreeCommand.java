@@ -16,7 +16,7 @@ public class BeanFreeCommand implements CommandExecutor{
 
     @Command(
             aliases = {"beanfree"},
-            usage = ".beanfree",
+            usage = "beanfree",
             description = "Get 25 beanCoin every 24 hours.",
             privateMessages = false
     )

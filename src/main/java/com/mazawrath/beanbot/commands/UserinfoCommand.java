@@ -23,7 +23,7 @@ public class UserinfoCommand implements CommandExecutor{
 
     @Command(
             aliases = {"userinfo"},
-            usage = ".userinfo [discriminated name]",
+            usage = "userinfo [discriminated name]",
             description = "DO NOT @ USER. Enter user's discriminated name (Example#XXXX). Pulls up information about a user on the server. Leave username blank to look up yourself.",
             privateMessages = false
     )

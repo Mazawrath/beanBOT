@@ -19,7 +19,7 @@ public class ReactCommand implements CommandExecutor {
 
     @Command(
             aliases = {"react"},
-            usage = ".react [text]",
+            usage = "react [text]",
             description = "Rolls a 10,000 sided die to randomly give mod.",
             privateMessages = false
     )

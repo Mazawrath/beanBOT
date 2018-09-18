@@ -16,7 +16,7 @@ public class Top500Command implements CommandExecutor {
 
     @Command(
             aliases = {"top500"},
-            usage = ".top500",
+            usage = "top500",
             privateMessages = false
     )
 

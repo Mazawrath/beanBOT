@@ -19,7 +19,7 @@ public class GivemodCommand implements CommandExecutor {
 
     @Command(
             aliases = {"givemod"},
-            usage = ".givemod",
+            usage = "givemod",
             description = "Rolls a 10,000 sided die to randomly give mod.",
             privateMessages = false
     )
