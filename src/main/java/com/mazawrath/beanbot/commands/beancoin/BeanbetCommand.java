@@ -23,10 +23,9 @@ public class BeanbetCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(String bettingPoints, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (isInteger(bettingPoints)) {
+    public void onCommand(String command, String bettingPoints, ServerTextChannel serverTextChannel, User author, Server server) {
+        if (bettingPoints != null && isInteger(bettingPoints)) {
             if (bettingPoints.equals("0")) {
-                //event.getMessage().delete();
                 serverTextChannel.sendMessage("You can't bet 0 beanCoin!");
             } else {
                 if (points.removePoints(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(bettingPoints))) {
