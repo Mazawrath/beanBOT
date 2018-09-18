@@ -2,12 +2,11 @@ package com.mazawrath.beanbot;
 
 import com.mazawrath.beanbot.commands.*;
 import com.mazawrath.beanbot.commands.GivemodCommand;
-import com.mazawrath.beanbot.commands.beancoin.BeanFreeCommand;
+import com.mazawrath.beanbot.commands.beancoin.BeanfreeCommand;
 import com.mazawrath.beanbot.commands.beancoin.BeanbalanaceCommand;
 import com.mazawrath.beanbot.commands.beancoin.BeanbetCommand;
-import com.mazawrath.beanbot.commands.copypasta.CoderedCommand;
-import com.mazawrath.beanbot.commands.copypasta.ThirtyPercentWinrateCommand;
-import com.mazawrath.beanbot.commands.copypasta.Top500Command;
+import com.mazawrath.beanbot.commands.copypasta.*;
+import com.mazawrath.beanbot.commands.maza.MazapostchangelogCommand;
 import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
@@ -34,10 +33,14 @@ public class Main {
             cmdHandler.registerCommand(new GivemodCommand(dbConn));
             cmdHandler.registerCommand(new ThirtyPercentWinrateCommand(dbConn));
             cmdHandler.registerCommand(new CoderedCommand(dbConn));
+            cmdHandler.registerCommand(new BlessedCommand(dbConn));
+            cmdHandler.registerCommand(new StfuCommand(dbConn));
             // beanCoin
             cmdHandler.registerCommand(new BeanbalanaceCommand(dbConn));
-            cmdHandler.registerCommand(new BeanFreeCommand(dbConn));
+            cmdHandler.registerCommand(new BeanfreeCommand(dbConn));
             cmdHandler.registerCommand(new BeanbetCommand(dbConn));
+            // Mazawrath commands
+            cmdHandler.registerCommand(new MazapostchangelogCommand());
             // Other
             cmdHandler.registerCommand(new ReactCommand(dbConn));
             cmdHandler.registerCommand(new UserinfoCommand(dbConn));
