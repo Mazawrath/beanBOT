@@ -2,6 +2,7 @@ package com.mazawrath.beanbot;
 
 import com.mazawrath.beanbot.commands.GivemodCommand;
 import com.mazawrath.beanbot.commands.ReactCommand;
+import com.mazawrath.beanbot.commands.beancoin.BeanFreeCommand;
 import com.mazawrath.beanbot.commands.beancoin.BeanbalanaceCommand;
 import com.mazawrath.beanbot.commands.beancoin.BeanbetCommand;
 import com.mazawrath.beanbot.commands.copypasta.ThirtyPercentWinrateCommand;
@@ -33,6 +34,7 @@ public class Main {
             cmdHandler.registerCommand(new ThirtyPercentWinrateCommand(points));
             // beanCoin
             cmdHandler.registerCommand(new BeanbalanaceCommand(points));
+            cmdHandler.registerCommand(new BeanFreeCommand(points));
             cmdHandler.registerCommand(new BeanbetCommand(points));
             // Other
             cmdHandler.registerCommand(new ReactCommand(points));

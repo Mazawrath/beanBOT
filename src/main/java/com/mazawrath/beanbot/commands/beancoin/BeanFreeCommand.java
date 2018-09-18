@@ -7,20 +7,24 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
-public class BeanbalanaceCommand implements CommandExecutor{
+public class BeanFreeCommand implements CommandExecutor{
     private Points points;
 
-    public BeanbalanaceCommand(Points points) {
+    public BeanFreeCommand(Points points) {
         this.points = points;
     }
 
     @Command(
-            aliases = {"beanbalance"},
-            description = "Check how many beanCoin you have.",
+            aliases = {"beanfree"},
+            usage = ".beanfree",
+            description = "Get 25 beanCoin every 24 hours.",
             privateMessages = false
     )
 
     public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
-            serverTextChannel.sendMessage("You have " + points.getBalance(author.getIdAsString(), server.getIdAsString()) + " beanCoin.");
+        if (points.giveFreePoints(author.getIdAsString(), server.getIdAsString())) {
+            serverTextChannel.sendMessage("You have received 25 beanCoin.");
+        } else
+            serverTextChannel.sendMessage("You can only receive free beanCoin every 24 hours.");
     }
 }
