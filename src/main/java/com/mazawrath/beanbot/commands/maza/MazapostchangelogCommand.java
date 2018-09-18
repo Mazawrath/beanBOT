@@ -32,7 +32,7 @@ public class MazapostchangelogCommand implements CommandExecutor {
                 "\n" +
                 "**New**\n" +
                 "\t- beanBOT has been reworked from the ground up.\n" +
-                "\t\t- \n" +
+                "\t\t- beanBOT now uses sdcf4j for super easy command management and command parsing.\n" +
                 "\t- beanBOT is now open source on https://github.com/Mazawrath/beanBOT\n" +
 //                "\t- Created the Bean Market.\n" +
 //                "\t\t*Use `.beanmarket` to get started.*\n" +
