@@ -18,6 +18,8 @@ dependencies {
     implementation group: 'de.btobastian.sdcf4j', name: 'sdcf4j-core', version: 'v1.0.10'
     implementation group: 'de.btobastian.sdcf4j', name: 'sdcf4j-javacord', version: 'v1.0.10'
     compile group: 'com.rethinkdb', name: 'rethinkdb-driver', version: '2.3.3'
+    compile 'com.vdurmont:emoji-java:4.0.0'
+    compile "org.apache.commons:commons-lang3:3.8"
 }
 
 jar {
