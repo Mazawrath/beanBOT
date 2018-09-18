@@ -2,12 +2,10 @@ package com.mazawrath.beanbot;
 
 import com.mazawrath.beanbot.commands.*;
 import com.mazawrath.beanbot.commands.GivemodCommand;
-import com.mazawrath.beanbot.commands.ReactCommand;
-import com.mazawrath.beanbot.commands.ServerInfoCommand;
-import com.mazawrath.beanbot.commands.UserinfoCommand;
 import com.mazawrath.beanbot.commands.beancoin.BeanFreeCommand;
 import com.mazawrath.beanbot.commands.beancoin.BeanbalanaceCommand;
 import com.mazawrath.beanbot.commands.beancoin.BeanbetCommand;
+import com.mazawrath.beanbot.commands.copypasta.CoderedCommand;
 import com.mazawrath.beanbot.commands.copypasta.ThirtyPercentWinrateCommand;
 import com.mazawrath.beanbot.commands.copypasta.Top500Command;
 import com.mazawrath.beanbot.utilities.Points;
@@ -35,6 +33,7 @@ public class Main {
             cmdHandler.registerCommand(new Top500Command(dbConn));
             cmdHandler.registerCommand(new GivemodCommand(dbConn));
             cmdHandler.registerCommand(new ThirtyPercentWinrateCommand(dbConn));
+            cmdHandler.registerCommand(new CoderedCommand(dbConn));
             // beanCoin
             cmdHandler.registerCommand(new BeanbalanaceCommand(dbConn));
             cmdHandler.registerCommand(new BeanFreeCommand(dbConn));
