@@ -17,7 +17,7 @@ public class BeanbetCommand implements CommandExecutor {
     }
 
     @Command(
-            aliases = {"beanbet"},
+            aliases = {"beanbet", "coinbet"},
             usage = "beanbet [amount]",
             description = "Bet beanCoin to either win or lose.",
             privateMessages = false

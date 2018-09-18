@@ -19,7 +19,7 @@ public class BeanboardCommand implements CommandExecutor{
     }
 
     @Command(
-            aliases = {"beanboard"},
+            aliases = {"beanboard", "coinboard"},
             description = "Gets a leaderboard of who has the most beanCoin on the server.",
             privateMessages = false
     )
