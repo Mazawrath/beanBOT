@@ -35,7 +35,7 @@ public class BeanbetCommand implements CommandExecutor {
                     if (winningChance <= 35) {
                         int winningMultiplier = rand.nextInt(100) + 1;
 
-                        if (winningMultiplier >= 85) {
+                        if (winningMultiplier <= 15) {
                             points.addPoints(author.getIdAsString(), server.getIdAsString(),
                                     (Integer.parseInt(bettingPoints)) * 3);
                             serverTextChannel.sendMessage("Congrats, you got the x3 muliplayer! You won " + (Integer.parseInt(bettingPoints) * 3) + " beanCoin!");
