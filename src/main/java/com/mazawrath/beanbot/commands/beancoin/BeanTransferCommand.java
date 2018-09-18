@@ -8,7 +8,6 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
-import sun.plugin2.message.Message;
 
 public class BeanTransferCommand implements CommandExecutor {
     private Points points;
@@ -18,12 +17,12 @@ public class BeanTransferCommand implements CommandExecutor {
     }
 
     @Command(
-            aliases = {"beanbalance"},
+            aliases = {"beantransfer"},
             description = "Check how many beanCoin you have.",
             privateMessages = false
     )
 
-    public void onCommand(Message command, String userName, String transferAmount, String[] args, ServerTextChannel serverTextChannel, DiscordApi api, User author, Server server) {
+    public void onCommand(String command, String userName, String transferAmount, ServerTextChannel serverTextChannel, DiscordApi api, User author, Server server) {
         if (!userName.contains("#")) {
             serverTextChannel.sendMessage("Username is not valid!");
             userName = "null#000000000000";
