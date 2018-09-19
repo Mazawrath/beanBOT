@@ -24,7 +24,7 @@ public class GivemodCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(Message command, String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
+    public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
         if (points.removePoints(author.getIdAsString(), server.getIdAsString(), 10)) {
             final String[] messsage = {""};
                 if (author.getIdAsString().equals("112653978432503808")) {

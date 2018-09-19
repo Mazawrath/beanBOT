@@ -20,6 +20,7 @@ public class CoderedCommand implements CommandExecutor{
 
     @Command(
             aliases = {"codered"},
+            usage = "codered",
             privateMessages = false
     )
 

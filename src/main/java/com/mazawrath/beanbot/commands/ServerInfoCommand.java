@@ -1,6 +1,5 @@
 package com.mazawrath.beanbot.commands;
 
-import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.DiscordApi;
@@ -15,12 +14,6 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class ServerInfoCommand implements CommandExecutor {
-    private Points points;
-
-    public ServerInfoCommand(Points points) {
-        this.points = points;
-    }
-
     @Command(
             aliases = {"serverinfo"},
             usage = "serverinfo",

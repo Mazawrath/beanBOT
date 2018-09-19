@@ -28,6 +28,7 @@ public class MazapostchangelogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
+                "Detailed changelog can be found on " + // TODO add link to release page
                 "**2.0.0**\n" +
                 "\n" +
                 "**New**\n" +
@@ -38,7 +39,8 @@ public class MazapostchangelogCommand implements CommandExecutor {
 //                "\t\t*Use `.beanmarket` to get started.*\n" +
 //                "\t- Added `.beaninvest`.\n" +
                 "\t- Added `.blessed`.\n" +
-                "\t- Added `.stfu`" +
+                "\t- Added `.stfu`\n" +
+                "\t- Added `.source`\n" +
                 "\n" +
                 "**Changes**\n" +
                 "\t- Changed the chances of winning on `.beanbet` from 25% to 35%.\n" +

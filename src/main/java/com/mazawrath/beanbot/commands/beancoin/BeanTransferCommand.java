@@ -19,7 +19,7 @@ public class BeanTransferCommand implements CommandExecutor {
     @Command(
             aliases = {"beantransfer", "cointransfer"},
             usage = "beantransfer [discriminated name] [amount]",
-            description = "Check how many beanCoin you have.",
+            description = "Sends beanCoin to another user.",
             privateMessages = false
     )
 
