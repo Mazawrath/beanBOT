@@ -20,6 +20,7 @@ public class BlessedCommand implements CommandExecutor {
 
     @Command(
             aliases = {"blessed"},
+            usage = "blessed",
             privateMessages = false
     )
 
