@@ -1,0 +1,182 @@
+package com.mazawrath.beanbot.utilities;
+
+import com.rethinkdb.RethinkDB;
+import com.rethinkdb.net.Connection;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+
+public class StockMarket {
+    public static final RethinkDB r = RethinkDB.r;
+    Connection conn;
+
+    public Connection connectDatabase() {
+        conn = r.connection().hostname("localhost").port(28015).connect();
+        checkTable(conn);
+        return conn;
+    }
+
+    private boolean checkTable(Connection conn) {
+        if (r.dbList().contains("beanBotStock").run(conn)) {
+            return true;
+        } else {
+            r.dbCreate("beanBotStock").run(conn);
+            return true;
+        }
+    }
+
+    private void checkServer(String serverID) {
+        if (r.db("beanBotStock").tableList().contains(serverID).run(conn)) {
+        } else
+            r.db("beanBotStock").tableCreate(serverID).run(conn);
+
+    }
+
+    private void checkUser(String userID, String serverID) {
+        checkServer(serverID);
+
+        if (r.db("beanBotStock").table(serverID).getField("id").contains(userID).run(conn)) {
+
+        } else
+            r.db("beanBotStock").table(serverID).insert(r.array(
+                    r.hashMap("id", userID)
+            )).run(conn);
+    }
+
+    private void checkCompany(String userID, String serverID, String symbol) {
+        if (r.db("beanBotStock").table(serverID).getField(symbol).contains(userID).run(conn)) {
+        } else
+            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol, 0)
+            )).run(conn);
+    }
+
+    public boolean checkMarketStatus() {
+        try {
+            Stock thing = YahooFinance.get("APPL");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public static JSONArray getCompanies(String[] symbol) {
+        String jsonString = "[";
+
+        for (int i = 0; i < symbol.length; i++) {
+            try {
+                if (i == 0) {
+                    jsonString += getCompanyInfo(symbol[i]).toString();
+                } else {
+                    jsonString += "," + getCompanyInfo(symbol[i]).toString();
+                }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+
+        jsonString += "]";
+
+        return new JSONArray(jsonString);
+    }
+
+    public static JSONObject getCompanyInfo(String symbol) {
+        try {
+            JSONObject companyInfo = new JSONObject();
+            switch (symbol) {
+                case "BEAN":
+                    companyInfo.put("Name", "Bean");
+                    companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/489204157442424833/Untitled.png");
+                    companyInfo.put("Symbol", symbol);
+                    symbol = "AAPL";
+                    break;
+                case "FBI":
+                    companyInfo.put("Name", "Fortnite Burger, Inc.");
+                    companyInfo.put("Logo", ""); //TODO make mcdonalds logo
+                    companyInfo.put("Symbol", symbol);
+                    symbol = "MCD";
+                    break;
+                case "ATVI":
+                    companyInfo.put("Name", "");
+                    companyInfo.put("Logo", "");
+                    companyInfo.put("Symbol", symbol);
+                    symbol = "ATVI";
+                    break;
+                case "BEZFF":
+                    companyInfo.put("Name", "Beanzer Inc");
+                    companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/489211335830405120/Untitled-1.png");
+                    companyInfo.put("Symbol", symbol);
+                    symbol = "RAZFF";
+                    break;
+                case "ABD":
+                    companyInfo.put("Name", "Advanced Bean Devices, Inc.");
+                    companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/489254732251136012/Untitled.png");
+                    companyInfo.put("Symbol", symbol);
+                    symbol = "AMD";
+                    break;
+                case "BNTC":
+                    companyInfo.put("Name", "Beantel Corporation");
+                    companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/489277320205565952/Untitled.png");
+                    companyInfo.put("Symbol", symbol);
+                    symbol = "INTC";
+                    break;
+                default:
+                    return null;
+            }
+
+            Stock company = YahooFinance.get(symbol);
+
+            companyInfo.put("Price", company.getQuote().getPrice());
+            companyInfo.put("Opened", company.getQuote().getOpen());
+            companyInfo.put("Year High", company.getQuote().getYearHigh());
+            companyInfo.put("Year Low", company.getQuote().getYearLow());
+            //companyInfo.put("", company.getQuote())
+            companyInfo.put("Percentage Change", company.getQuote().getChangeInPercent() + "%");
+
+            return companyInfo;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public BigDecimal getStockPrice(String Symbol) {
+        try {
+            Stock stock = YahooFinance.get(Symbol);
+            return stock.getQuote().getPrice();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public BigDecimal getShareInvested(String userID, String serverID, String Symbol) {
+        
+
+        return null;
+    }
+
+    public boolean investCoin(String userID, String serverID, int points, String symbol) {
+        Points beanCoin = new Points();
+
+
+        if (beanCoin.removePointsExcludeBeanbot(userID, serverID, points)) {
+            checkUser(userID, serverID);
+            checkCompany(userID, serverID, symbol);
+            JSONObject obj = new JSONObject(new JSONArray(getCompanies(new String[] {symbol}).get(0)));
+            //r.db("beanBotStock ").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol, getShareInvested(userID, serverID, symbol) + points)).run(conn);
+        }
+        return false;
+    }
+
+    public ArrayList getPortfolio(String userID, String serverID) {
+        checkUser(userID, serverID);
+
+        return r.db("beanBotStock").table(serverID).get(userID).run(conn);
+    }
+}
