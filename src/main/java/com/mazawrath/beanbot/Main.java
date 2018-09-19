@@ -14,9 +14,9 @@ import org.javacord.api.DiscordApiBuilder;
 
 public class Main {
     public static void main(String[] args) {
-        Points dbConn = new Points();
+        Points points = new Points();
 
-        dbConn.connectDatabase();
+        points.connectDatabase();
         String token = args[0];
 
         new DiscordApiBuilder().setToken(token).login().thenAccept(api -> {
@@ -30,28 +30,28 @@ public class Main {
 
             // Standard
             cmdHandler.registerCommand(new HelpCommand(cmdHandler));
-            cmdHandler.registerCommand(new UserinfoCommand(dbConn));
+            cmdHandler.registerCommand(new UserinfoCommand(points));
             cmdHandler.registerCommand(new ServerInfoCommand());
-            cmdHandler.registerCommand(new ReactCommand(dbConn));
+            cmdHandler.registerCommand(new ReactCommand(points));
             cmdHandler.registerCommand(new SourceCommand());
             // beanCoin
-            cmdHandler.registerCommand(new BeanbalanaceCommand(dbConn));
-            cmdHandler.registerCommand(new BeanFreeCommand(dbConn));
-            cmdHandler.registerCommand(new BeanbetCommand(dbConn));
-            cmdHandler.registerCommand(new BeanTransferCommand(dbConn));
-            cmdHandler.registerCommand(new BeanboardCommand(dbConn));
+            cmdHandler.registerCommand(new BeanbalanaceCommand(points));
+            cmdHandler.registerCommand(new BeanFreeCommand(points));
+            cmdHandler.registerCommand(new BeanbetCommand(points));
+            cmdHandler.registerCommand(new BeanTransferCommand(points));
+            cmdHandler.registerCommand(new BeanboardCommand(points));
             // Mazawrath commands
             cmdHandler.registerCommand(new MazapostchangelogCommand());
             cmdHandler.registerCommand(new MazaDeleteMessageCommand());
-            cmdHandler.registerCommand(new MazaAddBeanCoinCommand(dbConn));
+            cmdHandler.registerCommand(new MazaAddBeanCoinCommand(points));
             // Copypasta
-            cmdHandler.registerCommand(new Top500Command(dbConn));
-            cmdHandler.registerCommand(new GivemodCommand(dbConn));
-            cmdHandler.registerCommand(new ThirtyPercentWinrateCommand(dbConn));
-            cmdHandler.registerCommand(new CodeRedCommand(dbConn));
-            cmdHandler.registerCommand(new BlessedCommand(dbConn));
-            cmdHandler.registerCommand(new StfuCommand(dbConn));
-            cmdHandler.registerCommand(new LossCommand(dbConn));
+            cmdHandler.registerCommand(new Top500Command(points));
+            cmdHandler.registerCommand(new GivemodCommand(points));
+            cmdHandler.registerCommand(new ThirtyPercentWinrateCommand(points));
+            cmdHandler.registerCommand(new CodeRedCommand(points));
+            cmdHandler.registerCommand(new BlessedCommand(points));
+            cmdHandler.registerCommand(new StfuCommand(points));
+            cmdHandler.registerCommand(new LossCommand(points));
         });
     }
 }
