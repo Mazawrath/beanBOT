@@ -7,7 +7,7 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
-public class BeanfreeCommand implements CommandExecutor{
+public class BeanFreeCommand implements CommandExecutor{
     private Points points;
 
     public BeanfreeCommand(Points points) {
