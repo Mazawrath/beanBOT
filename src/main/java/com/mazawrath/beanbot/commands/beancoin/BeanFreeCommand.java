@@ -10,7 +10,7 @@ import org.javacord.api.entity.user.User;
 public class BeanFreeCommand implements CommandExecutor{
     private Points points;
 
-    public BeanfreeCommand(Points points) {
+    public BeanFreeCommand(Points points) {
         this.points = points;
     }
 

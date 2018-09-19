@@ -11,7 +11,7 @@ import org.javacord.api.entity.user.User;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class CoderedCommand implements CommandExecutor{
+public class CoderedCommand implements CommandExecutor {
     private Points points;
 
     public CoderedCommand(Points points) {

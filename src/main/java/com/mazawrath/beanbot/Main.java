@@ -36,7 +36,7 @@ public class Main {
             cmdHandler.registerCommand(new SourceCommand());
             // beanCoin
             cmdHandler.registerCommand(new BeanbalanaceCommand(dbConn));
-            cmdHandler.registerCommand(new BeanfreeCommand(dbConn));
+            cmdHandler.registerCommand(new BeanFreeCommand(dbConn));
             cmdHandler.registerCommand(new BeanbetCommand(dbConn));
             cmdHandler.registerCommand(new BeanTransferCommand(dbConn));
             cmdHandler.registerCommand(new BeanboardCommand(dbConn));
@@ -51,6 +51,7 @@ public class Main {
             cmdHandler.registerCommand(new CoderedCommand(dbConn));
             cmdHandler.registerCommand(new BlessedCommand(dbConn));
             cmdHandler.registerCommand(new StfuCommand(dbConn));
+            cmdHandler.registerCommand(new LossCommand(dbConn));
         });
     }
 }
