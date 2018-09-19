@@ -26,5 +26,7 @@ public class MazaAddBeanCoinCommand implements CommandExecutor {
 
             points.addPoints(user, server.getIdAsString(), Integer.parseInt(pointValue));
         }
+        else
+            serverTextChannel.sendMessage("Only Mazawrath can send this message.");
     }
 }
