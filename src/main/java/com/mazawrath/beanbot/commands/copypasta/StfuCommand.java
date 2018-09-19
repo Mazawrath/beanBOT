@@ -20,6 +20,7 @@ public class StfuCommand implements CommandExecutor {
 
     @Command(
             aliases = {"stfu"},
+            usage = "stfu",
             privateMessages = false
     )
 
