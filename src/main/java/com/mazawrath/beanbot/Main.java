@@ -48,7 +48,7 @@ public class Main {
             cmdHandler.registerCommand(new Top500Command(dbConn));
             cmdHandler.registerCommand(new GivemodCommand(dbConn));
             cmdHandler.registerCommand(new ThirtyPercentWinrateCommand(dbConn));
-            cmdHandler.registerCommand(new CoderedCommand(dbConn));
+            cmdHandler.registerCommand(new CodeRedCommand(dbConn));
             cmdHandler.registerCommand(new BlessedCommand(dbConn));
             cmdHandler.registerCommand(new StfuCommand(dbConn));
             cmdHandler.registerCommand(new LossCommand(dbConn));

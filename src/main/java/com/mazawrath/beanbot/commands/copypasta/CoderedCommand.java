@@ -11,10 +11,10 @@ import org.javacord.api.entity.user.User;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class CoderedCommand implements CommandExecutor {
+public class CodeRedCommand implements CommandExecutor {
     private Points points;
 
-    public CoderedCommand(Points points) {
+    public CodeRedCommand(Points points) {
         this.points = points;
     }
 
