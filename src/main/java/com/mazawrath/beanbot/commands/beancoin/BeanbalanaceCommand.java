@@ -17,6 +17,7 @@ public class BeanbalanaceCommand implements CommandExecutor{
     @Command(
             aliases = {"beanbalance", "coinbalance"},
             description = "Check how many beanCoin you have.",
+            usage = "beanbalance",
             privateMessages = false
     )
 
