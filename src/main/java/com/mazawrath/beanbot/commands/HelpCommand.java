@@ -12,7 +12,7 @@ public class HelpCommand implements CommandExecutor {
         this.commandHandler = commandHandler;
     }
 
-    @Command(aliases = {"help", "commands"}, description = "Shows this page")
+    @Command(aliases = {"help", "commands"}, description = "Shows this page", usage = "help [command]")
     public String onHelpCommand() {
         StringBuilder builder = new StringBuilder();
         builder.append("```xml"); // a xml code block looks fancy
