@@ -16,6 +16,7 @@ public class ThirtyPercentWinrateCommand implements CommandExecutor {
 
     @Command(
             aliases = {"30%"},
+            usage = "30%",
             privateMessages = false
     )
 
