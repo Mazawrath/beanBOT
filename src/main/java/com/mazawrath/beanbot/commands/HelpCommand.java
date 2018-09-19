@@ -20,7 +20,7 @@ public class HelpCommand implements CommandExecutor {
             usage = "help [command]",
             description = "Displays a list of commands and usages, or details, if a command is specified.",
             async = true,
-            showInHelpPage = false
+            showInHelpPage = true
     )
     public void onCommand(String[] args, ServerTextChannel channel) {
 
