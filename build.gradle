@@ -1,5 +1,4 @@
 group 'mazawrath'
-version '2.1.0'
 
 apply plugin: 'java'
 apply plugin: 'application'
