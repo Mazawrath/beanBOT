@@ -28,23 +28,15 @@ public class MazaPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.0.0\n" +
-                "**v2.0.0**\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.1.0\n" +
+                "**v2.1.0**\n" +
                 "\n" +
                 "**New**\n" +
-                "\t- beanBOT has been reworked from the ground up.\n" +
-                "\t\t- beanBOT now uses sdcf4j for super easy command management and command parsing.\n" +
-                "\t- beanBOT is now open source on https://github.com/Mazawrath/beanBOT\n" +
-//                "\t- Created the Bean Market.\n" +
-//                "\t\t*Use `.beanmarket` to get started.*\n" +
-//                "\t- Added `.beaninvest`.\n" +
-                "\t- Added `.blessed`.\n" +
-                "\t- Added `.stfu`\n" +
-                "\t- Added `.source`\n" +
-                "\n" +
+                "\t- Added `.loss`.\n" +
+                "\t- Added `.shame`.\n" +
+                "\t- Added `.mazapostmessage`.\n" +
                 "**Changes**\n" +
-                "\t- Changed the chances of winning on `.beanbet` from 25% to 35%.\n" +
-                "\t- Updated `.loss`\n";
-//                "**Bug Fixes**\n" +
+                "\t`.help` has been completely redone.\n" +
+                "\tFile name capitalization have been made more consistent.";
     }
 }
