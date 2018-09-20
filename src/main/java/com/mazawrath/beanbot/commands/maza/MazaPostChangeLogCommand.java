@@ -28,15 +28,10 @@ public class MazaPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.1.0\n" +
-                "**v2.1.0**\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.1.1\n" +
+                "**v2.1.1**\n" +
                 "\n" +
-                "**New**\n" +
-                "\t- Added `.loss`.\n" +
-                "\t- Added `.shame`.\n" +
-                "\t- Added `.mazapostmessage`.\n" +
-                "**Changes**\n" +
-                "\t`.help` has been completely redone.\n" +
-                "\tFile name capitalization have been made more consistent.";
+                "**Bug Fixes**\n" +
+                "\t- Fixed an issue where `.shame` had the wrong alias.\n";
     }
 }
