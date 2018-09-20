@@ -7,10 +7,10 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
-public class BeanbalanaceCommand implements CommandExecutor{
+public class BeanBalanceCommand implements CommandExecutor{
     private Points points;
 
-    public BeanbalanaceCommand(Points points) {
+    public BeanBalanceCommand(Points points) {
         this.points = points;
     }
 
