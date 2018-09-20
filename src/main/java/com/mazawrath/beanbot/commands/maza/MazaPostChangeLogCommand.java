@@ -8,7 +8,7 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
-public class MazapostchangelogCommand implements CommandExecutor {
+public class MazaPostChangeLogCommand implements CommandExecutor {
     @Command(
             aliases = {"mazapostchangelog"},
             privateMessages = false,
