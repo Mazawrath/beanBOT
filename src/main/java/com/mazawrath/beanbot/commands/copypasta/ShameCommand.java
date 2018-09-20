@@ -15,8 +15,8 @@ public class ShameCommand implements CommandExecutor {
     }
 
     @Command(
-            aliases = {"30%"},
-            usage = "30%",
+            aliases = {"shame"},
+            usage = "shame",
             privateMessages = false
     )
 
