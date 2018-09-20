@@ -55,6 +55,7 @@ public class Main {
             cmdHandler.registerCommand(new StfuCommand(points));
             cmdHandler.registerCommand(new LossCommand(points));
             cmdHandler.registerCommand(new ShameCommand(points));
+            cmdHandler.registerCommand(new AsgCommand(points));
         });
     }
 }
