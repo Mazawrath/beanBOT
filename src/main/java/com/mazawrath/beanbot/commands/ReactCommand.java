@@ -24,8 +24,8 @@ public class ReactCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand (String command, String argument, ServerTextChannel serverTextChannel, User author, Server server, Message message) {
-            if (points.removePoints(author.getIdAsString(), server.getIdAsString(), 5)) {
+    public void onCommand (String[] command, ServerTextChannel serverTextChannel, User author, Server server, Message message) {
+            if (points.removePoints(author.getIdAsString(), server.getIdAsString(), 2)) {
                 Message messsageBefore = message.getMessagesBefore(1).join().first();
                 message.delete();
                 for (int i = 0; i < argument.length(); i++) {
