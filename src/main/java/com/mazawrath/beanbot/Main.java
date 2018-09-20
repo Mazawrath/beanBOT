@@ -7,6 +7,7 @@ import com.mazawrath.beanbot.commands.copypasta.*;
 import com.mazawrath.beanbot.commands.maza.MazaAddBeanCoinCommand;
 import com.mazawrath.beanbot.commands.maza.MazaDeleteMessageCommand;
 import com.mazawrath.beanbot.commands.maza.MazaPostChangeLogCommand;
+import com.mazawrath.beanbot.commands.maza.MazaPostMessageCommand;
 import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
@@ -44,6 +45,7 @@ public class Main {
             cmdHandler.registerCommand(new MazaPostChangeLogCommand());
             cmdHandler.registerCommand(new MazaDeleteMessageCommand());
             cmdHandler.registerCommand(new MazaAddBeanCoinCommand(points));
+            cmdHandler.registerCommand(new MazaPostMessageCommand());
             // Copypasta
             cmdHandler.registerCommand(new Top500Command(points));
             cmdHandler.registerCommand(new GiveModCommand(points));
