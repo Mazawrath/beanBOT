@@ -6,17 +6,17 @@ apply plugin: 'application'
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
-    maven {
-        url 'https://jitpack.io'
-    }
+	maven {
+		url 'https://jitpack.io'
+	}
+    mavenCentral()    
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     implementation group: 'org.javacord', name: 'javacord', version: '3.0.0'
-    implementation group: 'de.btobastian.sdcf4j', name: 'sdcf4j-core', version: 'v1.0.10'
-    implementation group: 'de.btobastian.sdcf4j', name: 'sdcf4j-javacord', version: 'v1.0.10'
+    implementation group: 'com.github.Mazawrath.sdcf4j', name: 'sdcf4j-core', version: 'v1.1.0'
+    implementation group: 'com.github.Mazawrath.sdcf4j', name: 'sdcf4j-javacord', version: 'v1.1.0'
     compile group: 'com.rethinkdb', name: 'rethinkdb-driver', version: '2.3.3'
     compile group: 'com.yahoofinance-api', name: 'YahooFinanceAPI', version: '3.14.0'
     compile 'com.vdurmont:emoji-java:4.0.0'
