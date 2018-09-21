@@ -39,11 +39,6 @@ public class UserInfoCommand implements CommandExecutor{
             } else if (userName.contains("@")) {
                 serverTextChannel.sendMessage("Do not mention the user, put in their full username (Example#0000) without a '@' in front.");
                 userName = "null#000000000000";
-            } else {
-                if (!points.removePoints(author.getIdAsString(), server.getIdAsString(), 3)) {
-                    serverTextChannel.sendMessage("You do not have enough beanCoin to search other users.");
-                    userName = "null#000000000000";
-                }
             }
         } else
             userName = author.getDiscriminatedName();
