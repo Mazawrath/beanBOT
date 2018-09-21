@@ -28,18 +28,21 @@ public class UserInfoCommand implements CommandExecutor{
             privateMessages = false
     )
 
-    public void onCommand(String command, String userName, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
+    public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
         final String[] roleList = {""};
         final String[] playing = {""};
+        String userName;
 
-        if (userName != null) {
-            if (!userName.contains("#")) {
+        if (args.length != 0) {
+            if (!args[0].contains("#")) {
                 serverTextChannel.sendMessage("Username is not valid!");
                 userName = "null#000000000000";
-            } else if (userName.contains("@")) {
+            } else if (args[0].contains("@")) {
                 serverTextChannel.sendMessage("Do not mention the user, put in their full username (Example#0000) without a '@' in front.");
                 userName = "null#000000000000";
             }
+            else
+                userName = args[0];
         } else
             userName = author.getDiscriminatedName();
         api.getCachedUserByDiscriminatedNameIgnoreCase(userName).ifPresent(user -> {
