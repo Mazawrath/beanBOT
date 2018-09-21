@@ -1,6 +1,7 @@
 package com.mazawrath.beanbot;
 
 import com.mazawrath.beanbot.commands.*;
+import com.mazawrath.beanbot.commands.beanmarket.BeanMarketCommand;
 import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
@@ -41,6 +42,8 @@ public class Main {
             cmdHandler.registerCommand(new BeanBetCommand(points));
             cmdHandler.registerCommand(new BeanTransferCommand(points));
             cmdHandler.registerCommand(new BeanBoardCommand(points));
+            // Bean Market
+            cmdHandler.registerCommand(new BeanMarketCommand());
             // Mazawrath commands
             cmdHandler.registerCommand(new MazaPostChangeLogCommand());
             cmdHandler.registerCommand(new MazaDeleteMessageCommand());
