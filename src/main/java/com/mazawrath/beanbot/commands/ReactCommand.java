@@ -24,26 +24,24 @@ public class ReactCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand (String[] command, ServerTextChannel serverTextChannel, User author, Server server, Message message) {
-            if (points.removePoints(author.getIdAsString(), server.getIdAsString(), 2)) {
-                Message messsageBefore = message.getMessagesBefore(1).join().first();
-                message.delete();
-                for (int i = 0; i < command.length; i++) {
-                    for (int j = 0; j < command[i].length(); j++) {
-                        if (StringUtils.isAlpha(String.valueOf(command[i].toLowerCase().charAt(j))))
-                            messsageBefore.addReaction(EmojiParser.parseToUnicode(":regional_indicator_symbol_" + command[i].toLowerCase().charAt(j) + ":"));
-                    }
-                        if (i == 0) {
-                            messsageBefore.addReaction(EmojiParser.parseToUnicode(":large_blue_circle:"));
-                        }
-                        else if (i == 1) {
-                            messsageBefore.addReaction(EmojiParser.parseToUnicode(":black_circle:"));
-                        }
-                        else if (i == 2) {
-                            messsageBefore.addReaction(EmojiParser.parseToUnicode(":red_circle:"));
-                        }
+    public void onCommand(String[] command, ServerTextChannel serverTextChannel, User author, Server server, Message message) {
+        if (points.removePoints(author.getIdAsString(), server.getIdAsString(), 2)) {
+            Message messsageBefore = message.getMessagesBefore(1).join().first();
+            message.delete();
+            for (int i = 0; i < command.length; i++) {
+                for (int j = 0; j < command[i].length(); j++) {
+                    if (StringUtils.isAlpha(String.valueOf(command[i].toLowerCase().charAt(j))))
+                        messsageBefore.addReaction(EmojiParser.parseToUnicode(":regional_indicator_symbol_" + command[i].toLowerCase().charAt(j) + ":"));
                 }
-            } else
-                serverTextChannel.sendMessage("You do not have enough beanCoin to use this command.");
+                if (i == 0) {
+                    messsageBefore.addReaction(EmojiParser.parseToUnicode(":large_blue_circle:"));
+                } else if (i == 1) {
+                    messsageBefore.addReaction(EmojiParser.parseToUnicode(":black_circle:"));
+                } else if (i == 2) {
+                    messsageBefore.addReaction(EmojiParser.parseToUnicode(":red_circle:"));
+                }
+            }
+        } else
+            serverTextChannel.sendMessage("You do not have enough beanCoin to use this command.");
     }
 }
