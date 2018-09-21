@@ -29,13 +29,19 @@ public class ReactCommand implements CommandExecutor {
                 Message messsageBefore = message.getMessagesBefore(1).join().first();
                 message.delete();
                 for (int i = 0; i < command.length; i++) {
-                    for (int j = 0; i < command[i].length(); j++) {
+                    for (int j = 0; j < command[i].length(); j++) {
                         if (StringUtils.isAlpha(String.valueOf(command[i].toLowerCase().charAt(j))))
                             messsageBefore.addReaction(EmojiParser.parseToUnicode(":regional_indicator_symbol_" + command[i].toLowerCase().charAt(j) + ":"));
-//                        else if (StringUtils.isAlphaSpace(String.valueOf(command[i].toLowerCase().charAt(j))))
-//                            messsageBefore.addReaction(EmojiParser.parseToUnicode(":large_blue_circle:"));
                     }
-                    messsageBefore.addReaction(EmojiParser.parseToUnicode(":large_blue_circle:"));
+                        if (i == 0) {
+                            messsageBefore.addReaction(EmojiParser.parseToUnicode(":large_blue_circle:"));
+                        }
+                        else if (i == 1) {
+                            messsageBefore.addReaction(EmojiParser.parseToUnicode(":black_circle:"));
+                        }
+                        else if (i == 2) {
+                            messsageBefore.addReaction(EmojiParser.parseToUnicode(":red_circle:"));
+                        }
                 }
             } else
                 serverTextChannel.sendMessage("You do not have enough beanCoin to use this command.");
