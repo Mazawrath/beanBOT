@@ -12,10 +12,16 @@ import com.mazawrath.beanbot.commands.maza.MazaPostMessageCommand;
 import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
+import org.apache.log4j.BasicConfigurator;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.util.logging.FallbackLoggerConfiguration;
 
 public class Main {
     public static void main(String[] args) {
+        BasicConfigurator.configure();
+        // Enable debugging, if no slf4j logger was found
+        FallbackLoggerConfiguration.setDebug(false);
+
         Points points = new Points();
 
         points.connectDatabase();
