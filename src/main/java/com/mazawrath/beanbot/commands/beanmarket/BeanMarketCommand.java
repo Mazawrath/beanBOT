@@ -11,21 +11,23 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.math.RoundingMode;
+import java.util.Arrays;
 
 public class BeanMarketCommand implements CommandExecutor {
     @Command(
             aliases = {"beanmarket"},
-            description = "Gets a status of the Bean Market. Leave command blank for a list of every company",
+            description = "Gets a status of the Bean Market. Leave argument blank for a list of every company",
             usage = "beanbalance",
             privateMessages = false
     )
 
-    public void onCommand(String[] command, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (command.length == 0) {
+    public void onCommand(String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
+        String[] companies = {"BEAN", "FBI", "ATVI", "BEZFF", "ABD", "BNTC"};
+        if (args.length == 0) {
             final String[] symbol = {""};
             final String[] price = {""};
 
-            JSONArray array = new JSONArray(StockMarket.getCompanies(new String[]{"BEAN", "FBI", "ATVI", "BEZFF", "ABD", "BNTC"}).toString());
+            JSONArray array = new JSONArray(StockMarket.getCompanies(companies).toString());
 
             for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = new JSONObject(array.get(i).toString());
@@ -40,23 +42,24 @@ public class BeanMarketCommand implements CommandExecutor {
                     .setFooter("Use .beanmarket [Symbol] to look up a sepcific company. Use .beaninvest to check your portfolio.");
             serverTextChannel.sendMessage(embed);
         } else {
-            JSONArray array = new JSONArray(StockMarket.getCompanies(new String[]{command[0].toUpperCase()}).toString());
+            if (Arrays.asList(companies).contains(args[0])) {
+                JSONArray array = new JSONArray(StockMarket.getCompanies(new String[]{args[0].toUpperCase()}).toString());
 
-            if (!array.isNull(0)) {
-                JSONObject obj = new JSONObject(array.get(0).toString());
+                if (!array.isNull(0)) {
+                    JSONObject obj = new JSONObject(array.get(0).toString());
 
-                EmbedBuilder embed = new EmbedBuilder()
-                        .setTitle(obj.getString("Name"))
-                        .setDescription(obj.getString("Symbol"))
-                        .setThumbnail(obj.getString("Logo"))
-                        .addInlineField("Price", obj.getBigDecimal("Price").setScale(2, RoundingMode.HALF_UP).toString())
-                        .addInlineField("Percentage Change", obj.getString("Percentage Change"))
-                        .addInlineField("Opened at", obj.getBigDecimal("Opened").setScale(2, RoundingMode.HALF_UP).toString())
-                        .addInlineField("Yearly High", obj.getBigDecimal("Year High").setScale(2, RoundingMode.HALF_UP).toString())
-                        .addInlineField("Yearly Low", obj.getBigDecimal("Year Low").setScale(2, RoundingMode.HALF_UP).toString());
-                serverTextChannel.sendMessage(embed);
-            }
-            else
+                    EmbedBuilder embed = new EmbedBuilder()
+                            .setTitle(obj.getString("Name"))
+                            .setDescription(obj.getString("Symbol"))
+                            .setThumbnail(obj.getString("Logo"))
+                            .addInlineField("Price", obj.getBigDecimal("Price").setScale(2, RoundingMode.HALF_UP).toString())
+                            .addInlineField("Percentage Change", obj.getString("Percentage Change"))
+                            .addInlineField("Opened at", obj.getBigDecimal("Opened").setScale(2, RoundingMode.HALF_UP).toString())
+                            .addInlineField("Yearly High", obj.getBigDecimal("Year High").setScale(2, RoundingMode.HALF_UP).toString())
+                            .addInlineField("Yearly Low", obj.getBigDecimal("Year Low").setScale(2, RoundingMode.HALF_UP).toString());
+                    serverTextChannel.sendMessage(embed);
+                }
+            } else
                 serverTextChannel.sendMessage("Symbol not found.");
         }
     }
