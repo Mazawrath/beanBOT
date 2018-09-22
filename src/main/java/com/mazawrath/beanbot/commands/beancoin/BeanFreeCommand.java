@@ -22,9 +22,10 @@ public class BeanFreeCommand implements CommandExecutor {
     )
 
     public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
-        if (points.giveFreePoints(author.getIdAsString(), server.getIdAsString())) {
+        long timeLeft = points.giveFreePoints(author.getIdAsString(), server.getIdAsString());
+        if (timeLeft == 0) {
             serverTextChannel.sendMessage("You have received 25 beanCoin.");
         } else
-            serverTextChannel.sendMessage("You can only receive free beanCoin every 24 hours.");
+            serverTextChannel.sendMessage("You can only receive free beanCoin every 24 hours. You have " + timeLeft);
     }
 }
