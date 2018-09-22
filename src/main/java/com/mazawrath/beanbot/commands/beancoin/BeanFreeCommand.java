@@ -7,6 +7,9 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class BeanFreeCommand implements CommandExecutor {
     private Points points;
 
@@ -23,9 +26,37 @@ public class BeanFreeCommand implements CommandExecutor {
 
     public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
         long timeLeft = points.giveFreePoints(author.getIdAsString(), server.getIdAsString());
+
         if (timeLeft == 0) {
             serverTextChannel.sendMessage("You have received 25 beanCoin.");
-        } else
-            serverTextChannel.sendMessage("You can only receive free beanCoin every 24 hours. You have " + timeLeft);
+        } else {
+            String dateStart = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
+                    .format(new java.util.Date (System.currentTimeMillis()));
+            String dateStop = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
+                    .format(new java.util.Date (timeLeft + 24 * 60 * 60 * 1000));
+
+            //HH converts hour in 24 hours format (0-23), day calculation
+            SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+            Date d1;
+            Date d2;
+
+            try {
+                d1 = format.parse(dateStart);
+                d2 = format.parse(dateStop);
+
+                //in milliseconds
+                long diff = d2.getTime() - d1.getTime();
+
+                long diffMinutes = diff / (60 * 1000) % 60;
+                long diffHours = diff / (60 * 60 * 1000) % 24;
+
+                serverTextChannel.sendMessage("You have already received free beanCoin today. You can receive beanCoin in " + diffHours + " hours " + diffMinutes + " minutes.");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }

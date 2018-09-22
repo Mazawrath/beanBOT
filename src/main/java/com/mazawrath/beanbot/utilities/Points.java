@@ -82,14 +82,12 @@ public class Points {
     public long giveFreePoints(String userID, String serverID) {
         checkUser(userID, serverID);
         long currentPoints = r.db("beanBotPoints").table(serverID).get(userID).getField("Last Received Free Points").run(conn);
-        long timeLeft = System.currentTimeMillis() - currentPoints;
 
-        if (timeLeft > 24 * 60 * 60 * 1000) {
+        if (System.currentTimeMillis() - currentPoints > 24 * 60 * 60 * 1000) {
             r.db("beanBotPoints").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", getBalance(userID, serverID) + 25)).run(conn);
             r.db("beanBotPoints").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Last Received Free Points", System.currentTimeMillis())).run(conn);
-            //  r.db("beanBotPoints").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", getBalance(userID, serverID) + points)).run(conn);
             return 0;
         }
-        return timeLeft;
+        return currentPoints;
     }
 }
