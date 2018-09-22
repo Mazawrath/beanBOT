@@ -43,7 +43,7 @@ public class BeanMarketCommand implements CommandExecutor {
                     //.setFooter("Use .beanmarket [Symbol] to look up a sepcific company. Use .beaninvest to check your portfolio.");
             serverTextChannel.sendMessage(embed);
         } else {
-            if (Arrays.asList(companies).contains(args[0])) {
+            if (Arrays.asList(companies).contains(args[0].toUpperCase())) {
                 JSONArray array = new JSONArray(StockMarket.getCompanies(new String[]{args[0].toUpperCase()}).toString());
 
                 if (!array.isNull(0)) {
