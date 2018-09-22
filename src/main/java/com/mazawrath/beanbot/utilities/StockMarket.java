@@ -169,7 +169,6 @@ public class StockMarket {
             checkUser(userID, serverID);
             checkCompany(userID, serverID, symbol);
             JSONObject obj = new JSONObject(new JSONArray(getCompanies(new String[] {symbol}).get(0)));
-            //r.db("beanBotStock ").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol, getShareInvested(userID, serverID, symbol) + points)).run(conn);
         }
         return false;
     }
