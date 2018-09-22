@@ -39,7 +39,7 @@ public class BeanMarketCommand implements CommandExecutor {
                     .setTitle("Bean Market")
                     .addInlineField("Symbol", symbol[0])
                     .addInlineField("Price", price[0])
-                    .setFooter("Investing coming soon!");
+                    .setFooter("Use .beanmarket [Symbol] to look up a sepcific company. Investing coming soon!");
                     //.setFooter("Use .beanmarket [Symbol] to look up a sepcific company. Use .beaninvest to check your portfolio.");
             serverTextChannel.sendMessage(embed);
         } else {
