@@ -23,22 +23,22 @@ public class BeanTransferCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(String command, String userName, String transferAmount, ServerTextChannel serverTextChannel, DiscordApi api, User author, Server server) {
-        if (userName != null) {
-            if (!userName.contains("#")) {
+    public void onCommand(String[] args, ServerTextChannel serverTextChannel, DiscordApi api, User author, Server server) {
+        if (args.length >= 2) {
+            if (!args[0].contains("#")) {
                 serverTextChannel.sendMessage("Username is not valid!");
-                userName = "null#000000000000";
-            } else if (userName.contains("@")) {
+                args[0] = "null#000000000000";
+            } else if (args[0].contains("@")) {
                 serverTextChannel.sendMessage("Do not mention the user, put in their full username (Example#0000) without a '@' in front.");
-                userName = "null#000000000000";
+                args[0] = "null#000000000000";
             }
-            api.getCachedUserByDiscriminatedNameIgnoreCase(userName).ifPresent(user -> {
-                if (StringUtils.isNumeric(transferAmount)) {
-                    if (!transferAmount.equals("0")) {
-                        if (Integer.parseInt(transferAmount) != 0) {
-                            if (points.removePointsExcludeBeanbot(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(transferAmount))) {
-                                points.addPoints(user.getIdAsString(), server.getIdAsString(), Integer.parseInt(transferAmount));
-                                serverTextChannel.sendMessage("Sent " + transferAmount + " beanCoin to " + user.getDisplayName(server) + ".");
+            api.getCachedUserByDiscriminatedNameIgnoreCase(args[0]).ifPresent(user -> {
+                if (StringUtils.isNumeric(args[1])) {
+                    if (!args[1].equals("0")) {
+                        if (Integer.parseInt(args[1]) != 0) {
+                            if (points.removePointsExcludeBeanbot(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[1]))) {
+                                points.addPoints(user.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[1]));
+                                serverTextChannel.sendMessage("Sent " + args[1] + " beanCoin to " + user.getDisplayName(server) + ".");
                             } else
                                 serverTextChannel.sendMessage("You do not have enough beanCoin to send that much.");
                         }
@@ -48,6 +48,6 @@ public class BeanTransferCommand implements CommandExecutor {
                     serverTextChannel.sendMessage("Invalid amount of beanCoin.");
             });
         } else
-            serverTextChannel.sendMessage("Username is not valid!");
+            serverTextChannel.sendMessage("Not enough arguments.");
     }
 }

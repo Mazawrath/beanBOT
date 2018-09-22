@@ -97,13 +97,13 @@ public class StockMarket {
                     break;
                 case "FBI":
                     companyInfo.put("Name", "Fortnite Burger, Inc.");
-                    companyInfo.put("Logo", ""); //TODO make mcdonalds logo
+                    companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/492901413299552289/Untitled.png");
                     companyInfo.put("Symbol", symbol);
                     symbol = "MCD";
                     break;
-                case "ATVI":
-                    companyInfo.put("Name", "");
-                    companyInfo.put("Logo", "");
+                case "SHTEB":
+                    companyInfo.put("Name", "shteeeb, Inc.");
+                    companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/492901390763556864/483457233943003148.png");
                     companyInfo.put("Symbol", symbol);
                     symbol = "ATVI";
                     break;

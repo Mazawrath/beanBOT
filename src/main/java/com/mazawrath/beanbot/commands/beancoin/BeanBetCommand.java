@@ -23,42 +23,45 @@ public class BeanBetCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(String command, String bettingPoints, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (bettingPoints != null && isInteger(bettingPoints)) {
-            if (bettingPoints.equals("0")) {
-                serverTextChannel.sendMessage("You can't bet 0 beanCoin!");
-            } else {
-                if (points.removePoints(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(bettingPoints))) {
-                    Random rand = new Random();
-                    int winningChance = rand.nextInt(100) + 1;
+    public void onCommand(String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
+        if (args.length != 0) {
+            if (isInteger(args[0])) {
+                if (args[0].equals("0")) {
+                    serverTextChannel.sendMessage("You can't bet 0 beanCoin!");
+                } else {
+                    if (points.removePoints(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]))) {
+                        Random rand = new Random();
+                        int winningChance = rand.nextInt(100) + 1;
 
-                    if (winningChance <= 35) {
-                        int winningMultiplier = rand.nextInt(100) + 1;
+                        if (winningChance <= 35) {
+                            int winningMultiplier = rand.nextInt(100) + 1;
 
-                        if (winningMultiplier <= 15) {
-                            points.addPoints(author.getIdAsString(), server.getIdAsString(),
-                                    (Integer.parseInt(bettingPoints)) * 3);
-                            serverTextChannel.sendMessage("Congrats, you got the x3 muliplayer! You won " + (Integer.parseInt(bettingPoints) * 3) + " beanCoin!");
+                            if (winningMultiplier <= 15) {
+                                points.addPoints(author.getIdAsString(), server.getIdAsString(),
+                                        (Integer.parseInt(args[0])) * 3);
+                                serverTextChannel.sendMessage("Congrats, you got the x3 muliplayer! You won " + (Integer.parseInt(args[0]) * 3) + " beanCoin!");
+                            } else {
+                                points.addPoints(author.getIdAsString(), server.getIdAsString(),
+                                        (Integer.parseInt(args[0])) * 2);
+                                serverTextChannel.sendMessage("Congrats, you won " + (Integer.parseInt(args[0]) * 2) + " beanCoin!");
+                            }
                         } else {
-                            points.addPoints(author.getIdAsString(), server.getIdAsString(),
-                                    (Integer.parseInt(bettingPoints)) * 2);
-                            serverTextChannel.sendMessage("Congrats, you won " + (Integer.parseInt(bettingPoints) * 2) + " beanCoin!");
+                            serverTextChannel.sendMessage("Sorry, you lost " + args[0] + " beanCoin.");
                         }
-                    } else {
-                        serverTextChannel.sendMessage("Sorry, you lost " + bettingPoints + " beanCoin.");
-                    }
-                } else
-                    serverTextChannel.sendMessage("You don't have enough beanCoin to bet that much.");
-            }
-        } else
+                    } else
+                        serverTextChannel.sendMessage("You don't have enough beanCoin to bet that much.");
+                }
+            } else
+                serverTextChannel.sendMessage("Invalid amount of beanCoin.");
+        }else
             serverTextChannel.sendMessage("Invalid amount of beanCoin.");
     }
 
-    public static boolean isInteger(String s) {
+    private static boolean isInteger(String s) {
         return isInteger(s, 10);
     }
 
-    public static boolean isInteger(String s, int radix) {
+    private static boolean isInteger(String s, int radix) {
         if (s.isEmpty()) return false;
         for (int i = 0; i < s.length(); i++) {
             if (i == 0 && s.charAt(i) == '-') {

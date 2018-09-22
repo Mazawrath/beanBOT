@@ -28,10 +28,19 @@ public class MazaPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.1.1\n" +
-                "**v2.1.1**\n" +
-                "\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.2.0\n" +
+                "**v2.2.0**\n" +
+                "**New**\n" +
+                "\t- Added start of the Bean Market.\n" +
+                "\t- Added `.beanmarket`.\n" +
+                "\t\t- Can only look at companies. Currently cannot invest any beanCoin.\n" +
+                "\t- Added `.asg`.\n" +
+                "\t- Added `.grind`.\n" +
+                "**Changes**\n" +
+                "\t- Looking up users with `.userinfo` is now free\n" +
+                "\t- `.react` beanCoin cost changed from 5 beanCoin to 2 beanCoin\n" +
+                "\t- `.beanfree` now tells you how long you have until you can use `.beanfree` again.\n" +
                 "**Bug Fixes**\n" +
-                "\t- Fixed an issue where `.shame` had the wrong alias.\n";
+                "\t- `.react` now supports up to 4 words";
     }
 }

@@ -1,6 +1,7 @@
 package com.mazawrath.beanbot;
 
 import com.mazawrath.beanbot.commands.*;
+import com.mazawrath.beanbot.commands.beanmarket.BeanMarketCommand;
 import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
@@ -11,10 +12,16 @@ import com.mazawrath.beanbot.commands.maza.MazaPostMessageCommand;
 import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
+import org.apache.log4j.BasicConfigurator;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.util.logging.FallbackLoggerConfiguration;
 
 public class Main {
     public static void main(String[] args) {
+        BasicConfigurator.configure();
+        // Enable debugging, if no slf4j logger was found
+        FallbackLoggerConfiguration.setDebug(false);
+
         Points points = new Points();
 
         points.connectDatabase();
@@ -41,6 +48,8 @@ public class Main {
             cmdHandler.registerCommand(new BeanBetCommand(points));
             cmdHandler.registerCommand(new BeanTransferCommand(points));
             cmdHandler.registerCommand(new BeanBoardCommand(points));
+            // Bean Market
+            cmdHandler.registerCommand(new BeanMarketCommand());
             // Mazawrath commands
             cmdHandler.registerCommand(new MazaPostChangeLogCommand());
             cmdHandler.registerCommand(new MazaDeleteMessageCommand());
@@ -55,6 +64,8 @@ public class Main {
             cmdHandler.registerCommand(new StfuCommand(points));
             cmdHandler.registerCommand(new LossCommand(points));
             cmdHandler.registerCommand(new ShameCommand(points));
+            cmdHandler.registerCommand(new AsgCommand(points));
+            cmdHandler.registerCommand(new GrindCommand(points));
         });
     }
 }
