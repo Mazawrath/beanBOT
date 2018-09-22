@@ -17,7 +17,7 @@ public class BeanMarketCommand implements CommandExecutor {
     @Command(
             aliases = {"beanmarket"},
             description = "Gets a status of the Bean Market. Leave argument blank for a list of every company",
-            usage = "beanmarket",
+            usage = "beanmarket [symbol]",
             privateMessages = false
     )
 
