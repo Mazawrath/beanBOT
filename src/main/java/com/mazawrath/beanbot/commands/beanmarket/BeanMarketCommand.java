@@ -21,7 +21,7 @@ public class BeanMarketCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
+    public void onCommand(String[] args, ServerTextChannel serverTextChannel) {
         String[] companies = {"BEAN", "FBI", "SHTEB", "BEZFF", "ABD", "BNTC", "BETHS"};
         if (args.length == 0) {
             final String[] symbol = {""};
