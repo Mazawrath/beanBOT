@@ -125,6 +125,12 @@ public class StockMarket {
                     companyInfo.put("Symbol", symbol);
                     symbol = "INTC";
                     break;
+                case "BETHS":
+                    companyInfo.put("Name", "Papa BEETHS");
+                    companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/493884076605046799/Papa_BEETHS.png");
+                    companyInfo.put("Symbol", symbol);
+                    symbol = "PZZA";
+                    break;
                 default:
                     return null;
             }

@@ -22,7 +22,7 @@ public class BeanMarketCommand implements CommandExecutor {
     )
 
     public void onCommand(String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
-        String[] companies = {"BEAN", "FBI", "SHTEB", "BEZFF", "ABD", "BNTC"};
+        String[] companies = {"BEAN", "FBI", "SHTEB", "BEZFF", "ABD", "BNTC", "BETHS"};
         if (args.length == 0) {
             final String[] symbol = {""};
             final String[] price = {""};
