@@ -125,6 +125,12 @@ public class StockMarket {
                     companyInfo.put("Symbol", symbol);
                     symbol = "INTC";
                     break;
+                case "BETHS":
+                    companyInfo.put("Name", "Papa BEETHS");
+                    companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/493885223826751508/Papa_BEETHS.png");
+                    companyInfo.put("Symbol", symbol);
+                    symbol = "PZZA";
+                    break;
                 default:
                     return null;
             }
@@ -169,7 +175,6 @@ public class StockMarket {
             checkUser(userID, serverID);
             checkCompany(userID, serverID, symbol);
             JSONObject obj = new JSONObject(new JSONArray(getCompanies(new String[] {symbol}).get(0)));
-            //r.db("beanBotStock ").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol, getShareInvested(userID, serverID, symbol) + points)).run(conn);
         }
         return false;
     }

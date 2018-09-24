@@ -3,6 +3,7 @@ package com.mazawrath.beanbot.commands.copypasta;
 import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -20,8 +21,8 @@ public class Top500Command implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
-        if (points.removePoints(author.getIdAsString(), server.getIdAsString(), 2)) {
+    public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
+        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), 2)) {
             serverTextChannel.sendMessage("This is your friendly neighborhood Game Master Lograldon. I am sorry to hear that your account is not showing up on the top 500 leaderboards for " +
                     "Overwatch! I know how frustrating it can be when things in-game dont work like you expect >.<\n" +
                     "\n" +

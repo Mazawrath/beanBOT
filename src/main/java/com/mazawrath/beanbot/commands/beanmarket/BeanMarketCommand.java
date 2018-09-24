@@ -17,12 +17,12 @@ public class BeanMarketCommand implements CommandExecutor {
     @Command(
             aliases = {"beanmarket"},
             description = "Gets a status of the Bean Market. Leave argument blank for a list of every company",
-            usage = "beanmarket",
+            usage = "beanmarket [symbol]",
             privateMessages = false
     )
 
-    public void onCommand(String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
-        String[] companies = {"BEAN", "FBI", "SHTEB", "BEZFF", "ABD", "BNTC"};
+    public void onCommand(String[] args, ServerTextChannel serverTextChannel) {
+        String[] companies = {"BEAN", "FBI", "SHTEB", "BEZFF", "ABD", "BNTC", "BETHS"};
         if (args.length == 0) {
             final String[] symbol = {""};
             final String[] price = {""};
