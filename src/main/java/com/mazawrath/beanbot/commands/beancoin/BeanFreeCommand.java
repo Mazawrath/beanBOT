@@ -28,7 +28,7 @@ public class BeanFreeCommand implements CommandExecutor {
         long timeLeft = points.giveFreePoints(author.getIdAsString(), server.getIdAsString());
 
         if (timeLeft == 0) {
-            serverTextChannel.sendMessage("You have received 25 beanCoin.");
+            serverTextChannel.sendMessage("You have received 25 beanCoin." + " You now have " + points.getBalance(author.getIdAsString(), server.getIdAsString()) + " beanCoin.");
         } else {
             String dateStart = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
                     .format(new java.util.Date (System.currentTimeMillis()));
