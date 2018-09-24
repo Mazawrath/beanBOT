@@ -3,6 +3,7 @@ package com.mazawrath.beanbot.commands.copypasta;
 import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.server.Server;
@@ -24,8 +25,8 @@ public class GiveModCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
-        if (points.removePoints(author.getIdAsString(), server.getIdAsString(), 10)) {
+    public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
+        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), 10)) {
             if (author.getIdAsString().equals("112653978432503808")) {
                 serverTextChannel.sendMessage("You rolled a 10000. You have to get 10,000. Congrats, you're now a mod!");
             }

@@ -3,6 +3,7 @@ package com.mazawrath.beanbot.commands.copypasta;
 import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
@@ -21,8 +22,8 @@ public class AsgCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
-        if (points.removePoints(author.getIdAsString(), server.getIdAsString(), 2)) {
+    public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
+        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), 2)) {
             EmbedBuilder embed = new EmbedBuilder()
                     .setAuthor("asg", null, "https://cdn.discordapp.com/attachments/480959729330290688/492393589939109935/asg.png")
                     .setDescription("asg")

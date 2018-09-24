@@ -4,6 +4,7 @@ import com.mazawrath.beanbot.utilities.Points;
 import com.vdurmont.emoji.EmojiParser;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
 import org.apache.commons.lang3.StringUtils;
@@ -24,8 +25,8 @@ public class ReactCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(String[] command, ServerTextChannel serverTextChannel, User author, Server server, Message message) {
-        if (points.removePoints(author.getIdAsString(), server.getIdAsString(), 2)) {
+    public void onCommand(String[] command, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server, Message message) {
+        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), 2)) {
             Message messsageBefore = message.getMessagesBefore(1).join().first();
             message.delete();
             for (int i = 0; i < command.length; i++) {

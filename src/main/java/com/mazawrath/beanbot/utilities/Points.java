@@ -58,12 +58,13 @@ public class Points {
         r.db("beanBotPoints").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", getBalance(userID, serverID) + points)).run(conn);
     }
 
-    public boolean removePoints(String userID, String serverID, long points) {
+    public boolean removePoints(String userID, String botUserID, String serverID, long points) {
         checkUser(userID, serverID);
+        checkUser(botUserID, serverID);
 
         if (getBalance(userID, serverID) >= points) {
             r.db("beanBotPoints").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", getBalance(userID, serverID) - points)).run(conn);
-            addPoints("481912112969678868", serverID, points);
+            addPoints(botUserID, serverID, points);
             return true;
         } else
             return false;

@@ -3,6 +3,7 @@ package com.mazawrath.beanbot.commands.beancoin;
 import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -23,13 +24,13 @@ public class BeanBetCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
+    public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
         if (args.length != 0) {
             if (isInteger(args[0])) {
                 if (args[0].equals("0")) {
                     serverTextChannel.sendMessage("You can't bet 0 beanCoin!");
                 } else {
-                    if (points.removePoints(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]))) {
+                    if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]))) {
                         Random rand = new Random();
                         int winningChance = rand.nextInt(100) + 1;
 
