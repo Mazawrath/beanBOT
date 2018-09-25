@@ -17,8 +17,9 @@ public class GnomedCommand implements CommandExecutor {
     }
 
     @Command(
-            aliases = {"gnomed"},
-            usage = "gnomed",
+            aliases = {"gnomed", "banuser", "everyone"},
+            usage = "banuser [discriminated name]",
+            description = "Bans a user",
             privateMessages = false
     )
 
