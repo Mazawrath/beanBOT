@@ -28,8 +28,12 @@ public class BeanFreeCommand implements CommandExecutor {
         long timeLeft = points.giveFreePoints(author.getIdAsString(), server.getIdAsString());
 
         if (timeLeft == 0) {
-            serverTextChannel.sendMessage("You have received 25 beanCoin.");
+            serverTextChannel.sendMessage("You have received 25 beanCoin." + " You now have " + points.getBalance(author.getIdAsString(), server.getIdAsString()) + " beanCoin.");
         } else {
+            StringBuilder message = new StringBuilder();
+
+            message.append("You have already received free beanCoin today. You can receive beanCoin in ");
+
             String dateStart = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
                     .format(new java.util.Date (System.currentTimeMillis()));
             String dateStop = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
@@ -51,7 +55,16 @@ public class BeanFreeCommand implements CommandExecutor {
                 long diffMinutes = diff / (60 * 1000) % 60;
                 long diffHours = diff / (60 * 60 * 1000) % 24;
 
-                serverTextChannel.sendMessage("You have already received free beanCoin today. You can receive beanCoin in " + diffHours + " hours " + diffMinutes + " minutes.");
+                if (diffHours == 1)
+                    message.append(diffHours).append(" hour ");
+                else
+                    message.append(diffHours).append(" hours ");
+                if (diffMinutes == 1)
+                    message.append(diffMinutes).append(" minute.");
+                else
+                    message.append(diffMinutes).append(" minutes.");
+
+                serverTextChannel.sendMessage(message.toString());
 
             } catch (Exception e) {
                 e.printStackTrace();

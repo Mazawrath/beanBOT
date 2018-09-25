@@ -10,7 +10,7 @@ public class SourceCommand implements CommandExecutor {
     @Command(
             aliases = {"source"},
             description = "Gives a link to beanBOT's source code",
-            usage = "top500",
+            usage = "source",
             privateMessages = false
     )
 

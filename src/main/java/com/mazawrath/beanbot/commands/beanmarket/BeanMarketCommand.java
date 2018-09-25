@@ -54,8 +54,9 @@ public class BeanMarketCommand implements CommandExecutor {
                             .setDescription(obj.getString("Symbol"))
                             .setThumbnail(obj.getString("Logo"))
                             .addInlineField("Price", obj.getBigDecimal("Price").setScale(2, RoundingMode.HALF_UP).toString())
-                            .addInlineField("Percentage Change", obj.getString("Percentage Change"))
-                            .addInlineField("Opened at", obj.getBigDecimal("Opened").setScale(2, RoundingMode.HALF_UP).toString())
+                            .addInlineField("Daily Percentage Change", obj.getBigDecimal("Percentage Change")  + "%")
+                            .addInlineField("Previously Closed At", obj.getBigDecimal("Previous Close").setScale(2, RoundingMode.HALF_UP).toString())
+                            .addInlineField("50 Day Percentage Change", obj.getBigDecimal("50 Day Percentage Change").setScale(2, RoundingMode.HALF_UP).toString()  + "%")
                             .addInlineField("Yearly High", obj.getBigDecimal("Year High").setScale(2, RoundingMode.HALF_UP).toString())
                             .addInlineField("Yearly Low", obj.getBigDecimal("Year Low").setScale(2, RoundingMode.HALF_UP).toString());
                     serverTextChannel.sendMessage(embed);
