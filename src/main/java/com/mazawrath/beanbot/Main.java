@@ -64,6 +64,7 @@ public class Main {
             cmdHandler.registerCommand(new ShameCommand(points));
             cmdHandler.registerCommand(new AsgCommand(points));
             cmdHandler.registerCommand(new GrindCommand(points));
+            cmdHandler.registerCommand(new GnomedCommand(points));
         });
     }
 }
