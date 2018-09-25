@@ -28,19 +28,18 @@ public class MazaPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.2.0\n" +
-                "**v2.2.0**\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.3.0\n" +
+                "**v2.3.0**\n" +
                 "**New**\n" +
-                "\t- Added start of the Bean Market.\n" +
-                "\t- Added `.beanmarket`.\n" +
-                "\t\t- Can only look at companies. Currently cannot invest any beanCoin.\n" +
-                "\t- Added `.asg`.\n" +
-                "\t- Added `.grind`.\n" +
+                "\t- Added `.mazaposthelp`.\n" +
+                "\t- Added `.banuser`.\n" +
+                "\t- Added Papa BEETHS as a stock.\n" +
                 "**Changes**\n" +
-                "\t- Looking up users with `.userinfo` is now free\n" +
-                "\t- `.react` beanCoin cost changed from 5 beanCoin to 2 beanCoin\n" +
-                "\t- `.beanfree` now tells you how long you have until you can use `.beanfree` again.\n" +
+                "\t- `.beanfree` now tells you how many beanCoin you have if you received beanCoin from the command.\n" +
+                "\t- `.beanfree` now uses singular or plural based on whether the amount of hours or minutes.\n" +
+                "\t- Companies looked up with `.beanmarket` show more info.\n" +
                 "**Bug Fixes**\n" +
-                "\t- `.react` now supports up to 4 words";
+                "\t- Fixed `Points.java` that arbitrarily added beanCoin to a specific user ID vs the user ID of the bot itself.\n" +
+                "\t- Fixed `.source` not showing up on `.help`";
     }
 }
