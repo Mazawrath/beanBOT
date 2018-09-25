@@ -138,11 +138,11 @@ public class StockMarket {
             Stock company = YahooFinance.get(symbol);
 
             companyInfo.put("Price", company.getQuote().getPrice());
-            companyInfo.put("Opened", company.getQuote().getOpen());
+            companyInfo.put("Previous Close", company.getQuote().getPreviousClose());
             companyInfo.put("Year High", company.getQuote().getYearHigh());
             companyInfo.put("Year Low", company.getQuote().getYearLow());
-            //companyInfo.put("", company.getQuote())
-            companyInfo.put("Percentage Change", company.getQuote().getChangeInPercent() + "%");
+            companyInfo.put("50 Day Percentage Change", company.getQuote().getChangeFromAvg50InPercent());
+            companyInfo.put("Percentage Change", company.getQuote().getChangeInPercent());
 
             return companyInfo;
         } catch (IOException e) {
