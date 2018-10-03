@@ -19,14 +19,14 @@ public class BeanInvestCommand implements CommandExecutor {
 
     @Command(
             aliases = {"beanInvest", "coinInvest"},
-            description = "Gets a status of the Bean Market. Leave argument blank for a list of every company",
-            usage = "beanmarket [symbol]",
+            description = "Lets you invest in companies from the Bean Market.",
+            usage = "beanInvest [[buy/sell] [symbol]]",
             privateMessages = false
     )
 
     public void onCommand(String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
         if (args.length == 0) {
-            serverTextChannel.sendMessage("No arguements are currently not supported.\n" +
+            serverTextChannel.sendMessage("No arguments for this command are currently not supported. In the future this will be a way to look at your portfolio and all the shares you have invested in.\n" +
                     "Instructions for `.beaninvest`.\n" +
                     "\t- `.beaninvest buy [symbol] [amount]` - Buys shares from that symbol.\n" +
                     "\t- `.beaninvest sell [symbol]` - Sells all shares bought from that symbol.");
