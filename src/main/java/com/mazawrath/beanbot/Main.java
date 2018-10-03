@@ -1,12 +1,14 @@
 package com.mazawrath.beanbot;
 
 import com.mazawrath.beanbot.commands.*;
+import com.mazawrath.beanbot.commands.beanmarket.BeanInvestCommand;
 import com.mazawrath.beanbot.commands.beanmarket.BeanMarketCommand;
 import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
 import com.mazawrath.beanbot.commands.maza.*;
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.StockMarket;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 import org.apache.log4j.BasicConfigurator;
@@ -20,8 +22,11 @@ public class Main {
         FallbackLoggerConfiguration.setDebug(false);
 
         Points points = new Points();
+        StockMarket stockMarket = new StockMarket();
 
         points.connectDatabase();
+        stockMarket.connectDatabase();
+
         String token = args[0];
 
         new DiscordApiBuilder().setToken(token).login().thenAccept(api -> {
@@ -47,6 +52,7 @@ public class Main {
             cmdHandler.registerCommand(new BeanBoardCommand(points));
             // Bean Market
             cmdHandler.registerCommand(new BeanMarketCommand());
+            cmdHandler.registerCommand(new BeanInvestCommand(points, stockMarket));
             // Mazawrath commands
             cmdHandler.registerCommand(new MazaPostChangeLogCommand());
             cmdHandler.registerCommand(new MazaDeleteMessageCommand());

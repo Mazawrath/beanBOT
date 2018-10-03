@@ -9,6 +9,7 @@ import yahoofinance.YahooFinance;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 public class StockMarket {
@@ -41,7 +42,6 @@ public class StockMarket {
         checkServer(serverID);
 
         if (r.db("beanBotStock").table(serverID).getField("id").contains(userID).run(conn)) {
-
         } else
             r.db("beanBotStock").table(serverID).insert(r.array(
                     r.hashMap("id", userID)
@@ -161,22 +161,28 @@ public class StockMarket {
         return null;
     }
 
-    public BigDecimal getShareInvested(String userID, String serverID, String Symbol) {
-        
+    public BigDecimal getShareInvested(String userID, String serverID, String symbol) {
+
 
         return null;
     }
 
-    public boolean investCoin(String userID, String serverID, int points, String symbol) {
-        Points beanCoin = new Points();
-
-
-        if (beanCoin.removePointsExcludeBeanbot(userID, serverID, points)) {
+    public void buyShares(String userID, String serverID, String symbol, int investAmount) {
             checkUser(userID, serverID);
             checkCompany(userID, serverID, symbol);
-            JSONObject obj = new JSONObject(new JSONArray(getCompanies(new String[] {symbol}).get(0)));
-        }
-        return false;
+
+            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " shares bought", getStockPrice(symbol).divide(new BigDecimal(investAmount), 2, RoundingMode.HALF_UP).add(getShareInvested(userID, serverID, symbol))))).run(conn);
+            //TODO Add calculations to adding up how much beanCoin is spent on shares
+        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " beanCoin spent", investAmount))).run(conn);
+    }
+
+    public void sellShares(String userID, String serverID, String symbol, int investAmount) {
+        checkUser(userID, serverID);
+        checkCompany(userID, serverID, symbol);
+
+        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " shares bought", getStockPrice(symbol).divide(new BigDecimal(investAmount), 2, RoundingMode.HALF_UP).add(getShareInvested(userID, serverID, symbol))))).run(conn);
+        //TODO Add calculations to adding up how much beanCoin is spent on shares
+        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " beanCoin spent", investAmount))).run(conn);
     }
 
     public ArrayList getPortfolio(String userID, String serverID) {
