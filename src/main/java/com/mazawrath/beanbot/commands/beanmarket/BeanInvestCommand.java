@@ -36,9 +36,7 @@ public class BeanInvestCommand implements CommandExecutor {
             }
         } else if (args[0].equals("sell")) {
             // TODO make selling shares
-            if (points.removePointsExcludeBeanbot(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[1]))) {
-                stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[0], Integer.parseInt(args[1]));
-            }
+                stockMarket.sellShares(author.getIdAsString(), server.getIdAsString(), args[0]));
         }
     }
 }
