@@ -40,13 +40,8 @@ public class BeanMarketCommand implements CommandExecutor {
                     .setTitle("Bean Market")
                     .addInlineField("Symbol", symbol[0])
                     .addInlineField("Price", price[0])
-<<<<<<< HEAD
-                    .setFooter("Use .beanmarket [Symbol] to look up a sepcific company. Use `.beaninvest` to invest into the Bean Market.");
-                    //.setFooter("Use .beanmarket [Symbol] to look up a sepcific company. Use .beaninvest to check your portfolio.");
-=======
-                    .setFooter("Use .beanmarket [Symbol] to look up a specific company. Investing coming soon!");
-                    //.setFooter("Use .beanmarket [Symbol] to look up a specific company. Use .beaninvest to check your portfolio.");
->>>>>>> 508723e4f17284d6508f7201a39cace53627ee36
+                    //.setFooter("Use .beanmarket [Symbol] to look up a specific company. Investing coming soon!");
+                    .setFooter("Use .beanmarket [Symbol] to look up a specific company. Use .beaninvest to check your portfolio.");
             serverTextChannel.sendMessage(embed);
         } else {
             if (Arrays.asList(companies).contains(args[0].toUpperCase())) {

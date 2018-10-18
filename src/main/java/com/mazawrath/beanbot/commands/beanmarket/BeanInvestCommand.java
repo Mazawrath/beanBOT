@@ -8,6 +8,8 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
+import java.math.BigDecimal;
+
 public class BeanInvestCommand implements CommandExecutor {
     private Points points;
     private StockMarket stockMarket;
@@ -31,12 +33,12 @@ public class BeanInvestCommand implements CommandExecutor {
                     "\t- `.beaninvest buy [symbol] [amount]` - Buys shares from that symbol.\n" +
                     "\t- `.beaninvest sell [symbol]` - Sells all shares bought from that symbol.");
         } else if (args[0].equals("buy")) {
-            if (points.removePointsExcludeBeanbot(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[2]))) {
-                stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1], Integer.parseInt(args[2]));
+            if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), new BigDecimal(args[2]))) {
+                stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1], new BigDecimal(args[2]));
             }
         } else if (args[0].equals("sell")) {
             // TODO make selling shares
-                stockMarket.sellShares(author.getIdAsString(), server.getIdAsString(), args[0]));
+                stockMarket.sellShares(author.getIdAsString(), server.getIdAsString(), args[0]);
         }
     }
 }

@@ -164,28 +164,22 @@ public class StockMarket {
         return null;
     }
 
-<<<<<<< HEAD
     public BigDecimal getShareInvested(String userID, String serverID, String symbol) {
-=======
-    public BigDecimal getShareInvested(String userID, String serverID, String Symbol) {
->>>>>>> 508723e4f17284d6508f7201a39cace53627ee36
-
 
         return null;
     }
 
-<<<<<<< HEAD
-    public float getBeanCoinSpent(String userID, String serverID, String symbol) {
-        r.db("beanBotPoints").table(serverID).get(userID).getField(symbol + "beanCoin spent").run(conn);
+    public BigDecimal getBeanCoinSpent(String userID, String serverID, String symbol) {
+        return r.db("beanBotPoints").table(serverID).get(userID).getField(symbol + "beanCoin spent").run(conn);
     }
 
-    public void buyShares(String userID, String serverID, String symbol, float investAmount) {
+    public void buyShares(String userID, String serverID, String symbol, BigDecimal investAmount) {
         checkUser(userID, serverID);
         checkCompany(userID, serverID, symbol);
 
-        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " shares bought", getStockPrice(symbol).divide(new BigDecimal(investAmount), 2, RoundingMode.HALF_UP).add(getShareInvested(userID, serverID, symbol))))).run(conn);
+        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " shares bought", getStockPrice(symbol).divide(investAmount, 2, RoundingMode.HALF_UP).add(getShareInvested(userID, serverID, symbol))))).run(conn);
         //TODO Add calculations to adding up how much beanCoin is spent on shares
-        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(getBeanCoinSpent(userID, serverID, symbol) + r.hashMap("Stock", r.hashMap(symbol + " beanCoin spent", investAmount))).run(conn);
+        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(getBeanCoinSpent(userID, serverID, symbol).add(investAmount)).run(conn);
     }
 
     public float[] sellShares(String userID, String serverID, String symbol) {
@@ -194,22 +188,11 @@ public class StockMarket {
         checkUser(userID, serverID);
         checkCompany(userID, serverID, symbol);
 
-        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " shares bought", getStockPrice(symbol).divide(new BigDecimal(investAmount), 2, RoundingMode.HALF_UP).add(getShareInvested(userID, serverID, symbol))))).run(conn);
+        //r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " shares bought", getStockPrice(symbol).divide(new BigDecimal(investAmount), 2, RoundingMode.HALF_UP).add(getShareInvested(userID, serverID, symbol))))).run(conn);
         //TODO Add calculations to adding up how much beanCoin is spent on shares
-        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " beanCoin spent", investAmount))).run(conn);
+        //r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " beanCoin spent", investAmount))).run(conn);
 
         return retVal;
-=======
-    public boolean investCoin(String userID, String serverID, BigDecimal points, String symbol) {
-        Points beanCoin = new Points();
-
-        if (beanCoin.removePoints(userID, "", serverID, points)) {
-            checkUser(userID, serverID);
-            checkCompany(userID, serverID, symbol);
-            JSONObject obj = new JSONObject(new JSONArray(getCompanies(new String[] {symbol}).get(0)));
-        }
-        return false;
->>>>>>> 508723e4f17284d6508f7201a39cace53627ee36
     }
 
     public ArrayList getPortfolio(String userID, String serverID) {
