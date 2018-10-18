@@ -14,13 +14,13 @@ import java.util.Locale;
 
 public class Points {
     private static final RethinkDB r = RethinkDB.r;
-  	private static final String DB_VALUE_PREFIX = "P_";
-  	public static final int SCALE = 2;
-  	public static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
+    private static final String DB_VALUE_PREFIX = "P_";
+    public static final int SCALE = 2;
+    public static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
     public static final BigDecimal ZERO_POINTS = (BigDecimal.ZERO).setScale(SCALE, ROUNDING_MODE);
-  	public static final BigDecimal FREE_POINTS = new BigDecimal("25.69").setScale(SCALE, ROUNDING_MODE);
-  	public static final BigDecimal COMMAND_COST = new BigDecimal("2.00").setScale(SCALE, ROUNDING_MODE);
-  	public static final BigDecimal COMMAND_COST_SPECIAL = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal FREE_POINTS = new BigDecimal("25.69").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal COMMAND_COST = new BigDecimal("2.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal COMMAND_COST_SPECIAL = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
     private Connection conn;
 
     public void connectDatabase() {
@@ -75,13 +75,13 @@ public class Points {
     public boolean removePoints(String userID, String botUserID, String serverID, BigDecimal points) {
         checkUser(userID, serverID);
         if (botUserID != null && !botUserID.isEmpty()) {
-          checkUser(botUserID, serverID);
+            checkUser(botUserID, serverID);
         }
 
         if (points.compareTo(getBalance(userID, serverID)) <= 0) {
             r.db("beanBotPoints").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).subtract(points)))).run(conn);
             if (botUserID != null && !botUserID.isEmpty()) {
-              addPoints(botUserID, serverID, points);
+                addPoints(botUserID, serverID, points);
             }
             return true;
         } else
@@ -100,38 +100,31 @@ public class Points {
         return timeLeft;
     }
 
-	public static String parseValueFromDB(String value)
-	{
-		return value.substring(DB_VALUE_PREFIX.length());
-	}
+    public static String parseValueFromDB(String value) {
+        return value.substring(DB_VALUE_PREFIX.length());
+    }
 
-	public static String buildValueForDB(BigDecimal value)
-	{
-		return DB_VALUE_PREFIX + value.toString();
-	}
+    public static String buildValueForDB(BigDecimal value) {
+        return DB_VALUE_PREFIX + value.toString();
+    }
 
-	public static String pointsToString(BigDecimal points)
-	{
-		DecimalFormatSymbols symbol = new DecimalFormatSymbols(Locale.US);
-    symbol.setCurrencySymbol("\u00DF");
-		DecimalFormat formatter = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
-		formatter.setDecimalFormatSymbols(symbol);
+    public static String pointsToString(BigDecimal points) {
+        DecimalFormatSymbols symbol = new DecimalFormatSymbols(Locale.US);
+        symbol.setCurrencySymbol("\u00DF");
+        DecimalFormat formatter = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
+        formatter.setDecimalFormatSymbols(symbol);
 
-		return formatter.format(points);
-	}
+        return formatter.format(points);
+    }
 
-	public static boolean isProperDecimal(String number)
-	{
-		boolean proper = true;
-		try
-		{
-			BigDecimal decimal = new BigDecimal(number).setScale(Points.SCALE, Points.ROUNDING_MODE);
-		}
-		catch(ArithmeticException | NumberFormatException e)
-		{
-			proper = false;
-		}
+    public static boolean isProperDecimal(String number) {
+        boolean proper = true;
+        try {
+            BigDecimal decimal = new BigDecimal(number).setScale(Points.SCALE, Points.ROUNDING_MODE);
+        } catch (ArithmeticException | NumberFormatException e) {
+            proper = false;
+        }
 
-		return proper;
-	}
+        return proper;
+    }
 }
