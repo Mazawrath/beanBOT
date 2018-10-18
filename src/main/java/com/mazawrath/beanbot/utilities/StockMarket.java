@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 public class StockMarket {
     public static final RethinkDB r = RethinkDB.r;
+    public static final String[] COMPANIES = {"BEAN", "FBI", "SHTEB", "BEZFF", "ABD", "BNTC", "BETHS"};
     Connection conn;
 
     public Connection connectDatabase() {
