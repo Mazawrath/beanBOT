@@ -20,12 +20,12 @@ public class MazaPostMessageCommand implements CommandExecutor {
         if (author.isBotOwner()) {
             StringBuilder message = new StringBuilder();
             server.getTextChannelById(command[0]).ifPresent(serverTextChannel -> {
-                for (int i = 1; i < command.length; i++){
+                for (int i = 1; i < command.length; i++) {
                     message.append(command[i]).append(" ");
                 }
                 serverTextChannel.sendMessage(message.toString());
             });
         } else
-        serverTextChannel2.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " can send this message.");
+            serverTextChannel2.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " can send this message.");
     }
 }

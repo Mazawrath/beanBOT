@@ -30,7 +30,7 @@ public class Main {
         String token = args[0];
 
         new DiscordApiBuilder().setToken(token).login().thenAccept(api -> {
-			  //System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
+            //System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
 
             // Instantiate command handler
             CommandHandler cmdHandler = new JavacordHandler(api);

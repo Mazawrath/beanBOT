@@ -55,7 +55,7 @@ public class BeanMarketCommand implements CommandExecutor {
                             .setDescription(obj.getString("Symbol"))
                             .setThumbnail(obj.getString("Logo"))
                             .addInlineField("Price", Points.pointsToString(obj.getBigDecimal("Price").setScale(2, RoundingMode.HALF_UP)))
-                            .addInlineField("Daily Percentage Change", obj.getBigDecimal("Percentage Change").toString()  + "%")
+                            .addInlineField("Daily Percentage Change", obj.getBigDecimal("Percentage Change").toString() + "%")
                             .addInlineField("Previously Closed At", Points.pointsToString(obj.getBigDecimal("Previous Close").setScale(2, RoundingMode.HALF_UP)))
                             .addInlineField("50 Day Percentage Change", obj.getBigDecimal("50 Day Percentage Change").setScale(2, RoundingMode.HALF_UP).toString() + "%")
                             .addInlineField("Yearly High", Points.pointsToString(obj.getBigDecimal("Year High").setScale(2, RoundingMode.HALF_UP)))

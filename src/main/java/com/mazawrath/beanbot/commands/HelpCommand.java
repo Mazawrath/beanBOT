@@ -1,4 +1,5 @@
 package com.mazawrath.beanbot.commands;
+
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import de.btobastian.sdcf4j.CommandHandler;

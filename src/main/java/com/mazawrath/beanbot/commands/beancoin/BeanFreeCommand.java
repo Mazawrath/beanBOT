@@ -35,9 +35,9 @@ public class BeanFreeCommand implements CommandExecutor {
             message.append("You have already received free beanCoin today. You can receive beanCoin in ");
 
             String dateStart = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
-                    .format(new java.util.Date (System.currentTimeMillis()));
+                    .format(new java.util.Date(System.currentTimeMillis()));
             String dateStop = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
-                    .format(new java.util.Date (timeLeft + 24 * 60 * 60 * 1000));
+                    .format(new java.util.Date(timeLeft + 24 * 60 * 60 * 1000));
 
             //HH converts hour in 24 hours format (0-23), day calculation
             SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");

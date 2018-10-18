@@ -7,7 +7,7 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
-public class BeanBalanceCommand implements CommandExecutor{
+public class BeanBalanceCommand implements CommandExecutor {
     private Points points;
 
     public BeanBalanceCommand(Points points) {
@@ -22,6 +22,6 @@ public class BeanBalanceCommand implements CommandExecutor{
     )
 
     public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
-            serverTextChannel.sendMessage("You have " + Points.pointsToString(points.getBalance(author.getIdAsString(), server.getIdAsString())) + ".");
+        serverTextChannel.sendMessage("You have " + Points.pointsToString(points.getBalance(author.getIdAsString(), server.getIdAsString())) + ".");
     }
 }
