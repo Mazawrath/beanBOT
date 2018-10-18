@@ -162,16 +162,15 @@ public class StockMarket {
     }
 
     public BigDecimal getShareInvested(String userID, String serverID, String Symbol) {
-        
+
 
         return null;
     }
 
-    public boolean investCoin(String userID, String serverID, int points, String symbol) {
+    public boolean investCoin(String userID, String serverID, BigDecimal points, String symbol) {
         Points beanCoin = new Points();
 
-
-        if (beanCoin.removePointsExcludeBeanbot(userID, serverID, points)) {
+        if (beanCoin.removePoints(userID, "", serverID, points)) {
             checkUser(userID, serverID);
             checkCompany(userID, serverID, symbol);
             JSONObject obj = new JSONObject(new JSONArray(getCompanies(new String[] {symbol}).get(0)));

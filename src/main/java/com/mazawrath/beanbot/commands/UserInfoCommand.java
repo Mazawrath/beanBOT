@@ -81,7 +81,7 @@ public class UserInfoCommand implements CommandExecutor{
                     .addInlineField("Username", user.getDiscriminatedName())
                     .addInlineField("Roles", roleList[0])
                     .addInlineField("Date Joined", formatted)
-                    .addInlineField("beanCoin Balance", String.valueOf(points.getBalance(user.getIdAsString(), server.getIdAsString())) + " beanCoin")
+                    .addInlineField("beanCoin Balance", Points.pointsToString(points.getBalance(user.getIdAsString(), server.getIdAsString())) + " beanCoin")
                     .setFooter("User ID: " + user.getIdAsString());
             serverTextChannel.sendMessage(embed);
 

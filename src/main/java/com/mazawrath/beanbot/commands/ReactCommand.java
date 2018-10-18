@@ -21,12 +21,12 @@ public class ReactCommand implements CommandExecutor {
     @Command(
             aliases = {"react"},
             usage = "react [text]",
-            description = "Rolls a 10,000 sided die to randomly give mod.",
+            description = "Rolls a 10,000 sided dice to randomly give mod.",
             privateMessages = false
     )
 
     public void onCommand(String[] command, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server, Message message) {
-        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), 2)) {
+        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {
             Message messsageBefore = message.getMessagesBefore(1).join().first();
             message.delete();
             for (int i = 0; i < command.length; i++) {

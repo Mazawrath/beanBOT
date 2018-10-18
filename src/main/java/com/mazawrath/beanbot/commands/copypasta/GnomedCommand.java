@@ -24,7 +24,7 @@ public class GnomedCommand implements CommandExecutor {
     )
 
     public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), 2)) {
+        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {
             serverTextChannel.sendMessage("```                __\n" +
                     "             .-'  |\n" +
                     "            /   <\\|     'Ello me ol' chum\n" +

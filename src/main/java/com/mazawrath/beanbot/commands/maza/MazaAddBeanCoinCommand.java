@@ -7,6 +7,9 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+
 public class MazaAddBeanCoinCommand implements CommandExecutor {
     private Points points;
 
@@ -22,9 +25,12 @@ public class MazaAddBeanCoinCommand implements CommandExecutor {
 
     public void onCommand(String command, String user, String pointValue, ServerTextChannel serverTextChannel, User author, Server server) {
         if (author.isBotOwner()) {
-            serverTextChannel.sendMessage("Added " + pointValue + " beanCoin to " + user + ".");
-
-            points.addPoints(user, server.getIdAsString(), Integer.parseInt(pointValue));
+			if (Points.isProperDecimal(pointValue)) {
+				BigDecimal transferPoints = new BigDecimal(pointValue).setScale(Points.SCALE, Points.ROUNDING_MODE);
+				points.addPoints(user, server.getIdAsString(), transferPoints);
+				serverTextChannel.sendMessage("Added " + Points.pointsToString(transferPoints) + " to " + user + ".");
+			} else
+				serverTextChannel.sendMessage("Invalid amount of beanCoin.");
         }
         else
             serverTextChannel.sendMessage("Only Mazawrath can send this message.");

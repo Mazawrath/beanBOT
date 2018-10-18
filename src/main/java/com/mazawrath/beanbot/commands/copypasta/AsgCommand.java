@@ -23,7 +23,7 @@ public class AsgCommand implements CommandExecutor {
     )
 
     public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), 2)) {
+        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {
             EmbedBuilder embed = new EmbedBuilder()
                     .setAuthor("asg", null, "https://cdn.discordapp.com/attachments/480959729330290688/492393589939109935/asg.png")
                     .setDescription("asg")
