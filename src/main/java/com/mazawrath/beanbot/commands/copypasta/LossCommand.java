@@ -26,7 +26,7 @@ public class LossCommand implements CommandExecutor {
     )
 
     public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), 2)) {
+        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {
             try {
                 new MessageBuilder()
                         .addAttachment(new URL("https://cdn.discordapp.com/attachments/480959729330290688/489630723146514437/loss.png"))

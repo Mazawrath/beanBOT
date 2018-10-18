@@ -1,5 +1,6 @@
 package com.mazawrath.beanbot.commands.beanmarket;
 
+import com.mazawrath.beanbot.utilities.Points;
 import com.mazawrath.beanbot.utilities.StockMarket;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
@@ -32,15 +33,20 @@ public class BeanMarketCommand implements CommandExecutor {
             for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = new JSONObject(array.get(i).toString());
                 symbol[0] += obj.getString("Symbol") + "\n";
-                price[0] += "$ " + obj.getBigDecimal("Price").setScale(2, RoundingMode.HALF_UP) + "\n";
+                price[0] += Points.pointsToString(obj.getBigDecimal("Price").setScale(2, RoundingMode.HALF_UP)) + "\n";
             }
 
             EmbedBuilder embed = new EmbedBuilder()
                     .setTitle("Bean Market")
                     .addInlineField("Symbol", symbol[0])
                     .addInlineField("Price", price[0])
+<<<<<<< HEAD
                     .setFooter("Use .beanmarket [Symbol] to look up a sepcific company. Use `.beaninvest` to invest into the Bean Market.");
                     //.setFooter("Use .beanmarket [Symbol] to look up a sepcific company. Use .beaninvest to check your portfolio.");
+=======
+                    .setFooter("Use .beanmarket [Symbol] to look up a specific company. Investing coming soon!");
+                    //.setFooter("Use .beanmarket [Symbol] to look up a specific company. Use .beaninvest to check your portfolio.");
+>>>>>>> 508723e4f17284d6508f7201a39cace53627ee36
             serverTextChannel.sendMessage(embed);
         } else {
             if (Arrays.asList(companies).contains(args[0].toUpperCase())) {
@@ -53,12 +59,12 @@ public class BeanMarketCommand implements CommandExecutor {
                             .setTitle(obj.getString("Name"))
                             .setDescription(obj.getString("Symbol"))
                             .setThumbnail(obj.getString("Logo"))
-                            .addInlineField("Price", obj.getBigDecimal("Price").setScale(2, RoundingMode.HALF_UP).toString())
-                            .addInlineField("Daily Percentage Change", obj.getBigDecimal("Percentage Change")  + "%")
-                            .addInlineField("Previously Closed At", obj.getBigDecimal("Previous Close").setScale(2, RoundingMode.HALF_UP).toString())
-                            .addInlineField("50 Day Percentage Change", obj.getBigDecimal("50 Day Percentage Change").setScale(2, RoundingMode.HALF_UP).toString()  + "%")
-                            .addInlineField("Yearly High", obj.getBigDecimal("Year High").setScale(2, RoundingMode.HALF_UP).toString())
-                            .addInlineField("Yearly Low", obj.getBigDecimal("Year Low").setScale(2, RoundingMode.HALF_UP).toString());
+                            .addInlineField("Price", Points.pointsToString(obj.getBigDecimal("Price").setScale(2, RoundingMode.HALF_UP)))
+                            .addInlineField("Daily Percentage Change", obj.getBigDecimal("Percentage Change").toString()  + "%")
+                            .addInlineField("Previously Closed At", Points.pointsToString(obj.getBigDecimal("Previous Close").setScale(2, RoundingMode.HALF_UP)))
+                            .addInlineField("50 Day Percentage Change", obj.getBigDecimal("50 Day Percentage Change").setScale(2, RoundingMode.HALF_UP).toString() + "%")
+                            .addInlineField("Yearly High", Points.pointsToString(obj.getBigDecimal("Year High").setScale(2, RoundingMode.HALF_UP)))
+                            .addInlineField("Yearly Low", Points.pointsToString(obj.getBigDecimal("Year Low").setScale(2, RoundingMode.HALF_UP)));
                     serverTextChannel.sendMessage(embed);
                 }
             } else

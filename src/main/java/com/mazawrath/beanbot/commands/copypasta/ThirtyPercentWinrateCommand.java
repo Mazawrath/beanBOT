@@ -22,7 +22,7 @@ public class ThirtyPercentWinrateCommand implements CommandExecutor {
     )
 
     public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), 2)) {
+        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {
             serverTextChannel.sendMessage("shteebs 30% winrate roadhog is uncarriable. I got 3 losses off him the other night. Now if I get him I just instalock hog so I have a chance of winning.");
         } else
             serverTextChannel.sendMessage("You do not have enough beanCoin for this command");

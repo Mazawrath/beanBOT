@@ -22,6 +22,6 @@ public class BeanBalanceCommand implements CommandExecutor{
     )
 
     public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
-            serverTextChannel.sendMessage("You have " + points.getBalance(author.getIdAsString(), server.getIdAsString()) + " beanCoin.");
+            serverTextChannel.sendMessage("You have " + Points.pointsToString(points.getBalance(author.getIdAsString(), server.getIdAsString())) + ".");
     }
 }

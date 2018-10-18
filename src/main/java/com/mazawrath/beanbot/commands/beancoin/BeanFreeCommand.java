@@ -28,7 +28,7 @@ public class BeanFreeCommand implements CommandExecutor {
         long timeLeft = points.giveFreePoints(author.getIdAsString(), server.getIdAsString());
 
         if (timeLeft == 0) {
-            serverTextChannel.sendMessage("You have received 25 beanCoin." + " You now have " + points.getBalance(author.getIdAsString(), server.getIdAsString()) + " beanCoin.");
+            serverTextChannel.sendMessage("You have received " + Points.pointsToString(Points.FREE_POINTS) + ". You now have " + Points.pointsToString(points.getBalance(author.getIdAsString(), server.getIdAsString())) + ".");
         } else {
             StringBuilder message = new StringBuilder();
 

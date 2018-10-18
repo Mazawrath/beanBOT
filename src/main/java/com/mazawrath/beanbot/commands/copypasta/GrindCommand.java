@@ -7,6 +7,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
+import static java.nio.charset.StandardCharsets.*;
 
 public class GrindCommand implements CommandExecutor {
     private Points points;
@@ -22,8 +23,8 @@ public class GrindCommand implements CommandExecutor {
     )
 
     public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), 2)) {
-            serverTextChannel.sendMessage("Respect the grind bro, I am live all day every day and can’t get views but I love what I do, I’m live rn but hopefully I get some people, I’m playing fort :) Comgrats on ur success");
+        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {
+            serverTextChannel.sendMessage("Respect the grind bro, I am live all day every day and can\u0027t get views but I love what I do, I\u0027m live rn but hopefully I get some people, I\u0027m playing fort :) Comgrats on ur success");
         } else
             serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
     }

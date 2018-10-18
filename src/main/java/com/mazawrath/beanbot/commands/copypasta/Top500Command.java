@@ -22,7 +22,7 @@ public class Top500Command implements CommandExecutor {
     )
 
     public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), 2)) {
+        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {
             serverTextChannel.sendMessage("This is your friendly neighborhood Game Master Lograldon. I am sorry to hear that your account is not showing up on the top 500 leaderboards for " +
                     "Overwatch! I know how frustrating it can be when things in-game dont work like you expect >.<\n" +
                     "\n" +

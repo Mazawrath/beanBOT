@@ -8,6 +8,8 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Random;
 
 public class BeanBetCommand implements CommandExecutor {
@@ -26,11 +28,12 @@ public class BeanBetCommand implements CommandExecutor {
 
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
         if (args.length != 0) {
-            if (isInteger(args[0])) {
-                if (args[0].equals("0")) {
+            if (Points.isProperDecimal(args[0])) {
+				        BigDecimal winningPoints = new BigDecimal(args[0]).setScale(Points.SCALE, Points.ROUNDING_MODE);
+                if (winningPoints.compareTo(BigDecimal.ZERO) == 0) {
                     serverTextChannel.sendMessage("You can't bet 0 beanCoin!");
                 } else {
-                    if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]))) {
+                    if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), winningPoints)) {
                         Random rand = new Random();
                         int winningChance = rand.nextInt(100) + 1;
 
@@ -38,16 +41,16 @@ public class BeanBetCommand implements CommandExecutor {
                             int winningMultiplier = rand.nextInt(100) + 1;
 
                             if (winningMultiplier <= 15) {
-                                points.addPoints(author.getIdAsString(), server.getIdAsString(),
-                                        (Integer.parseInt(args[0])) * 3);
-                                serverTextChannel.sendMessage("Congrats, you got the x3 muliplayer! You won " + (Integer.parseInt(args[0]) * 3) + " beanCoin!");
+								                winningPoints = winningPoints.multiply(new BigDecimal(3).setScale(Points.SCALE, Points.ROUNDING_MODE));
+                                points.addPoints(author.getIdAsString(), server.getIdAsString(), winningPoints);
+                                serverTextChannel.sendMessage("Congrats, you got the x3 multiplier! You won " + Points.pointsToString(winningPoints) + "!");
                             } else {
-                                points.addPoints(author.getIdAsString(), server.getIdAsString(),
-                                        (Integer.parseInt(args[0])) * 2);
-                                serverTextChannel.sendMessage("Congrats, you won " + (Integer.parseInt(args[0]) * 2) + " beanCoin!");
+								                winningPoints = winningPoints.multiply(new BigDecimal(2).setScale(Points.SCALE, Points.ROUNDING_MODE));
+                                points.addPoints(author.getIdAsString(), server.getIdAsString(), winningPoints);
+                                serverTextChannel.sendMessage("Congrats, you won " + Points.pointsToString(winningPoints) + "!");
                             }
                         } else {
-                            serverTextChannel.sendMessage("Sorry, you lost " + args[0] + " beanCoin.");
+                            serverTextChannel.sendMessage("Sorry, you lost " + Points.pointsToString(winningPoints) + ".");
                         }
                     } else
                         serverTextChannel.sendMessage("You don't have enough beanCoin to bet that much.");
@@ -57,21 +60,4 @@ public class BeanBetCommand implements CommandExecutor {
         }else
             serverTextChannel.sendMessage("Invalid amount of beanCoin.");
     }
-
-    private static boolean isInteger(String s) {
-        return isInteger(s, 10);
-    }
-
-    private static boolean isInteger(String s, int radix) {
-        if (s.isEmpty()) return false;
-        for (int i = 0; i < s.length(); i++) {
-            if (i == 0 && s.charAt(i) == '-') {
-                if (s.length() == 1) return false;
-                else continue;
-            }
-            if (Character.digit(s.charAt(i), radix) < 0) return false;
-        }
-        return true;
-    }
-
 }

@@ -164,12 +164,17 @@ public class StockMarket {
         return null;
     }
 
+<<<<<<< HEAD
     public BigDecimal getShareInvested(String userID, String serverID, String symbol) {
+=======
+    public BigDecimal getShareInvested(String userID, String serverID, String Symbol) {
+>>>>>>> 508723e4f17284d6508f7201a39cace53627ee36
 
 
         return null;
     }
 
+<<<<<<< HEAD
     public float getBeanCoinSpent(String userID, String serverID, String symbol) {
         r.db("beanBotPoints").table(serverID).get(userID).getField(symbol + "beanCoin spent").run(conn);
     }
@@ -194,6 +199,17 @@ public class StockMarket {
         r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " beanCoin spent", investAmount))).run(conn);
 
         return retVal;
+=======
+    public boolean investCoin(String userID, String serverID, BigDecimal points, String symbol) {
+        Points beanCoin = new Points();
+
+        if (beanCoin.removePoints(userID, "", serverID, points)) {
+            checkUser(userID, serverID);
+            checkCompany(userID, serverID, symbol);
+            JSONObject obj = new JSONObject(new JSONArray(getCompanies(new String[] {symbol}).get(0)));
+        }
+        return false;
+>>>>>>> 508723e4f17284d6508f7201a39cace53627ee36
     }
 
     public ArrayList getPortfolio(String userID, String serverID) {
