@@ -7,6 +7,8 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
+import java.util.concurrent.ExecutionException;
+
 public class MazaPostMessageCommand implements CommandExecutor {
     @Command(
             aliases = {"mazapostmessage"},
@@ -14,7 +16,7 @@ public class MazaPostMessageCommand implements CommandExecutor {
             showInHelpPage = false
     )
 
-    public void onCommand(String[] command, DiscordApi api, ServerTextChannel serverTextChannel2, User author, Server server) {
+    public void onCommand(String[] command, DiscordApi api, ServerTextChannel serverTextChannel2, User author, Server server) throws ExecutionException, InterruptedException {
         if (author.isBotOwner()) {
             StringBuilder message = new StringBuilder();
             server.getTextChannelById(command[0]).ifPresent(serverTextChannel -> {
@@ -24,6 +26,6 @@ public class MazaPostMessageCommand implements CommandExecutor {
                 serverTextChannel.sendMessage(message.toString());
             });
         } else
-        serverTextChannel2.sendMessage("Only Mazawrath can send this message.");
+        serverTextChannel2.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " can send this message.");
     }
 }
