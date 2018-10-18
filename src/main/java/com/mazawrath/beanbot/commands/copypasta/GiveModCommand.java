@@ -26,7 +26,7 @@ public class GiveModCommand implements CommandExecutor {
     )
 
     public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), 10)) {
+        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST_SPECIAL)) {
             if (author.getIdAsString().equals("112653978432503808")) {
                 serverTextChannel.sendMessage("You rolled a 10000. You have to get 10,000. Congrats, you're now a mod!");
             }

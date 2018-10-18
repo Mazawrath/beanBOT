@@ -17,11 +17,11 @@ public class ServerInfoCommand implements CommandExecutor {
     @Command(
             aliases = {"serverinfo"},
             usage = "serverinfo",
-            description = "DO NOT @ USER. Enter user's discriminated name (Example#XXXX). Pulls up information about a user on the server. Leave username blank to look up yourself.",
+            description = "Pulls up information about the server.",
             privateMessages = false
     )
 
-    public void onCommand(String command, String userName, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
+    public void onCommand(String command, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
         Date date = new Date(server.getCreationTimestamp().getEpochSecond() * 1000L);
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy KK:mm:ss a");
         format.setTimeZone(TimeZone.getTimeZone("EST"));

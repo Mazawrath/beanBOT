@@ -22,7 +22,7 @@ public class ShameCommand implements CommandExecutor {
     )
 
     public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), 2)) {
+        if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {
             serverTextChannel.sendMessage("https://gist.github.com/Mazawrath/ce6dec5784b9bb85ad38bf372569ffa8");
         } else
             serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
