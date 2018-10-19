@@ -13,14 +13,14 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 
 public class StockMarket {
-    public static final RethinkDB r = RethinkDB.r;
+    private static final RethinkDB r = new RethinkDB();
     public static final String[] COMPANIES = {"BEAN", "FBI", "SHTEB", "BEZFF", "ABD", "BNTC", "BETHS"};
+    private static final String DB_VALUE_PREFIX = "P_";
     Connection conn;
 
-    public Connection connectDatabase() {
+    public void connectDatabase() {
         conn = r.connection().hostname("localhost").port(28015).connect();
         checkTable(conn);
-        return conn;
     }
 
     private boolean checkTable(Connection conn) {
@@ -52,10 +52,10 @@ public class StockMarket {
     private void checkCompany(String userID, String serverID, String symbol) {
         if (r.db("beanBotStock").table(serverID).getField(symbol).contains(userID).run(conn)) {
         } else {
-            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " shares bought", 0)
-            )).run(conn);
-            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + "beanCoin spent", 0)
-            )).run(conn);
+            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0)))
+            ).run(conn);
+            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0)))
+            ).run(conn);
         }
     }
 
@@ -97,43 +97,43 @@ public class StockMarket {
                     companyInfo.put("Name", "Bean");
                     companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/489204157442424833/Untitled.png");
                     companyInfo.put("Symbol", symbol);
-                    symbol = "AAPL";
+                    symbol = getSymbol(symbol);
                     break;
                 case "FBI":
                     companyInfo.put("Name", "Fortnite Burger, Inc.");
                     companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/492901413299552289/Untitled.png");
                     companyInfo.put("Symbol", symbol);
-                    symbol = "MCD";
+                    symbol = getSymbol(symbol);
                     break;
                 case "SHTEB":
                     companyInfo.put("Name", "shteeeb, Inc.");
                     companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/492901390763556864/483457233943003148.png");
                     companyInfo.put("Symbol", symbol);
-                    symbol = "ATVI";
+                    symbol = getSymbol(symbol);
                     break;
                 case "BEZFF":
                     companyInfo.put("Name", "Beanzer Inc");
                     companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/489211335830405120/Untitled-1.png");
                     companyInfo.put("Symbol", symbol);
-                    symbol = "RAZFF";
+                    symbol = getSymbol(symbol);
                     break;
                 case "ABD":
                     companyInfo.put("Name", "Advanced Bean Devices, Inc.");
                     companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/489254732251136012/Untitled.png");
                     companyInfo.put("Symbol", symbol);
-                    symbol = "AMD";
+                    symbol = getSymbol(symbol);
                     break;
                 case "BNTC":
                     companyInfo.put("Name", "Beantel Corporation");
                     companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/489277320205565952/Untitled.png");
                     companyInfo.put("Symbol", symbol);
-                    symbol = "INTC";
+                    symbol = getSymbol(symbol);
                     break;
                 case "BETHS":
                     companyInfo.put("Name", "Papa BEETHS");
                     companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/489203676863397889/493885223826751508/Papa_BEETHS.png");
                     companyInfo.put("Symbol", symbol);
-                    symbol = "PZZA";
+                    symbol = getSymbol(symbol);
                     break;
                 default:
                     return null;
@@ -155,6 +155,48 @@ public class StockMarket {
         return null;
     }
 
+    public String getComapanyName(String beanSymbol) {
+        switch (beanSymbol) {
+            case "BEAN":
+                return "Bean";
+            case "FBI":
+                return "Fortnite Burger, Inc.";
+            case "SHTEB":
+                return "shteeeb, Inc.";
+            case "BEZFF":
+                return "Beanzer Inc";
+            case "ABD":
+                return "Advanced Bean Devices, Inc.";
+            case "BNTC":
+                return "Beantel Corporation";
+            case "BETHS":
+                return "Papa BEETHS";
+            default:
+                return null;
+        }
+    }
+
+    public static String getSymbol(String beanSymbol) {
+        switch (beanSymbol) {
+            case "BEAN":
+                return "AAPL";
+            case "FBI":
+                return "MCD";
+            case "SHTEB":
+                return "ATVI";
+            case "BEZFF":
+                return "RAZFF";
+            case "ABD":
+                return "AMD";
+            case "BNTC":
+                return "INTC";
+            case "BETHS":
+                return "PZZA";
+            default:
+                return null;
+        }
+    }
+
     public BigDecimal getStockPrice(String Symbol) {
         try {
             Stock stock = YahooFinance.get(Symbol);
@@ -166,32 +208,42 @@ public class StockMarket {
     }
 
     public BigDecimal getShareInvested(String userID, String serverID, String symbol) {
-
-        return null;
+        return new BigDecimal(parseValueFromDB(r.db("beanBotStock").table(serverID).get(userID).getField(symbol + " shares bought").run(conn)));
     }
 
     public BigDecimal getBeanCoinSpent(String userID, String serverID, String symbol) {
-        return r.db("beanBotPoints").table(serverID).get(userID).getField(symbol + "beanCoin spent").run(conn);
+        return new BigDecimal(parseValueFromDB(r.db("beanBotStock").table(serverID).get(userID).getField(symbol + " beanCoin spent").run(conn)));
     }
 
-    public void buyShares(String userID, String serverID, String symbol, BigDecimal investAmount) {
-        checkUser(userID, serverID);
-        checkCompany(userID, serverID, symbol);
+    public BigDecimal buyShares(String userID, String serverID, String beanSymbol, BigDecimal investAmount) {
+        BigDecimal retVal = new BigDecimal(-1);
+        String symbol = getSymbol(beanSymbol);
 
-        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " shares bought", getStockPrice(symbol).divide(investAmount, 2, RoundingMode.HALF_UP).add(getShareInvested(userID, serverID, symbol))))).run(conn);
-        //TODO Add calculations to adding up how much beanCoin is spent on shares
-        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(getBeanCoinSpent(userID, serverID, symbol).add(investAmount)).run(conn);
+        if (symbol != null) {
+            checkUser(userID, serverID);
+            checkCompany(userID, serverID, symbol);
+
+            retVal = investAmount.divide(getStockPrice(symbol), 2, RoundingMode.HALF_UP).add(getShareInvested(userID, serverID, symbol));
+
+            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(retVal))).run(conn);
+            //TODO Add calculations to adding up how much beanCoin is spent on shares
+            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(getBeanCoinSpent(userID, serverID, symbol).add(investAmount)))).run(conn);
+        }
+
+        return retVal;
     }
 
-    public float[] sellShares(String userID, String serverID, String symbol) {
-        float[] retVal = { };
-        retVal[0] = -1;
+    public BigDecimal[] sellShares(String userID, String serverID, String symbol) {
+        BigDecimal[] retVal = new BigDecimal[2];
         checkUser(userID, serverID);
         checkCompany(userID, serverID, symbol);
+        retVal[0] = getShareInvested(userID, serverID, symbol);
+        retVal[1] = getBeanCoinSpent(userID, serverID, symbol);
 
-        //r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " shares bought", getStockPrice(symbol).divide(new BigDecimal(investAmount), 2, RoundingMode.HALF_UP).add(getShareInvested(userID, serverID, symbol))))).run(conn);
-        //TODO Add calculations to adding up how much beanCoin is spent on shares
-        //r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Stock", r.hashMap(symbol + " beanCoin spent", investAmount))).run(conn);
+        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0)))
+        ).run(conn);
+        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0)))
+        ).run(conn);
 
         return retVal;
     }
@@ -200,5 +252,13 @@ public class StockMarket {
         checkUser(userID, serverID);
 
         return r.db("beanBotStock").table(serverID).get(userID).run(conn);
+    }
+
+    public static String parseValueFromDB(String value) {
+        return value.substring(DB_VALUE_PREFIX.length());
+    }
+
+    public static String buildValueForDB(BigDecimal value) {
+        return DB_VALUE_PREFIX + value.toString();
     }
 }

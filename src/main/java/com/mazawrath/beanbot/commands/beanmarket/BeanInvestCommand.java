@@ -33,9 +33,17 @@ public class BeanInvestCommand implements CommandExecutor {
                     "\t- `.beaninvest buy [symbol] [amount]` - Buys shares from that symbol.\n" +
                     "\t- `.beaninvest sell [symbol]` - Sells all shares bought from that symbol.");
         } else if (args[0].equals("buy")) {
-            if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), new BigDecimal(args[2]))) {
-                stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1], new BigDecimal(args[2]));
-            }
+            if (args.length >= 3) {
+                if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE))) {
+                    BigDecimal sharesBought = stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE));
+                    if (sharesBought.compareTo(new BigDecimal(0)) > 0)
+                        serverTextChannel.sendMessage("Bought " + sharesBought + " shares from " + stockMarket.getComapanyName(args[1].toUpperCase()));
+                    else
+                        serverTextChannel.sendMessage("Symbol not found.");
+                } else
+                    serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
+            } else
+                serverTextChannel.sendMessage("Not enough arguments.");
         } else if (args[0].equals("sell")) {
             // TODO make selling shares
             stockMarket.sellShares(author.getIdAsString(), server.getIdAsString(), args[0]);
