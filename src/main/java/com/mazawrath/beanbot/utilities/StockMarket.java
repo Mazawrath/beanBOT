@@ -54,7 +54,7 @@ public class StockMarket {
     }
 
     private void checkCompany(String userID, String serverID, String symbol) {
-        if (r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).contains(symbol + " shares bought").run(conn)) {
+        if (r.db("beanBotStock").table(serverID).get(userID).hasFields(symbol + " shares bought").run(conn)) {
         } else {
             r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0)))
             ).run(conn);
@@ -227,9 +227,9 @@ public class StockMarket {
             checkUser(userID, serverID);
             checkCompany(userID, serverID, symbol);
 
-            retVal = investAmount.divide(getStockPrice(symbol), 2, RoundingMode.HALF_UP).add(getShareInvested(userID, serverID, symbol));
+            retVal = investAmount.divide(getStockPrice(symbol), 2, RoundingMode.HALF_UP);
 
-            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(retVal))).run(conn);
+            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(retVal.add(getShareInvested(userID, serverID, symbol))))).run(conn);
             r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(getBeanCoinSpent(userID, serverID, symbol).add(investAmount)))).run(conn);
         }
 
