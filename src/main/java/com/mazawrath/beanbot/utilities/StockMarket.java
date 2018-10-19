@@ -54,7 +54,7 @@ public class StockMarket {
     }
 
     private void checkCompany(String userID, String serverID, String symbol) {
-        if (r.db("beanBotStock").table(serverID).getField(symbol).contains(userID).run(conn)) {
+        if (r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).contains(symbol + " shares bought").run(conn)) {
         } else {
             r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0)))
             ).run(conn);
