@@ -35,14 +35,17 @@ public class BeanInvestCommand implements CommandExecutor {
         } else if (args[0].equals("buy")) {
             if (args.length >= 3) {
                 if (stockMarket.isProperDecimal(args[2])) {
-                    if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE))) {
-                        BigDecimal sharesBought = stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE));
-                        if (sharesBought.compareTo(BigDecimal.ZERO) > 0)
-                            serverTextChannel.sendMessage("Bought " + sharesBought + " shares from " + stockMarket.getComapanyName(args[1].toUpperCase()));
-                        else
-                            serverTextChannel.sendMessage("Symbol not found.");
+                    if (StockMarket.getSymbol(args[1]) != null) {
+                        if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE))) {
+                            BigDecimal sharesBought = stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE));
+                            if (sharesBought.compareTo(BigDecimal.ZERO) > 0)
+                                serverTextChannel.sendMessage("Bought " + sharesBought + " shares from " + stockMarket.getComapanyName(args[1].toUpperCase()));
+                            else
+                                serverTextChannel.sendMessage("some error happened and I don't know what it is.");
+                        } else
+                            serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
                     } else
-                        serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
+                        serverTextChannel.sendMessage("Symbol not found.");
                 } else
                     serverTextChannel.sendMessage("Invalid amount of beanCoin");
             } else
