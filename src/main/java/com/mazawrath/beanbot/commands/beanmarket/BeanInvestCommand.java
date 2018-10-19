@@ -35,7 +35,7 @@ public class BeanInvestCommand implements CommandExecutor {
         } else if (args[0].equals("buy")) {
             if (args.length >= 3) {
                 if (stockMarket.isProperDecimal(args[2])) {
-                    if (StockMarket.getSymbol(args[1]) != null) {
+                    if (StockMarket.getSymbol(args[1].toUpperCase()) != null) {
                         if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE))) {
                             BigDecimal sharesBought = stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE));
                             if (sharesBought.compareTo(BigDecimal.ZERO) > 0)
