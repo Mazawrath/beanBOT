@@ -10,7 +10,11 @@ import yahoofinance.YahooFinance;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class StockMarket {
     private static final RethinkDB r = new RethinkDB();
@@ -215,9 +219,9 @@ public class StockMarket {
         return new BigDecimal(parseValueFromDB(r.db("beanBotStock").table(serverID).get(userID).getField(symbol + " beanCoin spent").run(conn)));
     }
 
-    public BigDecimal buyShares(String userID, String serverID, String beanSymbol, BigDecimal investAmount) {
+    public BigDecimal buyShares(String userID, String serverID, String symbol, BigDecimal investAmount) {
         BigDecimal retVal = new BigDecimal(-1);
-        String symbol = getSymbol(beanSymbol);
+        symbol = getSymbol(symbol);
 
         if (symbol != null) {
             checkUser(userID, serverID);
@@ -226,7 +230,6 @@ public class StockMarket {
             retVal = investAmount.divide(getStockPrice(symbol), 2, RoundingMode.HALF_UP).add(getShareInvested(userID, serverID, symbol));
 
             r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(retVal))).run(conn);
-            //TODO Add calculations to adding up how much beanCoin is spent on shares
             r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(getBeanCoinSpent(userID, serverID, symbol).add(investAmount)))).run(conn);
         }
 
@@ -235,15 +238,20 @@ public class StockMarket {
 
     public BigDecimal[] sellShares(String userID, String serverID, String symbol) {
         BigDecimal[] retVal = new BigDecimal[2];
-        checkUser(userID, serverID);
-        checkCompany(userID, serverID, symbol);
-        retVal[0] = getShareInvested(userID, serverID, symbol);
-        retVal[1] = getBeanCoinSpent(userID, serverID, symbol);
 
-        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0)))
-        ).run(conn);
-        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0)))
-        ).run(conn);
+        symbol = getSymbol(symbol);
+
+        if (symbol != null) {
+            checkUser(userID, serverID);
+            checkCompany(userID, serverID, symbol);
+            retVal[0] = getShareInvested(userID, serverID, symbol);
+            retVal[1] = getBeanCoinSpent(userID, serverID, symbol);
+
+            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0)))
+            ).run(conn);
+            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0)))
+            ).run(conn);
+        }
 
         return retVal;
     }
@@ -260,5 +268,16 @@ public class StockMarket {
 
     public static String buildValueForDB(BigDecimal value) {
         return DB_VALUE_PREFIX + value.toString();
+    }
+
+    public boolean isProperDecimal(String number) {
+        boolean proper = true;
+        try {
+            BigDecimal decimal = new BigDecimal(number).setScale(Points.SCALE, Points.ROUNDING_MODE);
+        } catch (ArithmeticException | NumberFormatException e) {
+            proper = false;
+        }
+
+        return proper;
     }
 }
