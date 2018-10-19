@@ -37,7 +37,7 @@ public class BeanInvestCommand implements CommandExecutor {
                 if (stockMarket.isProperDecimal(args[2])) {
                     if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE))) {
                         BigDecimal sharesBought = stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE));
-                        if (sharesBought.compareTo(new BigDecimal(0)) > 0)
+                        if (sharesBought.compareTo(BigDecimal.ZERO) > 0)
                             serverTextChannel.sendMessage("Bought " + sharesBought + " shares from " + stockMarket.getComapanyName(args[1].toUpperCase()));
                         else
                             serverTextChannel.sendMessage("Symbol not found.");
@@ -49,8 +49,21 @@ public class BeanInvestCommand implements CommandExecutor {
                 serverTextChannel.sendMessage("Not enough arguments.");
         } else if (args[0].equals("sell")) {
             BigDecimal[] amounts = stockMarket.sellShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase());
+            BigDecimal outCome = amounts[0].multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true));
+            StringBuilder message = new StringBuilder();
 
-            serverTextChannel.sendMessage("You have sold " + amounts[0] + " shares which you spent " + amounts[1]);
+            if (amounts[0].compareTo(BigDecimal.ZERO) > 0){
+                message.append("You bought ").append(amounts[0]).append(" shares for ").append(stockMarket.pointsToString(amounts[1])).append(" with shares for ").append(stockMarket.getComapanyName(args[1].toUpperCase())).append(" at " + stockMarket.getStockPrice(args[1].toUpperCase(), true) + " you got a ").append(stockMarket.pointsToString(outCome.subtract((stockMarket.getStockPrice(args[1].toUpperCase(), true)))));
+                points.addPoints(author.getIdAsString(), server.getIdAsString(), outCome);
+
+                if (outCome.compareTo(amounts[1]) > 0) {
+                    message.append(" gain.");
+                }
+                else
+                    message.append(" loss.");
+            }
+
+            serverTextChannel.sendMessage(message.toString());
         }
     }
 }

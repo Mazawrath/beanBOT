@@ -201,9 +201,12 @@ public class StockMarket {
         }
     }
 
-    public BigDecimal getStockPrice(String Symbol) {
+    public BigDecimal getStockPrice(String symbol, boolean beanSymbol) {
+        if (beanSymbol) {
+            symbol = getSymbol(symbol);
+        }
         try {
-            Stock stock = YahooFinance.get(Symbol);
+            Stock stock = YahooFinance.get(symbol);
             return stock.getQuote().getPrice();
         } catch (IOException e) {
             e.printStackTrace();
@@ -227,7 +230,7 @@ public class StockMarket {
             checkUser(userID, serverID);
             checkCompany(userID, serverID, symbol);
 
-            retVal = investAmount.divide(getStockPrice(symbol), 2, RoundingMode.HALF_UP);
+            retVal = investAmount.divide(getStockPrice(symbol, false), 2, RoundingMode.HALF_UP);
 
             r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(retVal.add(getShareInvested(userID, serverID, symbol))))).run(conn);
             r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(getBeanCoinSpent(userID, serverID, symbol).add(investAmount)))).run(conn);
@@ -238,6 +241,7 @@ public class StockMarket {
 
     public BigDecimal[] sellShares(String userID, String serverID, String symbol) {
         BigDecimal[] retVal = new BigDecimal[2];
+        retVal[0] = new BigDecimal(-1);
 
         symbol = getSymbol(symbol);
 
@@ -268,6 +272,15 @@ public class StockMarket {
 
     public static String buildValueForDB(BigDecimal value) {
         return DB_VALUE_PREFIX + value.toString();
+    }
+
+    public String pointsToString(BigDecimal points) {
+        DecimalFormatSymbols symbol = new DecimalFormatSymbols(Locale.US);
+        symbol.setCurrencySymbol("\u00DF");
+        DecimalFormat formatter = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
+        formatter.setDecimalFormatSymbols(symbol);
+
+        return formatter.format(points);
     }
 
     public boolean isProperDecimal(String number) {
