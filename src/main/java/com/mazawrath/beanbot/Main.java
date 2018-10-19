@@ -63,7 +63,7 @@ public class Main {
             cmdHandler.registerCommand(new MazaPostHelpCommand(cmdHandler));
             // Copypasta
             cmdHandler.registerCommand(new Top500Command(points));
-            cmdHandler.registerCommand(new GiveModCommand(points));
+            //cmdHandler.registerCommand(new GiveModCommand(points));
             cmdHandler.registerCommand(new ThirtyPercentWinrateCommand(points));
             cmdHandler.registerCommand(new CodeRedCommand(points));
             cmdHandler.registerCommand(new BlessedCommand(points));
