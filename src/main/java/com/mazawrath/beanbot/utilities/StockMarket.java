@@ -215,15 +215,15 @@ public class StockMarket {
     }
 
     public BigDecimal getShareInvested(String userID, String serverID, String symbol) {
-        return new BigDecimal(parseValueFromDB(r.db("beanBotStock").table(serverID).get(userID).getField(symbol + " shares bought").run(conn)));
+        return new BigDecimal(parseValueFromDB(r.db("beanBotStock").table(serverID).get(userID).getField(symbol + " shares bought").run(conn))).setScale(Points.SCALE, Points.ROUNDING_MODE);
     }
 
     public BigDecimal getBeanCoinSpent(String userID, String serverID, String symbol) {
-        return new BigDecimal(parseValueFromDB(r.db("beanBotStock").table(serverID).get(userID).getField(symbol + " beanCoin spent").run(conn)));
+        return new BigDecimal(parseValueFromDB(r.db("beanBotStock").table(serverID).get(userID).getField(symbol + " beanCoin spent").run(conn))).setScale(Points.SCALE, Points.ROUNDING_MODE);
     }
 
     public BigDecimal buyShares(String userID, String serverID, String symbol, BigDecimal investAmount) {
-        BigDecimal retVal = new BigDecimal(-1);
+        BigDecimal retVal = new BigDecimal(-1).setScale(Points.SCALE, Points.ROUNDING_MODE);
         symbol = getSymbol(symbol);
 
         if (symbol != null) {
@@ -241,7 +241,7 @@ public class StockMarket {
 
     public BigDecimal[] sellShares(String userID, String serverID, String symbol) {
         BigDecimal[] retVal = new BigDecimal[2];
-        retVal[0] = new BigDecimal(-1);
+        retVal[0] = new BigDecimal(-1).setScale(Points.SCALE, Points.ROUNDING_MODE);
 
         symbol = getSymbol(symbol);
 
@@ -251,9 +251,9 @@ public class StockMarket {
             retVal[0] = getShareInvested(userID, serverID, symbol);
             retVal[1] = getBeanCoinSpent(userID, serverID, symbol);
 
-            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0)))
+            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0).setScale(Points.SCALE, Points.ROUNDING_MODE)))
             ).run(conn);
-            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0)))
+            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0).setScale(Points.SCALE, Points.ROUNDING_MODE)))
             ).run(conn);
         }
 

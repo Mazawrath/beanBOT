@@ -49,21 +49,24 @@ public class BeanInvestCommand implements CommandExecutor {
                 serverTextChannel.sendMessage("Not enough arguments.");
         } else if (args[0].equals("sell")) {
             BigDecimal[] amounts = stockMarket.sellShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase());
-            BigDecimal outCome = amounts[0].multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true));
-            StringBuilder message = new StringBuilder();
+            if (!amounts[0].equals(BigDecimal.ZERO)) {
+                BigDecimal outCome = amounts[0].multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true));
+                StringBuilder message = new StringBuilder();
 
-            if (amounts[0].compareTo(BigDecimal.ZERO) > 0){
-                message.append("You bought ").append(amounts[0]).append(" shares for ").append(stockMarket.pointsToString(amounts[1])).append(" with shares for ").append(stockMarket.getComapanyName(args[1].toUpperCase())).append(" at " + stockMarket.getStockPrice(args[1].toUpperCase(), true) + " you got a ").append(stockMarket.pointsToString(outCome.subtract((stockMarket.getStockPrice(args[1].toUpperCase(), true)))));
-                points.addPoints(author.getIdAsString(), server.getIdAsString(), outCome);
+                if (amounts[0].compareTo(BigDecimal.ZERO) > 0) {
+                    message.append("You bought ").append(amounts[0]).append(" shares for ").append(stockMarket.pointsToString(amounts[1])).append(" with shares for ").append(stockMarket.getComapanyName(args[1].toUpperCase())).append(" at ").append(stockMarket.pointsToString(stockMarket.getStockPrice(args[1].toUpperCase(), true))).append(" you got a ").append(stockMarket.pointsToString(outCome.subtract((stockMarket.getStockPrice(args[1].toUpperCase(), true)))));
+                    points.addPoints(author.getIdAsString(), server.getIdAsString(), outCome);
 
-                if (outCome.compareTo(amounts[1]) > 0) {
-                    message.append(" gain.");
+                    if (outCome.compareTo(amounts[1]) >= 0) {
+                        message.append(" gain.");
+                    } else
+                        message.append(" loss.");
                 }
-                else
-                    message.append(" loss.");
-            }
-
-            serverTextChannel.sendMessage(message.toString());
+                serverTextChannel.sendMessage(message.toString());
+            } else if (amounts[0].equals(new BigDecimal(-1))) {
+                serverTextChannel.sendMessage("Symbol not found.");
+            } else
+                serverTextChannel.sendMessage("You do not own any shares in this symbol.");
         }
     }
 }
