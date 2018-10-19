@@ -39,6 +39,6 @@ public class MazaPostChangeLogCommand implements CommandExecutor {
                 "\t- Changed the chances of `.givemod` giving mod to 100%.\n" +
                 "\t- Changed amount of beanCoin that `.beanfree` gives from 25 beanCoin to 25.69 beanCoin.\n" +
                 "**Bug Fixes**\n" +
-                "\t- Many backend bug fixes and spell corrections have been done.\n";
+                "\t- Many backend bug fixes and spell corrections have been done.";
     }
 }
