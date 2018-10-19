@@ -287,6 +287,8 @@ public class StockMarket {
         boolean proper = true;
         try {
             BigDecimal decimal = new BigDecimal(number).setScale(Points.SCALE, Points.ROUNDING_MODE);
+            if (decimal.compareTo(BigDecimal.ZERO) < 0)
+                proper = false;
         } catch (ArithmeticException | NumberFormatException e) {
             proper = false;
         }
