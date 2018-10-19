@@ -57,7 +57,11 @@ public class BeanInvestCommand implements CommandExecutor {
                 StringBuilder message = new StringBuilder();
 
                 if (amounts[0].compareTo(BigDecimal.ZERO) > 0) {
-                    message.append("You bought ").append(amounts[0]).append(" shares for ").append(stockMarket.pointsToString(amounts[1])).append(" with shares for ").append(stockMarket.getComapanyName(args[1].toUpperCase())).append(" at ").append(stockMarket.pointsToString(stockMarket.getStockPrice(args[1].toUpperCase(), true))).append(" you got a ").append(stockMarket.pointsToString(outCome.subtract((stockMarket.getStockPrice(args[1].toUpperCase(), true)))));
+                    message.append("You bought ").append(amounts[0]).append(" shares for ").append(stockMarket.pointsToString(amounts[1])).append(" with shares for ").append(stockMarket.getComapanyName(args[1].toUpperCase()))
+                            .append(" selling at ").append(stockMarket.pointsToString(stockMarket.getStockPrice(args[1].toUpperCase(), true))).append(" per share, you earned ")
+                            .append(stockMarket.pointsToString(amounts[0].multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true)))).append(" from it and you got a ")
+                            .append(stockMarket.pointsToString(outCome.subtract((stockMarket.getStockPrice(args[1].toUpperCase(), true)))));
+
                     points.addPoints(author.getIdAsString(), server.getIdAsString(), outCome);
 
                     if (outCome.compareTo(amounts[1]) >= 0) {
@@ -66,7 +70,7 @@ public class BeanInvestCommand implements CommandExecutor {
                         message.append(" loss.");
                 }
                 serverTextChannel.sendMessage(message.toString());
-            } else if (amounts[0].equals(new BigDecimal(-1))) {
+            }  else if (amounts[0].equals(new BigDecimal(-1))) {
                 serverTextChannel.sendMessage("Symbol not found.");
             } else
                 serverTextChannel.sendMessage("You do not own any shares in this symbol.");
