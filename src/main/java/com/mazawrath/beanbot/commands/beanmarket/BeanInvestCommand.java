@@ -51,29 +51,32 @@ public class BeanInvestCommand implements CommandExecutor {
             } else
                 serverTextChannel.sendMessage("Not enough arguments.");
         } else if (args[0].equals("sell")) {
-            BigDecimal[] amounts = stockMarket.sellShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase());
-            if (!amounts[0].equals(BigDecimal.ZERO)) {
-                BigDecimal outCome = amounts[0].multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true));
-                StringBuilder message = new StringBuilder();
+            if (args.length >= 2) {
+                BigDecimal[] amounts = stockMarket.sellShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase());
+                if (!amounts[0].equals(BigDecimal.ZERO)) {
+                    BigDecimal outCome = amounts[0].multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true));
+                    StringBuilder message = new StringBuilder();
 
-                if (amounts[0].compareTo(BigDecimal.ZERO) > 0) {
-                    message.append("You bought ").append(amounts[0]).append(" shares for ").append(stockMarket.pointsToString(amounts[1])).append(" with shares for ").append(stockMarket.getComapanyName(args[1].toUpperCase()))
-                            .append(" selling at ").append(stockMarket.pointsToString(stockMarket.getStockPrice(args[1].toUpperCase(), true))).append(" per share, you earned ")
-                            .append(stockMarket.pointsToString(amounts[0].multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true)))).append(" from it and you got a ")
-                            .append(stockMarket.pointsToString(outCome.subtract((stockMarket.getStockPrice(args[1].toUpperCase(), true)))));
+                    if (amounts[0].compareTo(BigDecimal.ZERO) > 0) {
+                        message.append("You bought ").append(amounts[0]).append(" shares for ").append(stockMarket.pointsToString(amounts[1])).append(" with shares for ").append(stockMarket.getComapanyName(args[1].toUpperCase()))
+                                .append(" selling at ").append(stockMarket.pointsToString(stockMarket.getStockPrice(args[1].toUpperCase(), true))).append(" per share, you earned ")
+                                .append(stockMarket.pointsToString(amounts[0].multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true)))).append(" from it and you got a ")
+                                .append(stockMarket.pointsToString(outCome.subtract((stockMarket.getStockPrice(args[1].toUpperCase(), true)))));
 
-                    points.addPoints(author.getIdAsString(), server.getIdAsString(), outCome);
+                        points.addPoints(author.getIdAsString(), server.getIdAsString(), outCome);
 
-                    if (outCome.compareTo(amounts[1]) >= 0) {
-                        message.append(" gain.");
-                    } else
-                        message.append(" loss.");
-                }
-                serverTextChannel.sendMessage(message.toString());
-            }  else if (amounts[0].equals(new BigDecimal(-1))) {
-                serverTextChannel.sendMessage("Symbol not found.");
+                        if (outCome.compareTo(amounts[1]) >= 0) {
+                            message.append(" gain.");
+                        } else
+                            message.append(" loss.");
+                    }
+                    serverTextChannel.sendMessage(message.toString());
+                } else if (amounts[0].equals(new BigDecimal(-1))) {
+                    serverTextChannel.sendMessage("Symbol not found.");
+                } else
+                    serverTextChannel.sendMessage("You do not own any shares in this symbol.");
             } else
-                serverTextChannel.sendMessage("You do not own any shares in this symbol.");
+                serverTextChannel.sendMessage("Not enough arguments");
         }
     }
 }
