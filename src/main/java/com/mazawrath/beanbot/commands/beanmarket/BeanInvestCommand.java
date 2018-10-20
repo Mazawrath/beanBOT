@@ -9,6 +9,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class BeanInvestCommand implements CommandExecutor {
     private Points points;
@@ -36,7 +37,7 @@ public class BeanInvestCommand implements CommandExecutor {
             if (args.length >= 3) {
                 if (stockMarket.isProperDecimal(args[2])) {
                     if (StockMarket.getSymbol(args[1].toUpperCase()) != null) {
-                        if (new BigDecimal(args[2]).divide(stockMarket.getStockPrice(StockMarket.getSymbol(args[1].toUpperCase()), false)).setScale(Points.SCALE, Points.ROUNDING_MODE).compareTo(new BigDecimal("0.01").setScale(Points.SCALE, Points.ROUNDING_MODE)) >= 0) {
+                        if (new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE).divide(stockMarket.getStockPrice(StockMarket.getSymbol(args[1].toUpperCase()), false), 2, RoundingMode.HALF_UP).setScale(Points.SCALE, Points.ROUNDING_MODE).compareTo(new BigDecimal("0.01").setScale(Points.SCALE, Points.ROUNDING_MODE)) >= 0) {
                             if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE))) {
                                 BigDecimal sharesBought = stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE));
                                 if (sharesBought.compareTo(BigDecimal.ZERO) > 0)
