@@ -58,7 +58,7 @@ public class BeanInvestCommand implements CommandExecutor {
                                 } else
                                     serverTextChannel.sendMessage("some error happened and I don't know what it is.");
                             } else
-                                serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
+                                serverTextChannel.sendMessage("You do not have enough beanCoin for this command. You attempted to buy " + stockMarket.pointsToString(new BigDecimal(args[2])) + " worth of stocks but after rounding you were going to spend " + beanCoinToSpend + ".");
                         } else
                             serverTextChannel.sendMessage("You must buy at least 1% of the share.");
                     } else
