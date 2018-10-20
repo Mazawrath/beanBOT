@@ -57,7 +57,27 @@ public class Points {
     }
 
     public ArrayList getLeaderboard(String serverID) {
-        return r.db("beanBotPoints").table(serverID).orderBy(r.desc("Points")).limit(10).run(conn);
+        //return r.db("beanBotPoints").table(serverID).orderBy(r.desc("Points")).limit(10).run(conn);
+
+        return r.db("beanBotPoints").table(serverID).map(doc ->
+          r.object(
+            "id",
+            doc.getField("id"),
+            "Points",
+            doc.getField("Points").split("P_").nth(1).coerceTo("NUMBER"),
+            "Last Received Free Points",
+            doc.getField("Last Received Free Points")
+          )
+        ).orderBy(r.desc("Points")).limit(10).map(doc ->
+          r.object(
+            "id",
+            doc.getField("id"),
+            "Points",
+            r.expr("P_").add(doc.getField("Points").coerceTo("STRING")),
+            "Last Received Free Points",
+            doc.getField("Last Received Free Points")
+          )
+        ).run(conn);
     }
 
     public BigDecimal getBalance(String userID, String serverID) {
