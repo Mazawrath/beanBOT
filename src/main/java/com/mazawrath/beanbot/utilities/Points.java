@@ -57,8 +57,6 @@ public class Points {
     }
 
     public ArrayList getLeaderboard(String serverID) {
-        //return r.db("beanBotPoints").table(serverID).orderBy(r.desc("Points")).limit(10).run(conn);
-
         return r.db("beanBotPoints").table(serverID).map(doc ->
           r.object(
             "id",
