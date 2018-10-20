@@ -159,7 +159,7 @@ public class StockMarket {
         return null;
     }
 
-    public String getComapanyName(String beanSymbol) {
+    public String getCompanyName(String beanSymbol) {
         switch (beanSymbol) {
             case "BEAN":
                 return "Bean";

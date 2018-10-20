@@ -36,11 +36,11 @@ public class BeanInvestCommand implements CommandExecutor {
             if (args.length >= 3) {
                 if (stockMarket.isProperDecimal(args[2])) {
                     if (StockMarket.getSymbol(args[1].toUpperCase()) != null) {
-                        if (new BigDecimal(args[2]).divide(stockMarket.getStockPrice(StockMarket.getSymbol(args[1].toUpperCase()), true)).setScale(Points.SCALE, Points.ROUNDING_MODE).compareTo(new BigDecimal(.01)) >= 0) {
+                        if (new BigDecimal(args[2]).divide(stockMarket.getStockPrice(StockMarket.getSymbol(args[1].toUpperCase()), false)).setScale(Points.SCALE, Points.ROUNDING_MODE).compareTo(new BigDecimal("0.01").setScale(Points.SCALE, Points.ROUNDING_MODE)) >= 0) {
                             if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE))) {
                                 BigDecimal sharesBought = stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE));
                                 if (sharesBought.compareTo(BigDecimal.ZERO) > 0)
-                                    serverTextChannel.sendMessage("Bought " + sharesBought + " shares from " + stockMarket.getComapanyName(args[1].toUpperCase()));
+                                    serverTextChannel.sendMessage("Bought " + sharesBought + " shares from " + stockMarket.getCompanyName(args[1].toUpperCase()));
                                 else
                                     serverTextChannel.sendMessage("some error happened and I don't know what it is.");
                             } else
@@ -62,7 +62,7 @@ public class BeanInvestCommand implements CommandExecutor {
                         StringBuilder message = new StringBuilder();
 
                         if (amounts[0].compareTo(BigDecimal.ZERO) > 0) {
-                            message.append("You bought ").append(amounts[0]).append(" shares for ").append(stockMarket.pointsToString(amounts[1])).append(" with shares for ").append(stockMarket.getComapanyName(args[1].toUpperCase()))
+                            message.append("You bought ").append(amounts[0]).append(" shares for ").append(stockMarket.pointsToString(amounts[1])).append(" with shares for ").append(stockMarket.getCompanyName(args[1].toUpperCase()))
                                     .append(" selling at ").append(stockMarket.pointsToString(stockMarket.getStockPrice(args[1].toUpperCase(), true))).append(" per share, you earned ")
                                     .append(stockMarket.pointsToString(amounts[0].multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true)))).append(" from it and you got a ")
                                     .append(stockMarket.pointsToString(outCome.subtract((stockMarket.getStockPrice(args[1].toUpperCase(), true)))));
