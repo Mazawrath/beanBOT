@@ -29,7 +29,7 @@ public class BeanBetCommand implements CommandExecutor {
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
         if (args.length != 0) {
             if (Points.isProperDecimal(args[0])) {
-				        BigDecimal winningPoints = new BigDecimal(args[0]).setScale(Points.SCALE, Points.ROUNDING_MODE);
+                BigDecimal winningPoints = new BigDecimal(args[0]).setScale(Points.SCALE, Points.ROUNDING_MODE);
                 if (winningPoints.compareTo(BigDecimal.ZERO) == 0) {
                     serverTextChannel.sendMessage("You can't bet 0 beanCoin!");
                 } else {
@@ -41,11 +41,11 @@ public class BeanBetCommand implements CommandExecutor {
                             int winningMultiplier = rand.nextInt(100) + 1;
 
                             if (winningMultiplier <= 15) {
-								                winningPoints = winningPoints.multiply(new BigDecimal(3).setScale(Points.SCALE, Points.ROUNDING_MODE));
+                                winningPoints = winningPoints.multiply(new BigDecimal(3).setScale(Points.SCALE, Points.ROUNDING_MODE));
                                 points.addPoints(author.getIdAsString(), server.getIdAsString(), winningPoints);
                                 serverTextChannel.sendMessage("Congrats, you got the x3 multiplier! You won " + Points.pointsToString(winningPoints) + "!");
                             } else {
-								                winningPoints = winningPoints.multiply(new BigDecimal(2).setScale(Points.SCALE, Points.ROUNDING_MODE));
+                                winningPoints = winningPoints.multiply(new BigDecimal(2).setScale(Points.SCALE, Points.ROUNDING_MODE));
                                 points.addPoints(author.getIdAsString(), server.getIdAsString(), winningPoints);
                                 serverTextChannel.sendMessage("Congrats, you won " + Points.pointsToString(winningPoints) + "!");
                             }
@@ -57,7 +57,7 @@ public class BeanBetCommand implements CommandExecutor {
                 }
             } else
                 serverTextChannel.sendMessage("Invalid amount of beanCoin.");
-        }else
+        } else
             serverTextChannel.sendMessage("Invalid amount of beanCoin.");
     }
 }

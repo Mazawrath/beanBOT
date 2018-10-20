@@ -28,18 +28,18 @@ public class MazaPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.3.0\n" +
-                "**v2.3.0**\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.4.0\n" +
+                "\n" +
+                "**v2.4.0**\n" +
                 "**New**\n" +
-                "\t- Added `.mazaposthelp`.\n" +
-                "\t- Added `.banuser`.\n" +
-                "\t- Added Papa BEETHS as a stock.\n" +
+                "\t- beanCoin now supports decimals.\n" +
+                "\t- Added currency symbol for beanCoin.\n" +
+                "\t- beanCoin is correctly spaced by commas.\n" +
+                "\t- Added Bean Market investing.\n" +
                 "**Changes**\n" +
-                "\t- `.beanfree` now tells you how many beanCoin you have if you received beanCoin from the command.\n" +
-                "\t- `.beanfree` now uses singular or plural based on whether the amount of hours or minutes.\n" +
-                "\t- Companies looked up with `.beanmarket` show more info.\n" +
+                "\t- Changed the chances of `.givemod` giving mod to 100%.\n" +
+                "\t- Changed amount of beanCoin that `.beanfree` gives from 25 beanCoin to 25.69 beanCoin.\n" +
                 "**Bug Fixes**\n" +
-                "\t- Fixed `Points.java` that arbitrarily added beanCoin to a specific user ID vs the user ID of the bot itself.\n" +
-                "\t- Fixed `.source` not showing up on `.help`";
+                "\t- Many backend bug fixes and spell corrections have been done.";
     }
 }

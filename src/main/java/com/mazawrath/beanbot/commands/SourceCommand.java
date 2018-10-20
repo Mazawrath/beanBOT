@@ -14,7 +14,7 @@ public class SourceCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
+    public void onCommand(ServerTextChannel serverTextChannel) {
         serverTextChannel.sendMessage("https://github.com/Mazawrath/beanBOT");
     }
 }

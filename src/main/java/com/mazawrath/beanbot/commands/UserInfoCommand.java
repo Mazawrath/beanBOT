@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class UserInfoCommand implements CommandExecutor{
+public class UserInfoCommand implements CommandExecutor {
     private Points points;
 
     public UserInfoCommand(Points points) {
@@ -40,8 +40,7 @@ public class UserInfoCommand implements CommandExecutor{
             } else if (args[0].contains("@")) {
                 serverTextChannel.sendMessage("Do not mention the user, put in their full username (Example#0000) without a '@' in front.");
                 userName = "null#000000000000";
-            }
-            else
+            } else
                 userName = args[0];
         } else
             userName = author.getDiscriminatedName();

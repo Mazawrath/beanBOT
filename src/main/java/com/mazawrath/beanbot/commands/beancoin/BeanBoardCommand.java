@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-public class BeanBoardCommand implements CommandExecutor{
+public class BeanBoardCommand implements CommandExecutor {
     private Points points;
 
     public BeanBoardCommand(Points points) {
@@ -39,7 +39,7 @@ public class BeanBoardCommand implements CommandExecutor{
 
             api.getCachedUserById(obj.getString("id")).ifPresent(user -> {
                 users[0] += user.getDisplayName(server) + "\n";
-				        BigDecimal userPoints = new BigDecimal(Points.parseValueFromDB(obj.getString("Points"))).setScale(Points.SCALE, Points.ROUNDING_MODE);
+                BigDecimal userPoints = new BigDecimal(Points.parseValueFromDB(obj.getString("Points"))).setScale(Points.SCALE, Points.ROUNDING_MODE);
                 beanBalance[0] += Points.pointsToString(userPoints) + "\n";
             });
         }
