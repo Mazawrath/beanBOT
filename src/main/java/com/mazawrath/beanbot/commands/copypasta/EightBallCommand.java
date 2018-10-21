@@ -32,7 +32,7 @@ public class EightBallCommand implements CommandExecutor {
             }
             Random r = new Random();
 
-            int choice = 1 + r.nextInt(15);
+            int choice = 1 + r.nextInt(16);
             String response;
 
             if ( choice == 1 )
@@ -160,6 +160,19 @@ public class EightBallCommand implements CommandExecutor {
                         " }\n" +
                         " }\n" +
                         "}```";
+            else if ( choice == 16 )
+                response = "```                __\n" +
+                        "             .-'  |\n" +
+                        "            /   <\\|     'Ello me ol' chum\n" +
+                        "           /     \\'\n" +
+                        "           |_.- o-o      I'm g'not a g'nelf\n" +
+                        "           / C  -._)\\\n" +
+                        "          /',        |   I'm g'not a g'noblin\n" +
+                        "         |   `-,_,__,'\n" +
+                        "         (,,)====[_]=|   I'm a g'nome and you've been GNOMED\n" +
+                        "           '.   ____/\n" +
+                        "            | -|-|_\n" +
+                        "            |____)_)```";
             else
                 response = "8-BALL ERROR!";
 
