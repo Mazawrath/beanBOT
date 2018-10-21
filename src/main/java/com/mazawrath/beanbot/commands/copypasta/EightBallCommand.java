@@ -96,9 +96,9 @@ public class EightBallCommand implements CommandExecutor {
                         "\tat com.mazawrath.beanbot.commands.copypasta.GnomedCommand.onCommand(GnomedCommand.java:27)\n" +
                         "\t... 15 more";
             else if ( choice == 13 )
-                response = "I don't even think I want to answer that.";
+                response = "I dunno go ask shteeeb.";
             else if ( choice == 14 )
-                response = "If I say the answer is \"I don't know\" that doesn't mean you magically get to try the command again to get a different response.";
+                response = "If I say the answer is \"I don't know\" that doesn't mean you get to try the command again to get a different response.";
             else if ( choice == 15 )
                 response = "Stop being so lazy and just run this code yourself ```java\n" +
                         "package com.mazawrath.beanbot.commands.copypasta;\n" +
