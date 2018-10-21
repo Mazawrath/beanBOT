@@ -20,7 +20,7 @@ public class EightBallCommand implements CommandExecutor {
     @Command(
             aliases = {"beanBall"},
             usage = "beanBall",
-            description = "Rolls a 10,000 sided die to randomly give mod.",
+            description = "Shake the magic beanBall and ask a question and (possibly) get a response.",
             privateMessages = false
     )
 
