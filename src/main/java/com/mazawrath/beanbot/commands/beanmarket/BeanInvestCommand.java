@@ -41,11 +41,10 @@ public class BeanInvestCommand implements CommandExecutor {
             if (args.length >= 3) {
                 if (stockMarket.isProperDecimal(args[2])) {
                     if (StockMarket.getSymbol(args[1].toUpperCase()) != null) {
-                        if (new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE).divide(stockMarket.getStockPrice(StockMarket.getSymbol(args[1].toUpperCase()), false), 2, RoundingMode.HALF_UP).setScale(Points.SCALE, Points.ROUNDING_MODE).compareTo(new BigDecimal("0.01").setScale(Points.SCALE, Points.ROUNDING_MODE)) >= 0) {
-                            BigDecimal roundedSharesBought = new BigDecimal(args[2]).divide(stockMarket.getStockPrice(args[1].toUpperCase(), true), 2, RoundingMode.DOWN);
-                            BigDecimal stockPrice = stockMarket.getStockPrice(args[1].toUpperCase(), true);
-                            BigDecimal beanCoinToSpend = roundedSharesBought.multiply(stockPrice);
-
+                        BigDecimal roundedSharesBought = new BigDecimal(args[2]).divide(stockMarket.getStockPrice(args[1].toUpperCase(), true), 2, RoundingMode.DOWN);
+                        BigDecimal stockPrice = stockMarket.getStockPrice(args[1].toUpperCase(), true);
+                        BigDecimal beanCoinToSpend = roundedSharesBought.multiply(stockPrice);
+                        if (roundedSharesBought.setScale(Points.SCALE, Points.ROUNDING_MODE).compareTo(new BigDecimal("0.01").setScale(Points.SCALE, Points.ROUNDING_MODE)) >= 0) {
                             if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), beanCoinToSpend)) {
                                 if (stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase(), beanCoinToSpend).compareTo(BigDecimal.ZERO) > 0) {
                                     embed.setDescription("Buying Shares from " + stockMarket.getCompanyName(args[1].toUpperCase()));
