@@ -93,8 +93,8 @@ public class EightBallCommand implements CommandExecutor {
                         "\tat com.mazawrath.beanbot.utilities.Points.checkServer(Points.java:41)\n" +
                         "\tat com.mazawrath.beanbot.utilities.Points.checkUser(Points.java:48)\n" +
                         "\tat com.mazawrath.beanbot.utilities.Points.removePoints(Points.java:94)\n" +
-                        "\tat com.mazawrath.beanbot.commands.copypasta.GnomedCommand.onCommand(GnomedCommand.java:27)\n" +
-                        "\t... 15 more";
+                        "\tat com.mazawrath.beanbot.commands.copypasta.EightBallCommand.onCommand(EightBallCommand.java:28)\n" +
+                        "\t... 15 more\n";
             else if ( choice == 13 )
                 response = "I dunno go ask shteeeb.";
             else if ( choice == 14 )
