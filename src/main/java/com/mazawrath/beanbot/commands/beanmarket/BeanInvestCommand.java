@@ -5,6 +5,7 @@ import com.mazawrath.beanbot.utilities.StockMarket;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
@@ -34,18 +35,29 @@ public class BeanInvestCommand implements CommandExecutor {
                     "\t- `.beaninvest buy [symbol] [amount]` - Buys shares from that symbol.\n" +
                     "\t- `.beaninvest sell [symbol]` - Sells all shares bought from that symbol.");
         } else if (args[0].equals("buy")) {
+            EmbedBuilder embed = new EmbedBuilder()
+                    .setTitle("Bean Market Investment")
+                    .setThumbnail("https://cdn.discordapp.com/attachments/489203676863397889/503334187621941308/Stock.png");
             if (args.length >= 3) {
                 if (stockMarket.isProperDecimal(args[2])) {
                     if (StockMarket.getSymbol(args[1].toUpperCase()) != null) {
-                        if (new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE).divide(stockMarket.getStockPrice(StockMarket.getSymbol(args[1].toUpperCase()), false), 2, RoundingMode.HALF_UP).setScale(Points.SCALE, Points.ROUNDING_MODE).compareTo(new BigDecimal("0.01").setScale(Points.SCALE, Points.ROUNDING_MODE)) >= 0) {
-                            if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE))) {
-                                BigDecimal sharesBought = stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase(), new BigDecimal(args[2]).setScale(Points.SCALE, Points.ROUNDING_MODE));
-                                if (sharesBought.compareTo(BigDecimal.ZERO) > 0)
-                                    serverTextChannel.sendMessage("Bought " + sharesBought + " shares from " + stockMarket.getCompanyName(args[1].toUpperCase()));
-                                else
+                        BigDecimal roundedSharesBought = new BigDecimal(args[2]).divide(stockMarket.getStockPrice(args[1].toUpperCase(), true), 2, RoundingMode.DOWN);
+                        BigDecimal stockPrice = stockMarket.getStockPrice(args[1].toUpperCase(), true);
+                        BigDecimal beanCoinToSpend = roundedSharesBought.multiply(stockPrice);
+                        if (roundedSharesBought.setScale(Points.SCALE, Points.ROUNDING_MODE).compareTo(new BigDecimal("0.01").setScale(Points.SCALE, Points.ROUNDING_MODE)) >= 0) {
+                            if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), beanCoinToSpend)) {
+                                if (stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase(), beanCoinToSpend).compareTo(BigDecimal.ZERO) > 0) {
+                                    embed.setDescription("Buying Shares from " + stockMarket.getCompanyName(args[1].toUpperCase()));
+                                    embed.addInlineField("beanCoin spent", stockMarket.pointsToString(beanCoinToSpend));
+                                    embed.addInlineField("Shares bought", roundedSharesBought.toString() + " shares");
+                                    embed.addInlineField("Shares you currently own", stockMarket.getShareInvested(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase())).toString() + " shares");
+                                    embed.addInlineField("Current Portfolio Value", stockMarket.pointsToString(stockMarket.getShareInvested(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase())).multiply(stockPrice)));
+
+                                    serverTextChannel.sendMessage(embed);
+                                } else
                                     serverTextChannel.sendMessage("some error happened and I don't know what it is.");
                             } else
-                                serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
+                                serverTextChannel.sendMessage("You do not have enough beanCoin for this command. You attempted to buy " + stockMarket.pointsToString(new BigDecimal(args[2])) + " worth of stocks but after rounding you were going to spend " + beanCoinToSpend + ".");
                         } else
                             serverTextChannel.sendMessage("You must buy at least 1% of the share.");
                     } else
