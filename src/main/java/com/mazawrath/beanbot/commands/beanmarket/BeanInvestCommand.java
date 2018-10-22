@@ -67,27 +67,30 @@ public class BeanInvestCommand implements CommandExecutor {
             } else
                 serverTextChannel.sendMessage("Not enough arguments.");
         } else if (args[0].equals("sell")) {
+            EmbedBuilder embed = new EmbedBuilder()
+                    .setTitle("Bean Market Investment")
+                    .setThumbnail("https://cdn.discordapp.com/attachments/489203676863397889/503334187621941308/Stock.png");
             if (args.length >= 2) {
                 if (StockMarket.getSymbol(args[1].toUpperCase()) != null) {
+                    BigDecimal sharesBought = stockMarket.getShareInvested(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase()));
+                    BigDecimal beanCoinSpent = stockMarket.getBeanCoinSpent(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase()));
+                    BigDecimal stockPrice = stockMarket.getStockPrice(args[1].toUpperCase(), true);
                     BigDecimal[] amounts = stockMarket.sellShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase());
                     if (!amounts[0].equals(BigDecimal.ZERO)) {
                         BigDecimal outCome = amounts[0].multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true));
-                        StringBuilder message = new StringBuilder();
-
+                        //StringBuilder message = new StringBuilder();
                         if (amounts[0].compareTo(BigDecimal.ZERO) > 0) {
-                            message.append("You bought ").append(amounts[0]).append(" shares for ").append(stockMarket.pointsToString(amounts[1])).append(" with shares for ").append(stockMarket.getCompanyName(args[1].toUpperCase()))
-                                    .append(" selling at ").append(stockMarket.pointsToString(stockMarket.getStockPrice(args[1].toUpperCase(), true))).append(" per share, you earned ")
-                                    .append(stockMarket.pointsToString(amounts[0].multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true)))).append(" from it and you got a ")
-                                    .append(stockMarket.pointsToString(outCome.subtract((stockMarket.getStockPrice(args[1].toUpperCase(), true)))));
+
+                            embed.setDescription("Selling Shares from " + stockMarket.getCompanyName(args[1].toUpperCase()));
+                            embed.addInlineField("Shares you currently own", sharesBought.toString() + " shares");
+                            embed.addInlineField("beanCoin spent", stockMarket.pointsToString(beanCoinSpent));
+                            embed.addInlineField("Price of " + args[1].toUpperCase(), stockMarket.pointsToString(stockPrice));
+                            embed.addInlineField("beanCoin earned from share", stockMarket.pointsToString(sharesBought.multiply(stockPrice)));
+                            embed.addInlineField("Profit from share", stockMarket.pointsToString(outCome.subtract(beanCoinSpent)));
 
                             points.addPoints(author.getIdAsString(), server.getIdAsString(), outCome);
-
-                            if (outCome.compareTo(amounts[1]) >= 0) {
-                                message.append(" gain.");
-                            } else
-                                message.append(" loss.");
                         }
-                        serverTextChannel.sendMessage(message.toString());
+                        serverTextChannel.sendMessage(embed);
                     } else if (amounts[0].equals(new BigDecimal(-1))) {
                         serverTextChannel.sendMessage("Uh oh this bug shouldn't happen and I wouldn't be able to explain why.");
                     } else
