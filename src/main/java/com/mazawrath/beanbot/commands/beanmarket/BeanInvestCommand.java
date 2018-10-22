@@ -78,7 +78,6 @@ public class BeanInvestCommand implements CommandExecutor {
                     BigDecimal[] amounts = stockMarket.sellShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase());
                     if (!amounts[0].equals(BigDecimal.ZERO)) {
                         BigDecimal outCome = amounts[0].multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true));
-                        //StringBuilder message = new StringBuilder();
                         if (amounts[0].compareTo(BigDecimal.ZERO) > 0) {
 
                             embed.setDescription("Selling Shares from " + stockMarket.getCompanyName(args[1].toUpperCase()));
