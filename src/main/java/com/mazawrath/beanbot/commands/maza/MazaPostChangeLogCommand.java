@@ -28,18 +28,14 @@ public class MazaPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.4.0\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.5.0\n" +
                 "\n" +
-                "**v2.4.0**\n" +
+                "**v2.5.0**\n" +
                 "**New**\n" +
-                "\t- beanCoin now supports decimals.\n" +
-                "\t- Added currency symbol for beanCoin.\n" +
-                "\t- beanCoin is correctly spaced by commas.\n" +
-                "\t- Added Bean Market investing.\n" +
+                "\t- Added `.beanball`.\n" +
                 "**Changes**\n" +
-                "\t- Changed the chances of `.givemod` giving mod to 100%.\n" +
-                "\t- Changed amount of beanCoin that `.beanfree` gives from 25 beanCoin to 25.69 beanCoin.\n" +
+                "\t- Buying and selling shares with `.beaninvest` will now use embedded messages to show you information.\n" +
                 "**Bug Fixes**\n" +
-                "\t- Many backend bug fixes and spell corrections have been done.";
+                "\t- Fixed a sorting issue with `.beanboard`.";
     }
 }
