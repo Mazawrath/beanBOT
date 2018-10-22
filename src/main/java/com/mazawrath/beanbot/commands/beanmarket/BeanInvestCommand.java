@@ -75,10 +75,9 @@ public class BeanInvestCommand implements CommandExecutor {
                     BigDecimal sharesBought = stockMarket.getShareInvested(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase()));
                     BigDecimal beanCoinSpent = stockMarket.getBeanCoinSpent(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase()));
                     BigDecimal stockPrice = stockMarket.getStockPrice(args[1].toUpperCase(), true);
-                    BigDecimal[] amounts = stockMarket.sellShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase());
-                    if (!amounts[0].equals(BigDecimal.ZERO)) {
-                        BigDecimal outCome = amounts[0].multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true));
-                        if (amounts[0].compareTo(BigDecimal.ZERO) > 0) {
+                    if (stockMarket.sellShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase())) {
+                        BigDecimal outCome = sharesBought.multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true));
+                        if (sharesBought.compareTo(BigDecimal.ZERO) > 0) {
 
                             embed.setDescription("Selling Shares from " + stockMarket.getCompanyName(args[1].toUpperCase()));
                             embed.addInlineField("Shares you currently own", sharesBought.toString() + " shares");
@@ -90,10 +89,8 @@ public class BeanInvestCommand implements CommandExecutor {
                             points.addPoints(author.getIdAsString(), server.getIdAsString(), outCome);
                         }
                         serverTextChannel.sendMessage(embed);
-                    } else if (amounts[0].equals(new BigDecimal(-1))) {
-                        serverTextChannel.sendMessage("Uh oh this bug shouldn't happen and I wouldn't be able to explain why.");
                     } else
-                        serverTextChannel.sendMessage("You do not own any shares in this symbol.");
+                        serverTextChannel.sendMessage("Uh oh this bug shouldn't happen and I wouldn't be able to explain why.");
                 } else
                     serverTextChannel.sendMessage("Symbol not found.");
             } else

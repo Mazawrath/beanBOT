@@ -239,22 +239,21 @@ public class StockMarket {
         return retVal;
     }
 
-    public BigDecimal[] sellShares(String userID, String serverID, String symbol) {
-        BigDecimal[] retVal = new BigDecimal[2];
-        retVal[0] = new BigDecimal(-1).setScale(Points.SCALE, Points.ROUNDING_MODE);
+    public boolean sellShares(String userID, String serverID, String symbol) {
+        boolean retVal = false;
 
         symbol = getSymbol(symbol);
 
         if (symbol != null) {
             checkUser(userID, serverID);
             checkCompany(userID, serverID, symbol);
-            retVal[0] = getShareInvested(userID, serverID, symbol);
-            retVal[1] = getBeanCoinSpent(userID, serverID, symbol);
 
             r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0).setScale(Points.SCALE, Points.ROUNDING_MODE)))
             ).run(conn);
             r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0).setScale(Points.SCALE, Points.ROUNDING_MODE)))
             ).run(conn);
+
+            retVal = true;
         }
 
         return retVal;
