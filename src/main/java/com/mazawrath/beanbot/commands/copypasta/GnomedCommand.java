@@ -37,6 +37,18 @@ public class GnomedCommand implements CommandExecutor {
                     "           '.   ____/\n" +
                     "            | -|-|_\n" +
                     "            |____)_)```");
-        }
+        } else
+            serverTextChannel.sendMessage("GET GNOMED FATPIG ```                __\n" +
+                    "             .-'  |\n" +
+                    "            /   <\\|     'Ello me ol' chum\n" +
+                    "           /     \\'\n" +
+                    "           |_.- o-o      I'm g'not a g'nelf\n" +
+                    "           / C  -._)\\\n" +
+                    "          /',        |   I'm g'not a g'noblin\n" +
+                    "         |   `-,_,__,'\n" +
+                    "         (,,)====[_]=|   I'm a g'nome and you've been GNOMED\n" +
+                    "           '.   ____/\n" +
+                    "            | -|-|_\n" +
+                    "            |____)_)```");
     }
 }
