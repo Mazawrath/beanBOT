@@ -1,7 +1,7 @@
 # beanBOT
 [![Build Status](https://travis-ci.com/Mazawrath/beanBOT.svg?branch=master)](https://travis-ci.com/Mazawrath/beanBOT)
 
-beanBOT is my own personal bot that I made for myself. Although it's not made for public use you can download this repository and use the bot yourself if you want to.
+beanBOT is my own personal bot that I made for myself, for a discord server I'm in. Although it's not made for public use you can download this repository and use the bot yourself if you want to.
 
 ## How to use this bot
 - Download or clone this repository.
