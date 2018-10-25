@@ -48,7 +48,7 @@ public class BeanInvestCommand implements CommandExecutor {
                             if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), beanCoinToSpend)) {
                                 if (stockMarket.buyShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase(), beanCoinToSpend).compareTo(BigDecimal.ZERO) > 0) {
                                     embed.setDescription("Buying Shares from " + stockMarket.getCompanyName(args[1].toUpperCase()));
-                                    embed.addInlineField("beanCoin spent", stockMarket.pointsToString(beanCoinToSpend));
+                                    embed.addInlineField("beanCoin spent on this purchase", stockMarket.pointsToString(beanCoinToSpend));
                                     embed.addInlineField("Shares bought", roundedSharesBought.toString() + " shares");
                                     embed.addInlineField("Shares you currently own", stockMarket.getShareInvested(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase())).toString() + " shares");
                                     embed.addInlineField("Current Portfolio Value", stockMarket.pointsToString(stockMarket.getShareInvested(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase())).multiply(stockPrice)));
