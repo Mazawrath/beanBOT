@@ -37,7 +37,7 @@ public class BeanBetCommand implements CommandExecutor {
                         Random rand = new Random();
                         int winningChance = rand.nextInt(100) + 1;
 
-                        if (winningChance <= 35) {
+                        if (winningChance <= 45) {
                             int winningMultiplier = rand.nextInt(100) + 1;
 
                             if (winningMultiplier <= 15) {
