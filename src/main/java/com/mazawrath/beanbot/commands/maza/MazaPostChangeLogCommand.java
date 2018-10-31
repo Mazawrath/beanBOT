@@ -30,12 +30,12 @@ public class MazaPostChangeLogCommand implements CommandExecutor {
         return "**New beanBOT update released.**\n" +
                 "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.5.0\n" +
                 "\n" +
-                "**v2.5.0**\n" +
+                "**v2.6.0**\n" +
                 "**New**\n" +
-                "\t- Added `.beanball`.\n" +
+                "\t- Added `.beaninvest check`.\n" +
                 "**Changes**\n" +
-                "\t- Buying and selling shares with `.beaninvest` will now use embedded messages to show you information.\n" +
+                "\t- Changed chances of winning `.beanbet` from 35% to 45%.\n" +
                 "**Bug Fixes**\n" +
-                "\t- Fixed a sorting issue with `.beanboard`.";
+                "\t- Fixed a issue with selling shares from a symbol you don't own.";
     }
 }
