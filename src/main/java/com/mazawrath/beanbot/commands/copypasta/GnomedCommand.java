@@ -37,6 +37,7 @@ public class GnomedCommand implements CommandExecutor {
                     "           '.   ____/\n" +
                     "            | -|-|_\n" +
                     "            |____)_)```");
-        }
+        } else
+            serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
     }
 }
