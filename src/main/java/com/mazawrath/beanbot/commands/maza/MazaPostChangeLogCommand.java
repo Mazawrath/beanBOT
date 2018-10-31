@@ -28,7 +28,7 @@ public class MazaPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.5.0\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.6.0\n" +
                 "\n" +
                 "**v2.6.0**\n" +
                 "**New**\n" +
