@@ -72,10 +72,10 @@ public class BeanInvestCommand implements CommandExecutor {
                     .setThumbnail("https://cdn.discordapp.com/attachments/489203676863397889/503334187621941308/Stock.png");
             if (args.length >= 2) {
                 if (StockMarket.getSymbol(args[1].toUpperCase()) != null) {
-                    BigDecimal sharesBought = stockMarket.getShareInvested(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase()));
-                    BigDecimal beanCoinSpent = stockMarket.getBeanCoinSpent(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase()));
-                    BigDecimal stockPrice = stockMarket.getStockPrice(args[1].toUpperCase(), true);
                     if (stockMarket.sellShares(author.getIdAsString(), server.getIdAsString(), args[1].toUpperCase())) {
+                        BigDecimal sharesBought = stockMarket.getShareInvested(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase()));
+                        BigDecimal beanCoinSpent = stockMarket.getBeanCoinSpent(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase()));
+                        BigDecimal stockPrice = stockMarket.getStockPrice(args[1].toUpperCase(), true);
                         BigDecimal outCome = sharesBought.multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true));
                         if (sharesBought.compareTo(BigDecimal.ZERO) > 0) {
 
