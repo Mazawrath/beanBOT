@@ -177,6 +177,7 @@ public class EightBallCommand implements CommandExecutor {
                 response = "8-BALL ERROR!";
 
             serverTextChannel.sendMessage( "MAGIC BEAN-BALL SAYS: " + response );
-        }
+        } else
+            serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
     }
 }
