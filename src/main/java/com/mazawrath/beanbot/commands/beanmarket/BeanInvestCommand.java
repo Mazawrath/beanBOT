@@ -95,6 +95,30 @@ public class BeanInvestCommand implements CommandExecutor {
                     serverTextChannel.sendMessage("Symbol not found.");
             } else
                 serverTextChannel.sendMessage("Not enough arguments");
+        } else if (args[0].equals("check")) {
+            if (args.length >= 2) {
+                if (StockMarket.getSymbol(args[1].toUpperCase()) != null) {
+                    BigDecimal sharesBought = stockMarket.getShareInvested(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase()));
+                    BigDecimal beanCoinSpent = stockMarket.getBeanCoinSpent(author.getIdAsString(), server.getIdAsString(), StockMarket.getSymbol(args[1].toUpperCase()));
+                    BigDecimal stockPrice = stockMarket.getStockPrice(args[1].toUpperCase(), true);
+                    BigDecimal outCome = sharesBought.multiply(stockMarket.getStockPrice(args[1].toUpperCase(), true));
+
+                    EmbedBuilder embed = new EmbedBuilder()
+                            .setTitle("Bean Market Investment")
+                            .setThumbnail("https://cdn.discordapp.com/attachments/489203676863397889/503334187621941308/Stock.png");
+
+                    embed.setDescription("Checking shares for " + stockMarket.getCompanyName(args[1].toUpperCase()));
+                    embed.addInlineField("Shares you currently own", sharesBought.toString() + " shares");
+                    embed.addInlineField("beanCoin spent", stockMarket.pointsToString(beanCoinSpent));
+                    embed.addInlineField("Price of " + args[1].toUpperCase(), stockMarket.pointsToString(stockPrice));
+                    embed.addInlineField("beanCoin earned from share", stockMarket.pointsToString(sharesBought.multiply(stockPrice)));
+                    embed.addInlineField("Profit from share if sold", stockMarket.pointsToString(outCome.subtract(beanCoinSpent)));
+
+                    serverTextChannel.sendMessage(embed);
+                } else
+                    serverTextChannel.sendMessage("Symbol not found.");
+            } else
+                serverTextChannel.sendMessage("You must have a symbol to check.");
         }
     }
 }
