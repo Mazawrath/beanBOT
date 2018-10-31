@@ -87,8 +87,9 @@ public class BeanInvestCommand implements CommandExecutor {
                             embed.addInlineField("Profit from share", stockMarket.pointsToString(outCome.subtract(beanCoinSpent)));
 
                             points.addPoints(author.getIdAsString(), server.getIdAsString(), outCome);
-                        }
-                        serverTextChannel.sendMessage(embed);
+                            serverTextChannel.sendMessage(embed);
+                        } else
+                            serverTextChannel.sendMessage("You must own shares in this symbol before you can sell them.");
                     } else
                         serverTextChannel.sendMessage("Uh oh this bug shouldn't happen and I wouldn't be able to explain why.");
                 } else
