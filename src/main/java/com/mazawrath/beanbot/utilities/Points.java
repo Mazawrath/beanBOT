@@ -53,7 +53,6 @@ public class Points {
                     r.hashMap("id", userID)
                             .with("Points", buildValueForDB(ZERO_POINTS))
                             .with("Last Received Free Points", 0)
-                            .with("Wanted Level", 0)
             )).run(conn);
     }
 
@@ -117,19 +116,6 @@ public class Points {
             return 0;
         }
         return timeLeft;
-    }
-
-    public BigDecimal getWantedLevel(String userID, String serverID) {
-        checkUser(userID, serverID);
-
-        return r.db("beanBotPoints").table(serverID).filter(r.hashMap("id", userID)).getField("Wanted Level").run(conn);
-    }
-
-    public void addWantedLevel(String userID, String serverID, BigDecimal wantedLevel) {
-        checkUser(userID,serverID);
-
-        r.db("beanBotPoints").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Wanted Level", getWantedLevel(userID, serverID).add(wantedLevel))).run(conn);
-        r.db("beanBotPoints").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Last Bean Rob", System.currentTimeMillis())).run(conn);
     }
 
     public static String parseValueFromDB(String value) {
