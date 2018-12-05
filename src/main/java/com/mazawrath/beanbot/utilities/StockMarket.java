@@ -18,7 +18,7 @@ import java.util.Locale;
 
 public class StockMarket {
     private static final RethinkDB r = new RethinkDB();
-    public static final String[] COMPANIES = {"BEAN", "FBI", "SHTEB", "BEZFF", "ABD", "BNTC", "BETHS", "BEAB"};
+    public static final String[] COMPANIES = {"BEAN", "FBI", "SHTEB", "BEZFF", "ABD", "BNTC", "BETHS", "BEAB", "WEEB"};
     private static final String DB_VALUE_PREFIX = "P_";
     Connection conn;
 
@@ -145,6 +145,12 @@ public class StockMarket {
                     companyInfo.put("Symbol", symbol);
                     symbol = getSymbol(symbol);
                     break;
+                case "WEEB":
+                    companyInfo.put("Name", "MicroWeeb");
+                    companyInfo.put("Logo", "https://cdn.discordapp.com/attachments/480959729330290688/519694521144049674/Untitled.png");
+                    companyInfo.put("Symbol", symbol);
+                    symbol = getSymbol(symbol);
+                    break;
                 default:
                     return null;
             }
@@ -183,6 +189,8 @@ public class StockMarket {
                 return "Papa BEETHS";
             case "BEAB":
                 return "Blissful Beans";
+            case "WEEB":
+                return "MicroWeeb";
             default:
                 return null;
         }
@@ -206,6 +214,8 @@ public class StockMarket {
                 return "PZZA";
             case "BEAB":
                 return "SBUX";
+            case "WEEB":
+                return "MSFT";
             default:
                 return null;
         }
