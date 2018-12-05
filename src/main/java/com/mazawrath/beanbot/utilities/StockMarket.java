@@ -43,7 +43,7 @@ public class StockMarket {
 
     }
 
-    public void checkUser(String userID, String serverID) {
+    private void checkUser(String userID, String serverID) {
         checkServer(serverID);
 
         if (r.db("beanBotStock").table(serverID).getField("id").contains(userID).run(conn)) {
@@ -53,7 +53,7 @@ public class StockMarket {
             )).run(conn);
     }
 
-    public void checkCompany(String userID, String serverID, String symbol) {
+    private void checkCompany(String userID, String serverID, String symbol) {
         if (r.db("beanBotStock").table(serverID).get(userID).hasFields(symbol + " shares bought").run(conn)) {
         } else {
             r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0)))
@@ -235,10 +235,14 @@ public class StockMarket {
     }
 
     public BigDecimal getShareInvested(String userID, String serverID, String symbol) {
+        checkUser(userID, serverID);
+        checkCompany(userID, serverID, symbol);
         return new BigDecimal(parseValueFromDB(r.db("beanBotStock").table(serverID).get(userID).getField(symbol + " shares bought").run(conn))).setScale(Points.SCALE, Points.ROUNDING_MODE);
     }
 
     public BigDecimal getBeanCoinSpent(String userID, String serverID, String symbol) {
+        checkUser(userID, serverID);
+        checkCompany(userID, serverID, symbol);
         return new BigDecimal(parseValueFromDB(r.db("beanBotStock").table(serverID).get(userID).getField(symbol + " beanCoin spent").run(conn))).setScale(Points.SCALE, Points.ROUNDING_MODE);
     }
 
