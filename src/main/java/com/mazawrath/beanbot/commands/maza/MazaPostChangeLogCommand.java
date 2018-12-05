@@ -36,8 +36,8 @@ public class MazaPostChangeLogCommand implements CommandExecutor {
                 "\t- Bean Market\n" +
                 "\t\t- Added `WEEB` (MicroWeeb).\n" +
                 "**Changes**\n" +
-                "\t- Added extra info when using `.beaninvest` without any arguments/";
-                //"**Bug Fixes**\n" +
-                //"\t- Fixed an issue with selling shares.";
+                "\t- Added extra info when using `.beaninvest` without any arguments.\n" +
+                "**Bug Fixes**\n" +
+                "\t- Fixed an issue with selling or checking stocks you never bought.";
     }
 }
