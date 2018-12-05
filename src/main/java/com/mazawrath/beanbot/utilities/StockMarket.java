@@ -43,7 +43,7 @@ public class StockMarket {
 
     }
 
-    private void checkUser(String userID, String serverID) {
+    public void checkUser(String userID, String serverID) {
         checkServer(serverID);
 
         if (r.db("beanBotStock").table(serverID).getField("id").contains(userID).run(conn)) {
@@ -53,7 +53,7 @@ public class StockMarket {
             )).run(conn);
     }
 
-    private void checkCompany(String userID, String serverID, String symbol) {
+    public void checkCompany(String userID, String serverID, String symbol) {
         if (r.db("beanBotStock").table(serverID).get(userID).hasFields(symbol + " shares bought").run(conn)) {
         } else {
             r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0)))
