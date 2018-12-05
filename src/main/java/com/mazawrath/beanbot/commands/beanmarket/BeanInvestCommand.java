@@ -24,7 +24,7 @@ public class BeanInvestCommand implements CommandExecutor {
     @Command(
             aliases = {"beanInvest", "coinInvest"},
             description = "Lets you invest in companies from the Bean Market.",
-            usage = "beanInvest [[buy/sell] [symbol]]",
+            usage = "beanInvest [[buy/sell/check] [symbol]]",
             privateMessages = false
     )
 
@@ -33,7 +33,8 @@ public class BeanInvestCommand implements CommandExecutor {
             serverTextChannel.sendMessage("No arguments for this command are currently not supported. In the future this will be a way to look at your portfolio and all the shares you have invested in.\n" +
                     "Instructions for `.beaninvest`.\n" +
                     "\t- `.beaninvest buy [symbol] [amount]` - Buys shares from that symbol.\n" +
-                    "\t- `.beaninvest sell [symbol]` - Sells all shares bought from that symbol.");
+                    "\t- `.beaninvest sell [symbol]` - Sells all shares bought from that symbol." +
+                    "\t- `.beaninvest check [symbol]` - Checks how many shares are bought from that symbol.");
         } else if (args[0].equals("buy")) {
             EmbedBuilder embed = new EmbedBuilder()
                     .setTitle("Bean Market Investment")
