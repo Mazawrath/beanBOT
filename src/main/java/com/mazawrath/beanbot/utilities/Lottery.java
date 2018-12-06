@@ -38,13 +38,17 @@ public class Lottery {
                     r.hashMap("id", userID))).run(conn);
     }
 
-    public void addEntry(String userID, String serverID, int amount) {
+    public int[][] addEntry(String userID, String serverID, int amount) {
         checkUser(userID, serverID);
+        int[][] retNumbers = new int[amount][3];
 
         for (int i = 0; i < amount; i++) {
+            retNumbers[i] = generateNumbers();
             r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Lottery ticket", generateNumbers())
             ).run(conn);
         }
+
+        return retNumbers;
     }
 
     public void addEntry(String userID, String server, int[] numbers) {
@@ -53,9 +57,9 @@ public class Lottery {
 
     private int[] generateNumbers() {
         Random random = new Random();
-        int[] numbers = new int[4];
-        for (int i = 0; i < 4; i++) {
-            numbers[i] = random.nextInt(40) + 1;
+        int[] numbers = new int[3];
+        for (int i = 0; i < 3; i++) {
+            numbers[i] = random.nextInt(20) + 1;
         }
         return numbers;
     }
