@@ -21,6 +21,7 @@ public class Points {
     public static final BigDecimal FREE_POINTS = new BigDecimal("25.69").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST = new BigDecimal("2.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST_SPECIAL = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal LOTTERY_TICKET_COST = new BigDecimal("20.00").setScale(SCALE, ROUNDING_MODE);
     private Connection conn;
 
     public void connectDatabase() {
@@ -41,7 +42,6 @@ public class Points {
         if (r.db("beanBotPoints").tableList().contains(serverID).run(conn)) {
         } else
             r.db("beanBotPoints").tableCreate(serverID).run(conn);
-
     }
 
     private void checkUser(String userID, String serverID) {
