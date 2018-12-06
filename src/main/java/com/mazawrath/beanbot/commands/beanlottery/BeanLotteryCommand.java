@@ -23,7 +23,7 @@ public class BeanLotteryCommand implements CommandExecutor {
 
     @Command(
             aliases = {"beanlottery"},
-            usage = "beanlottery [amount of tickets to buy/ 4 numbers > 0 and <= 40]",
+            usage = "beanlottery [amount of tickets to buy/ 4 numbers >= 1 and <= 20]",
             description = "Buys a lottery ticket, either input a number saying how many tickets you want or enter a set of 4 numbers to manually create a ticket.",
             privateMessages = false
     )
@@ -39,7 +39,7 @@ public class BeanLotteryCommand implements CommandExecutor {
                     MessageBuilder message = new MessageBuilder();
 
                     for (int i = 0; i < numbers.length; i++) {
-                        for (int j = 0; j < 3; j++)
+                        for (int j = 0; j < Lottery.AMOUNT_DRAWN; j++)
                             message.append(numbers[i][j] + " ");
                         message.append("\n");
                     }
@@ -47,14 +47,14 @@ public class BeanLotteryCommand implements CommandExecutor {
                     message.send(author);
                 } else
                     serverTextChannel.sendMessage("You don't have enough beanCoin to buy that many tickets.");
-            } else if (args.length >= 3) {
-                int[] numbers = new int[3];
+            } else if (args.length >= Lottery.AMOUNT_DRAWN) {
+                int[] numbers = new int[Lottery.AMOUNT_DRAWN];
 
-                for (int i = 0; i < 3; i++) {
-                    if (Integer.parseInt(args[i]) > 0 && Integer.parseInt(args[i]) <= 20)
+                for (int i = 0; i < Lottery.AMOUNT_DRAWN; i++) {
+                    if (Integer.parseInt(args[i]) >= Lottery.MIN_NUMBER && Integer.parseInt(args[i]) <= Lottery.MAX_NUMBER)
                         numbers[i] = Integer.parseInt(args[i]);
                     else {
-                        serverTextChannel.sendMessage(args[i] + " is an invalid number. Numbers must be greater than 0 and less than or equal to 20");
+                        serverTextChannel.sendMessage(args[i] + " is an invalid number. Numbers must be greater than or equal to " + Lottery.MIN_NUMBER + " and less than or equal to " + Lottery.MAX_NUMBER);
                         return;
                     }
                 }
@@ -65,7 +65,7 @@ public class BeanLotteryCommand implements CommandExecutor {
                             author.sendMessage(args[0] + " " + args[1] + " " + args[2]);
                 }
             } else
-                serverTextChannel.sendMessage("You must either have 1 number with how many tickets you want to buy or three numbers >0 and <=20.");
+                serverTextChannel.sendMessage("You must either have 1 number with how many tickets you want to buy or " + Lottery.AMOUNT_DRAWN  + " numbers >" + Lottery.MIN_NUMBER + " and <=" + Lottery.MAX_NUMBER + ".");
         } catch (NumberFormatException | NullPointerException e) {
             serverTextChannel.sendMessage("Invalid number(s).");
         }

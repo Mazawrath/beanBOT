@@ -7,6 +7,10 @@ import java.util.Random;
 import static com.rethinkdb.RethinkDB.r;
 
 public class Lottery {
+    public static final int AMOUNT_DRAWN = 3;
+    public static final int MIN_NUMBER = 1;
+    public static final int MAX_NUMBER = 20;
+
     Connection conn;
 
     public void connectDatabase() {
@@ -40,7 +44,7 @@ public class Lottery {
 
     public int[][] addEntry(String userID, String serverID, int amount) {
         checkUser(userID, serverID);
-        int[][] retNumbers = new int[amount][3];
+        int[][] retNumbers = new int[amount][AMOUNT_DRAWN];
 
         for (int i = 0; i < amount; i++) {
             retNumbers[i] = generateNumbers();
@@ -57,9 +61,9 @@ public class Lottery {
 
     private int[] generateNumbers() {
         Random random = new Random();
-        int[] numbers = new int[3];
-        for (int i = 0; i < 3; i++) {
-            numbers[i] = random.nextInt(20) + 1;
+        int[] numbers = new int[AMOUNT_DRAWN];
+        for (int i = 0; i < AMOUNT_DRAWN; i++) {
+            numbers[i] = random.nextInt(MAX_NUMBER) + 1;
         }
         return numbers;
     }
