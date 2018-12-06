@@ -34,7 +34,8 @@ public class BeanLotteryCommand implements CommandExecutor {
                 if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_TICKET_COST.multiply(new BigDecimal(Integer.parseInt(args[0]))))) {
                     int[][] numbers = lottery.addEntry(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]));
 
-                    author.sendMessage("Your numbers are:");
+                    author.sendMessage(args[0] + " tickets bought.\n" +
+                            "Your numbers are:");
                     MessageBuilder message = new MessageBuilder();
 
                     for (int i = 0; i < numbers.length; i++) {
@@ -46,20 +47,25 @@ public class BeanLotteryCommand implements CommandExecutor {
                     message.send(author);
                 } else
                     serverTextChannel.sendMessage("You don't have enough beanCoin to buy that many tickets.");
-            } else if (args.length >= 4) {
-                int[] numbers = new int[4];
+            } else if (args.length >= 3) {
+                int[] numbers = new int[3];
 
-                for (int i = 0; i < 4; i++) {
-                    if (Integer.parseInt(args[i]) > 0 && Integer.parseInt(args[i]) <= 40)
+                for (int i = 0; i < 3; i++) {
+                    if (Integer.parseInt(args[i]) > 0 && Integer.parseInt(args[i]) <= 20)
                         numbers[i] = Integer.parseInt(args[i]);
-                    else
-                        serverTextChannel.sendMessage(args[i] + " is an invalid number. Numbers must be greater than zero and less than or equal to 40");
+                    else {
+                        serverTextChannel.sendMessage(args[i] + " is an invalid number. Numbers must be greater than 0 and less than or equal to 20");
+                        return;
+                    }
                 }
-                if (!points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_TICKET_COST)) {
+                if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_TICKET_COST)) {
                     lottery.addEntry(author.getIdAsString(), server.getIdAsString(), numbers);
+                    author.sendMessage("1 ticket bought.\n" +
+                            "Your numbers are:\n");
+                            author.sendMessage(args[0] + " " + args[1] + " " + args[2]);
                 }
             } else
-                serverTextChannel.sendMessage("Not enough arguments.");
+                serverTextChannel.sendMessage("You must either have 1 number with how many tickets you want to buy or three numbers >0 and <=20.");
         } catch (NumberFormatException | NullPointerException e) {
             serverTextChannel.sendMessage("Invalid number(s).");
         }
