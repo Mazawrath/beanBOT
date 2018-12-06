@@ -7,6 +7,7 @@ import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
 import com.mazawrath.beanbot.commands.maza.*;
+import com.mazawrath.beanbot.utilities.Lottery;
 import com.mazawrath.beanbot.utilities.Points;
 import com.mazawrath.beanbot.utilities.StockMarket;
 import de.btobastian.sdcf4j.CommandHandler;
@@ -23,9 +24,11 @@ public class Main {
 
         Points points = new Points();
         StockMarket stockMarket = new StockMarket();
+        Lottery lottery = new Lottery();
 
         points.connectDatabase();
         stockMarket.connectDatabase();
+        lottery.connectDatabase();
 
         String token = args[0];
 
