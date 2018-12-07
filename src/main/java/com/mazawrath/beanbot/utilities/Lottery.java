@@ -44,11 +44,11 @@ public class Lottery {
         checkUser(userID, serverID);
         int[][] retNumbers = new int[amount][AMOUNT_DRAWN];
 
-        for (int i = 0; i < amount; i++) {
+        for (int i = 0; i < amount; i++)
             retNumbers[i] = generateNumbers();
-            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Lottery ticket", generateNumbers())
-            ).run(conn);
-        }
+
+        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Lottery ticket", retNumbers)
+        ).run(conn);
 
         return retNumbers;
     }
