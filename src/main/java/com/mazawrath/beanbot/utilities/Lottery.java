@@ -47,14 +47,14 @@ public class Lottery {
         for (int i = 0; i < amount; i++)
             retNumbers[i] = generateNumbers();
 
-        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Lottery ticket", retNumbers)
+        r.db("beanBotLottery").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Lottery ticket", retNumbers)
         ).run(conn);
 
         return retNumbers;
     }
 
     public void addEntry(String userID, String serverID, int[] numbers) {
-        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Lottery ticket", numbers)
+        r.db("beanBotLottery").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Lottery ticket", numbers)
         ).run(conn);
     }
 
