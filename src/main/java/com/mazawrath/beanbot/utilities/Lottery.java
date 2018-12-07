@@ -54,7 +54,7 @@ public class Lottery {
     }
 
     public void addEntry(String userID, String serverID, int[] numbers) {
-        r.db("beanBotLottery").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Lottery ticket", numbers)
+        r.db("beanBotLottery").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Lottery ticket", r.array(r.array(numbers[0], numbers[1], numbers[2])))
         ).run(conn);
     }
 
