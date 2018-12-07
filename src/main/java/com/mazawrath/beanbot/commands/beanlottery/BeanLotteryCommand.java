@@ -43,7 +43,6 @@ public class BeanLotteryCommand implements CommandExecutor {
                             message.append(numbers[i][j] + " ");
                         message.append("\n");
                     }
-
                     message.send(author);
                 } else
                     serverTextChannel.sendMessage("You don't have enough beanCoin to buy that many tickets.");
@@ -63,7 +62,8 @@ public class BeanLotteryCommand implements CommandExecutor {
                     author.sendMessage("1 ticket bought.\n" +
                             "Your numbers are:\n");
                             author.sendMessage(args[0] + " " + args[1] + " " + args[2]);
-                }
+                } else
+                    serverTextChannel.sendMessage("You do not have enough beanCoin to buy a ticket.");
             } else
                 serverTextChannel.sendMessage("You must either have 1 number with how many tickets you want to buy or " + Lottery.AMOUNT_DRAWN  + " numbers >" + Lottery.MIN_NUMBER + " and <=" + Lottery.MAX_NUMBER + ".");
         } catch (NumberFormatException | NullPointerException e) {
