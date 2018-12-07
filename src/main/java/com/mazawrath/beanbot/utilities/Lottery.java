@@ -11,7 +11,7 @@ public class Lottery {
     public static final int MIN_NUMBER = 1;
     public static final int MAX_NUMBER = 20;
 
-    Connection conn;
+    private Connection conn;
 
     public void connectDatabase() {
         conn = r.connection().hostname("localhost").port(28015).connect();
@@ -55,8 +55,9 @@ public class Lottery {
         return retNumbers;
     }
 
-    public void addEntry(String userID, String server, int[] numbers) {
-
+    public void addEntry(String userID, String serverID, int[] numbers) {
+        r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Lottery ticket", numbers)
+        ).run(conn);
     }
 
     private int[] generateNumbers() {
