@@ -43,18 +43,18 @@ public class Lottery {
 
     public ArrayList<ArrayList<Integer>> addEntry(String userID, String serverID, int amount) {
         checkUser(userID, serverID);
-        ArrayList<ArrayList<Integer>> ticketArray = new ArrayList<ArrayList<Integer>>();
-        int[] generatedNumbers = new int[AMOUNT_DRAWN];
+        ArrayList<ArrayList<Integer>> ticketArray = new ArrayList<>();
+        int[] generatedNumbers;
 
         for (int i = 0; i < amount; i++) {
-            ArrayList<Integer> singleTicket = new ArrayList<Integer>();
+            ArrayList<Integer> singleTicket = new ArrayList<>();
             generatedNumbers = generateNumbers();
             for (int j = 0; j < AMOUNT_DRAWN; j++)
                 singleTicket.add(generatedNumbers[j]);
             ticketArray.add(singleTicket);
         }
 
-        r.db("beanBotLottery").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Lottery ticket", ticketArray)
+        r.db("beanBotLottery").table(serverID).filter(r.hashMap("id", userID)).update(row -> r.hashMap("Lottery ticket", row.g("Lottery ticket").default_(r.array(ticketArray)))
         ).run(conn);
 
         return ticketArray;
