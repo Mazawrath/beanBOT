@@ -54,9 +54,11 @@ public class Lottery {
             ticketArray.add(singleTicket);
         }
 
-        r.db("beanBotLottery").table(serverID).filter(r.hashMap("id", userID)).update(row -> r.hashMap("Lottery ticket", row.g("Lottery ticket").default_(r.array(ticketArray)))
-        ).run(conn);
-
+        for (int i = 0; i < ticketArray.size(); i++) {
+            int finalI = i;
+            r.db("beanBotLottery").table(serverID).filter(r.hashMap("id", userID))
+                    .update(row -> r.hashMap("Lottery ticket", row.g("Lottery ticket").default_(r.array()).append(ticketArray.get(finalI)))).run(conn);
+        }
         return ticketArray;
     }
 
