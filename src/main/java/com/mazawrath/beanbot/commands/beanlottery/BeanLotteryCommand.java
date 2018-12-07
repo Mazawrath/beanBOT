@@ -11,6 +11,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 public class BeanLotteryCommand implements CommandExecutor {
     private Points points;
@@ -32,15 +33,15 @@ public class BeanLotteryCommand implements CommandExecutor {
         try {
             if (args.length == 1) {
                 if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_TICKET_COST.multiply(new BigDecimal(Integer.parseInt(args[0]))))) {
-                    int[][] numbers = lottery.addEntry(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]));
+                    ArrayList<ArrayList<Integer>> numbers = lottery.addEntry(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]));
 
                     author.sendMessage(args[0] + " tickets bought.\n" +
                             "Your numbers are:");
                     MessageBuilder message = new MessageBuilder();
 
-                    for (int i = 0; i < numbers.length; i++) {
+                    for (int i = 0; i < numbers.size(); i++) {
                         for (int j = 0; j < Lottery.AMOUNT_DRAWN; j++)
-                            message.append(numbers[i][j] + " ");
+                            message.append(numbers.get(i).get(j) + " ");
                         message.append("\n");
                     }
                     message.send(author);

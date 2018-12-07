@@ -2,6 +2,7 @@ package com.mazawrath.beanbot.utilities;
 
 import com.rethinkdb.net.Connection;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import static com.rethinkdb.RethinkDB.r;
@@ -40,17 +41,23 @@ public class Lottery {
                     r.hashMap("id", userID))).run(conn);
     }
 
-    public int[][] addEntry(String userID, String serverID, int amount) {
+    public ArrayList<ArrayList<Integer>> addEntry(String userID, String serverID, int amount) {
         checkUser(userID, serverID);
-        int[][] retNumbers = new int[amount][AMOUNT_DRAWN];
+        ArrayList<ArrayList<Integer>> ticketArray = new ArrayList<ArrayList<Integer>>();
+        int[] generatedNumbers = new int[AMOUNT_DRAWN];
 
-        for (int i = 0; i < amount; i++)
-            retNumbers[i] = generateNumbers();
+        for (int i = 0; i < amount; i++) {
+            ArrayList<Integer> singleTicket = new ArrayList<Integer>();
+            generatedNumbers = generateNumbers();
+            for (int j = 0; j < AMOUNT_DRAWN; j++)
+                singleTicket.add(generatedNumbers[j]);
+            ticketArray.add(singleTicket);
+        }
 
-        r.db("beanBotLottery").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Lottery ticket", retNumbers)
+        r.db("beanBotLottery").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Lottery ticket", r.array(ticketArray))
         ).run(conn);
 
-        return retNumbers;
+        return ticketArray;
     }
 
     public void addEntry(String userID, String serverID, int[] numbers) {
