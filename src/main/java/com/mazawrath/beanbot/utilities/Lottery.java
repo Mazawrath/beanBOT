@@ -18,12 +18,10 @@ public class Lottery {
         checkTable(conn);
     }
 
-    private boolean checkTable(Connection conn) {
+    private void checkTable(Connection conn) {
         if (r.dbList().contains("beanBotLottery").run(conn)) {
-            return true;
         } else {
             r.dbCreate("beanBotLottery").run(conn);
-            return true;
         }
     }
 

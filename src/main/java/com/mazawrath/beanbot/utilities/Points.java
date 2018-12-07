@@ -29,12 +29,10 @@ public class Points {
         checkTable(conn);
     }
 
-    private boolean checkTable(Connection conn) {
+    private void checkTable(Connection conn) {
         if (r.dbList().contains("beanBotPoints").run(conn)) {
-            return true;
         } else {
             r.dbCreate("beanBotPoints").run(conn);
-            return true;
         }
     }
 

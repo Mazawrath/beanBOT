@@ -27,12 +27,10 @@ public class StockMarket {
         checkTable(conn);
     }
 
-    private boolean checkTable(Connection conn) {
+    private void checkTable(Connection conn) {
         if (r.dbList().contains("beanBotStock").run(conn)) {
-            return true;
         } else {
             r.dbCreate("beanBotStock").run(conn);
-            return true;
         }
     }
 
