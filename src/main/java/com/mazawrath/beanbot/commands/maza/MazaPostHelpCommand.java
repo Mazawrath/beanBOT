@@ -7,6 +7,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
 
 import java.awt.*;
 
@@ -25,11 +26,15 @@ public class MazaPostHelpCommand implements CommandExecutor {
             async = true,
             showInHelpPage = false
     )
-    public void onCommand(String[] args, DiscordApi api, ServerTextChannel channel, Server server) {
+    public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
+        if (!author.isBotOwner()) {
+            serverTextChannel.sendMessage("Only Mazawrath can use this command.");
+            return;
+        }
 
         String prefix = cmdHandler.getDefaultPrefix();
         buildDefaultHelp(api, server, args[0], prefix);
-        channel.sendMessage("Help command sent to " + channel);
+        serverTextChannel.sendMessage("Help command sent to " + serverTextChannel);
     }
 
     public void buildDefaultHelp(DiscordApi api, Server server, String channel, String prefix) {
@@ -54,8 +59,6 @@ public class MazaPostHelpCommand implements CommandExecutor {
                 .addField("Prefix: ", String.format("```%s```", prefix))
                 .addField("Command usage", builder.toString())
                 .setFooter("Target a command as an argument to see details");
-        server.getTextChannelById(channel).ifPresent(serverTextChannel -> {
-            serverTextChannel.sendMessage(embed);
-        });
+        server.getTextChannelById(channel).ifPresent(serverTextChannel -> serverTextChannel.sendMessage(embed));
     }
 }

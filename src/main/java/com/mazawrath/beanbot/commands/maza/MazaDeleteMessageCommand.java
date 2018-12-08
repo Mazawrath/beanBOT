@@ -14,14 +14,14 @@ public class MazaDeleteMessageCommand implements CommandExecutor {
             showInHelpPage = false
     )
 
-    public void onCommand(String command, String channelID, String messageId, ServerTextChannel serverTextChannel2, DiscordApi api, User author, Server server) {
-        if (author.isBotOwner()) {
-            serverTextChannel2.sendMessage(messageId + " deleted.");
-            server.getTextChannelById(channelID).ifPresent(serverTextChannel -> {
-                serverTextChannel.deleteMessages(messageId);
-            });
-        } else
+    public void onCommand(String[] args, ServerTextChannel serverTextChannel2, User author, Server server) {
+        if (!author.isBotOwner()) {
             // There is no better var name than this and if you think otherwise you're wrong.
-            serverTextChannel2.sendMessage("Only Mazawrath can send this message.");
+            serverTextChannel2.sendMessage("Only Mazawrath can use this command.");
+            return;
+        }
+
+        serverTextChannel2.sendMessage(args[1] + " deleted.");
+        server.getTextChannelById(args[0]).ifPresent(serverTextChannel -> serverTextChannel.deleteMessages(args[1]));
     }
 }
