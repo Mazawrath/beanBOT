@@ -23,15 +23,17 @@ public class MazaAddBeanCoinCommand implements CommandExecutor {
             showInHelpPage = false
     )
 
-    public void onCommand(String command, String user, String pointValue, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (author.isBotOwner()) {
-            if (Points.isProperDecimal(pointValue)) {
-                BigDecimal transferPoints = new BigDecimal(pointValue).setScale(Points.SCALE, Points.ROUNDING_MODE);
-                points.addPoints(user, server.getIdAsString(), transferPoints);
-                serverTextChannel.sendMessage("Added " + Points.pointsToString(transferPoints) + " to " + user + ".");
-            } else
-                serverTextChannel.sendMessage("Invalid amount of beanCoin.");
+    public void onCommand(String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
+        if (!author.isBotOwner()) {
+            serverTextChannel.sendMessage("Only Mazawrath can use this command.");
+            return;
+        }
+
+        if (Points.isProperDecimal(args[1])) {
+            BigDecimal transferPoints = new BigDecimal(args[1]).setScale(Points.SCALE, Points.ROUNDING_MODE);
+            points.addPoints(args[0], server.getIdAsString(), transferPoints);
+            serverTextChannel.sendMessage("Added " + Points.pointsToString(transferPoints) + " to " + args[0] + ".");
         } else
-            serverTextChannel.sendMessage("Only Mazawrath can send this message.");
+            serverTextChannel.sendMessage("Invalid amount of beanCoin.");
     }
 }

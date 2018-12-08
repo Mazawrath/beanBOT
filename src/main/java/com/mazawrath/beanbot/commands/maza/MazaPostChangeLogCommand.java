@@ -15,15 +15,17 @@ public class MazaPostChangeLogCommand implements CommandExecutor {
             showInHelpPage = false
     )
 
-    public void onCommand(String command, String id, DiscordApi api, ServerTextChannel serverTextChannel2, User author, Server server) {
-        if (author.isBotOwner()) {
-            server.getTextChannelById(id).ifPresent(serverTextChannel -> {
-                serverTextChannel.sendMessage(getRecentChangeLog());
-                serverTextChannel2.sendMessage("Changelog sent to " + serverTextChannel.getName() + ".");
-            });
-        } else
+    public void onCommand(String[] args, ServerTextChannel serverTextChannel2, User author, Server server) {
+        if (!author.isBotOwner()) {
             // There is no better var name than this and if you think otherwise you're wrong.
-            serverTextChannel2.sendMessage("Only Mazawrath can send this message.");
+            serverTextChannel2.sendMessage("Only Mazawrath can use this command.");
+            return;
+        }
+
+        server.getTextChannelById(args[0]).ifPresent(serverTextChannel -> {
+            serverTextChannel.sendMessage(getRecentChangeLog());
+            serverTextChannel2.sendMessage("Changelog sent to " + serverTextChannel.getName() + ".");
+        });
     }
 
     private String getRecentChangeLog() {
