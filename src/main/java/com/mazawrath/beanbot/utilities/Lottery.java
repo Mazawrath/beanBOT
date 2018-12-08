@@ -11,6 +11,7 @@ public class Lottery {
     public static final int AMOUNT_DRAWN = 3;
     public static final int MIN_NUMBER = 1;
     public static final int MAX_NUMBER = 20;
+    private static final String DB_NAME = "beanBotLottery";
 
     private Connection conn;
 
@@ -20,24 +21,24 @@ public class Lottery {
     }
 
     private void checkTable(Connection conn) {
-        if (r.dbList().contains("beanBotLottery").run(conn)) {
+        if (r.dbList().contains(DB_NAME).run(conn)) {
         } else {
-            r.dbCreate("beanBotLottery").run(conn);
+            r.dbCreate(DB_NAME).run(conn);
         }
     }
 
     private void checkServer(String serverID) {
-        if (r.db("beanBotLottery").tableList().contains(serverID).run(conn)) {
+        if (r.db(DB_NAME).tableList().contains(serverID).run(conn)) {
         } else
-            r.db("beanBotLottery").tableCreate(serverID).run(conn);
+            r.db(DB_NAME).tableCreate(serverID).run(conn);
     }
 
     private void checkUser(String userID, String serverID) {
         checkServer(serverID);
 
-        if (r.db("beanBotLottery").table(serverID).getField("id").contains(userID).run(conn)) {
+        if (r.db(DB_NAME).table(serverID).getField("id").contains(userID).run(conn)) {
         } else
-            r.db("beanBotLottery").table(serverID).insert(r.array(
+            r.db(DB_NAME).table(serverID).insert(r.array(
                     r.hashMap("id", userID))).run(conn);
     }
 
@@ -56,14 +57,14 @@ public class Lottery {
 
         for (int i = 0; i < ticketArray.size(); i++) {
             int finalI = i;
-            r.db("beanBotLottery").table(serverID).filter(r.hashMap("id", userID))
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID))
                     .update(row -> r.hashMap("Lottery ticket", row.g("Lottery ticket").default_(r.array()).append(ticketArray.get(finalI)))).run(conn);
         }
         return ticketArray;
     }
 
     public void addEntry(String userID, String serverID, int[] numbers) {
-        r.db("beanBotLottery").table(serverID).filter(r.hashMap("id", userID))
+        r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID))
                 .update(row -> r.hashMap("Lottery ticket", row.g("Lottery ticket").default_(r.array()).append(r.array(numbers[0], numbers[1], numbers[2])))).run(conn);
     }
 
