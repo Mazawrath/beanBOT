@@ -9,6 +9,10 @@ import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
+import java.text.DecimalFormat;
+import java.text.Format;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Random;
 
 public class GiveModCommand implements CommandExecutor {
@@ -33,7 +37,7 @@ public class GiveModCommand implements CommandExecutor {
             else {
                 Random rand = new Random();
                 int n = rand.nextInt(9999) + 1;
-                serverTextChannel.sendMessage("You rolled a " + n + ". You have to get 10,000. Sorry, try again!");
+                serverTextChannel.sendMessage("You rolled a " + NumberFormat.getNumberInstance(Locale.US).format(n) + ". You have to get 10,000. Sorry, try again!");
             }
         } else
             serverTextChannel.sendMessage("You do not have enough beanCoin for this command.");
