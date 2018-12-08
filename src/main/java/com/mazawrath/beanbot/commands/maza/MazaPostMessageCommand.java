@@ -16,16 +16,17 @@ public class MazaPostMessageCommand implements CommandExecutor {
             showInHelpPage = false
     )
 
-    public void onCommand(String[] command, DiscordApi api, ServerTextChannel serverTextChannel2, User author, Server server) throws ExecutionException, InterruptedException {
-        if (author.isBotOwner()) {
-            StringBuilder message = new StringBuilder();
-            server.getTextChannelById(command[0]).ifPresent(serverTextChannel -> {
-                for (int i = 1; i < command.length; i++) {
-                    message.append(command[i]).append(" ");
-                }
-                serverTextChannel.sendMessage(message.toString());
-            });
-        } else
-            serverTextChannel2.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " can send this message.");
+    public void onCommand(String[] command, ServerTextChannel serverTextChannel2, User author, Server server) throws ExecutionException, InterruptedException {
+        if (!author.isBotOwner()) {
+            serverTextChannel2.sendMessage("Only Mazawrath can use this command.");
+            return;
+        }
+        StringBuilder message = new StringBuilder();
+        server.getTextChannelById(command[0]).ifPresent(serverTextChannel -> {
+            for (int i = 1; i < command.length; i++) {
+                message.append(command[i]).append(" ");
+            }
+            serverTextChannel.sendMessage(message.toString());
+        });
     }
 }
