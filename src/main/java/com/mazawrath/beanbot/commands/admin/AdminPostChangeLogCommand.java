@@ -21,7 +21,7 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel2, User author, Server server) throws ExecutionException, InterruptedException {
         if (!author.isBotOwner() || !server.isOwner(author)) {
             // There is no better var name than this and if you think otherwise you're wrong.
-            serverTextChannel2.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " can use this command.");
+            serverTextChannel2.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + "can use this command.");
             return;
         }
 
