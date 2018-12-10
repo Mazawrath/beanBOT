@@ -76,7 +76,7 @@ public class BeanLotteryCommand implements CommandExecutor {
                 } else
                     serverTextChannel.sendMessage("You do not have enough beanCoin to buy a ticket.");
             } else
-                serverTextChannel.sendMessage("You must either have 1 number with how many tickets you want to buy or " + Lottery.AMOUNT_DRAWN  + " numbers >" + Lottery.MIN_NUMBER + " and <=" + Lottery.MAX_NUMBER + ".");
+                serverTextChannel.sendMessage("You must either have 1 number with how many tickets you want to buy or " + Lottery.AMOUNT_DRAWN  + " numbers > " + Lottery.MIN_NUMBER + " and <= " + Lottery.MAX_NUMBER + ".");
         } catch (NumberFormatException | NullPointerException e) {
             serverTextChannel.sendMessage("Invalid number(s).");
         }
