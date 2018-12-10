@@ -12,12 +12,14 @@ import java.util.concurrent.ExecutionException;
 public class AdminPostChangeLogCommand implements CommandExecutor {
     @Command(
             aliases = {"adminpostchangelog"},
+            usage = "adminpostchangelog [Channel ID]",
+            description = "Posts the changelog to the specified channel.",
             privateMessages = false,
             showInHelpPage = false
     )
 
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel2, User author, Server server) throws ExecutionException, InterruptedException {
-        if (!author.isBotOwner()) {
+        if (!author.isBotOwner() || !server.isOwner(author)) {
             // There is no better var name than this and if you think otherwise you're wrong.
             serverTextChannel2.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " can use this command.");
             return;

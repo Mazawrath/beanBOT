@@ -22,13 +22,12 @@ public class AdminPostHelpCommand implements CommandExecutor {
 
     @Command(
             aliases = {"adminposthelp"},
-            usage = "adminposthelp [channel]",
-            description = "Posts the help page to the specified channel.",
-            async = true,
+            usage = "adminposthelp [Channel ID]",
+            description = "Posts the help info to the specified channel.",
             showInHelpPage = false
     )
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) throws ExecutionException, InterruptedException {
-        if (!author.isBotOwner()) {
+        if (!author.isBotOwner() || !server.isOwner(author)) {
             serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " can use this command.");
             return;
         }
