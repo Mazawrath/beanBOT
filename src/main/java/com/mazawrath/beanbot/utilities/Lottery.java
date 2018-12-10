@@ -72,7 +72,7 @@ public class Lottery {
         Random r = new Random();
         int[] numbers = new int[AMOUNT_DRAWN];
         for (int i = 0; i < AMOUNT_DRAWN; i++) {
-            numbers[i] = r.nextInt(MAX_NUMBER - MIN_NUMBER) + MIN_NUMBER;
+            numbers[i] = r.nextInt(MAX_NUMBER - MIN_NUMBER + 1) + MIN_NUMBER;
         }
         return numbers;
     }
