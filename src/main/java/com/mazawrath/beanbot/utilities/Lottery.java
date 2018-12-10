@@ -69,10 +69,10 @@ public class Lottery {
     }
 
     private int[] generateNumbers() {
-        Random random = new Random();
+        Random r = new Random();
         int[] numbers = new int[AMOUNT_DRAWN];
         for (int i = 0; i < AMOUNT_DRAWN; i++) {
-            numbers[i] = random.nextInt(MAX_NUMBER) + 1;
+            numbers[i] = r.nextInt(MAX_NUMBER - MIN_NUMBER) + MIN_NUMBER;
         }
         return numbers;
     }
