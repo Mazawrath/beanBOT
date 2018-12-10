@@ -1,31 +1,32 @@
-package com.mazawrath.beanbot.commands.maza;
+package com.mazawrath.beanbot.commands.admin;
 
 import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.util.concurrent.ExecutionException;
 
-public class MazaAddBeanCoinCommand implements CommandExecutor {
+public class AdminAddBeanCoinCommand implements CommandExecutor {
     private Points points;
 
-    public MazaAddBeanCoinCommand(Points pointsPassed) {
+    public AdminAddBeanCoinCommand(Points pointsPassed) {
         points = pointsPassed;
     }
 
     @Command(
-            aliases = {"mazaaddbeancoin"},
+            aliases = {"adminaddbeancoin"},
             privateMessages = false,
             showInHelpPage = false
     )
 
-    public void onCommand(String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
+    public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) throws ExecutionException, InterruptedException {
         if (!author.isBotOwner()) {
-            serverTextChannel.sendMessage("Only Mazawrath can use this command.");
+            serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " can use this command.");
             return;
         }
 

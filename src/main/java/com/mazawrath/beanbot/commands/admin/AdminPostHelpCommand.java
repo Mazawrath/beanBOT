@@ -1,4 +1,4 @@
-package com.mazawrath.beanbot.commands.maza;
+package com.mazawrath.beanbot.commands.admin;
 
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
@@ -10,25 +10,26 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
 import java.awt.*;
+import java.util.concurrent.ExecutionException;
 
-public class MazaPostHelpCommand implements CommandExecutor {
+public class AdminPostHelpCommand implements CommandExecutor {
 
     private final CommandHandler cmdHandler;
 
-    public MazaPostHelpCommand(CommandHandler commandHandler) {
+    public AdminPostHelpCommand(CommandHandler commandHandler) {
         this.cmdHandler = commandHandler;
     }
 
     @Command(
-            aliases = {"mazaposthelp"},
-            usage = "mazaposthelp [channel]",
-            description = "Posts the help page to the specified channel.",
-            async = true,
+            aliases = {"adminposthelp"},
+            usage = "adminposthelp [Channel ID]",
+            description = "Posts the help info to the specified channel.",
+            privateMessages = false,
             showInHelpPage = false
     )
-    public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (!author.isBotOwner()) {
-            serverTextChannel.sendMessage("Only Mazawrath can use this command.");
+    public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) throws ExecutionException, InterruptedException {
+        if (!author.isBotOwner() || !server.isOwner(author)) {
+            serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
             return;
         }
 
