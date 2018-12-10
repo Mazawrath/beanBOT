@@ -35,6 +35,8 @@ public class BeanLotteryCommand implements CommandExecutor {
                 if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_TICKET_COST.multiply(new BigDecimal(Integer.parseInt(args[0]))))) {
                     ArrayList<ArrayList<Integer>> numbers = lottery.addEntry(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]));
 
+                    serverTextChannel.sendMessage(args[0] + " tickets bought.\n" +
+                            "The numbers generated have been sent to you in a private message.");
                     author.sendMessage(args[0] + " tickets bought.\n" +
                             "Your numbers are:");
                     MessageBuilder message = new MessageBuilder();
@@ -60,6 +62,9 @@ public class BeanLotteryCommand implements CommandExecutor {
                 }
                 if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_TICKET_COST)) {
                     lottery.addEntry(author.getIdAsString(), server.getIdAsString(), numbers);
+
+                    serverTextChannel.sendMessage("1 ticket bought.\n" +
+                            "The your numbers have been sent to you in a private message.");
                     author.sendMessage("1 ticket bought.\n" +
                             "Your numbers are:\n");
                             author.sendMessage(args[0] + " " + args[1] + " " + args[2]);
