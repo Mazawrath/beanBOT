@@ -24,6 +24,7 @@ public class AdminPostHelpCommand implements CommandExecutor {
             aliases = {"adminposthelp"},
             usage = "adminposthelp [Channel ID]",
             description = "Posts the help info to the specified channel.",
+            privateMessages = false,
             showInHelpPage = false
     )
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) throws ExecutionException, InterruptedException {
