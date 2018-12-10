@@ -32,6 +32,11 @@ public class BeanLotteryCommand implements CommandExecutor {
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
         try {
             if (args.length == 1) {
+                if (Integer.parseInt(args[0]) > 200) {
+                    serverTextChannel.sendMessage("You can only buy 200 tickets at a time.");
+                    return;
+                }
+
                 if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_TICKET_COST.multiply(new BigDecimal(Integer.parseInt(args[0]))))) {
                     ArrayList<ArrayList<Integer>> numbers = lottery.addEntry(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]));
 
