@@ -1,6 +1,5 @@
-package com.mazawrath.beanbot.commands.maza;
+package com.mazawrath.beanbot.commands.admin;
 
-import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.DiscordApi;
@@ -8,17 +7,19 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
-public class MazaPostChangeLogCommand implements CommandExecutor {
+import java.util.concurrent.ExecutionException;
+
+public class AdminPostChangeLogCommand implements CommandExecutor {
     @Command(
-            aliases = {"mazapostchangelog"},
+            aliases = {"adminpostchangelog"},
             privateMessages = false,
             showInHelpPage = false
     )
 
-    public void onCommand(String[] args, ServerTextChannel serverTextChannel2, User author, Server server) {
+    public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel2, User author, Server server) throws ExecutionException, InterruptedException {
         if (!author.isBotOwner()) {
             // There is no better var name than this and if you think otherwise you're wrong.
-            serverTextChannel2.sendMessage("Only Mazawrath can use this command.");
+            serverTextChannel2.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " can use this command.");
             return;
         }
 

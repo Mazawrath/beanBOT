@@ -6,7 +6,7 @@ import com.mazawrath.beanbot.commands.beanmarket.BeanMarketCommand;
 import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
-import com.mazawrath.beanbot.commands.maza.*;
+import com.mazawrath.beanbot.commands.admin.*;
 import com.mazawrath.beanbot.utilities.Points;
 import com.mazawrath.beanbot.utilities.StockMarket;
 import de.btobastian.sdcf4j.CommandHandler;
@@ -55,12 +55,12 @@ public class Main {
             // Bean Market
             cmdHandler.registerCommand(new BeanMarketCommand());
             cmdHandler.registerCommand(new BeanInvestCommand(points, stockMarket));
-            // Mazawrath commands
-            cmdHandler.registerCommand(new MazaPostChangeLogCommand());
-            cmdHandler.registerCommand(new MazaDeleteMessageCommand());
-            cmdHandler.registerCommand(new MazaAddBeanCoinCommand(points));
-            cmdHandler.registerCommand(new MazaPostMessageCommand());
-            cmdHandler.registerCommand(new MazaPostHelpCommand(cmdHandler));
+            // Admin commands
+            cmdHandler.registerCommand(new AdminPostChangeLogCommand());
+            cmdHandler.registerCommand(new AdminDeleteMessageCommand());
+            cmdHandler.registerCommand(new AdminAddBeanCoinCommand(points));
+            cmdHandler.registerCommand(new AdminPostMessageCommand());
+            cmdHandler.registerCommand(new AdminPostHelpCommand(cmdHandler));
             // Copypasta
             cmdHandler.registerCommand(new Top500Command(points));
             //cmdHandler.registerCommand(new GiveModCommand(points));

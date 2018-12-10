@@ -1,4 +1,4 @@
-package com.mazawrath.beanbot.commands.maza;
+package com.mazawrath.beanbot.commands.admin;
 
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
@@ -9,16 +9,16 @@ import org.javacord.api.entity.user.User;
 
 import java.util.concurrent.ExecutionException;
 
-public class MazaPostMessageCommand implements CommandExecutor {
+public class AdminPostMessageCommand implements CommandExecutor {
     @Command(
-            aliases = {"mazapostmessage"},
+            aliases = {"adminpostmessage"},
             privateMessages = false,
             showInHelpPage = false
     )
 
-    public void onCommand(String[] command, ServerTextChannel serverTextChannel2, User author, Server server) throws ExecutionException, InterruptedException {
+    public void onCommand(String[] command, DiscordApi api, ServerTextChannel serverTextChannel2, User author, Server server) throws ExecutionException, InterruptedException {
         if (!author.isBotOwner()) {
-            serverTextChannel2.sendMessage("Only Mazawrath can use this command.");
+            serverTextChannel2.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " can use this command.");
             return;
         }
         StringBuilder message = new StringBuilder();
