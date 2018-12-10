@@ -59,6 +59,7 @@ public class Main {
             cmdHandler.registerCommand(new AdminPostChangeLogCommand());
             cmdHandler.registerCommand(new AdminDeleteMessageCommand());
             cmdHandler.registerCommand(new AdminAddBeanCoinCommand(points));
+            cmdHandler.registerCommand(new AdminRemoveBeanCoinCommand(points));
             cmdHandler.registerCommand(new AdminPostMessageCommand());
             cmdHandler.registerCommand(new AdminPostHelpCommand(cmdHandler));
             // Copypasta
