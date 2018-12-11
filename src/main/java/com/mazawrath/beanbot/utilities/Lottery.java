@@ -12,7 +12,7 @@ import static com.rethinkdb.RethinkDB.r;
 public class Lottery {
     public static final int AMOUNT_DRAWN = 3;
     public static final int MIN_NUMBER = 1;
-    public static final int MAX_NUMBER = 40;
+    public static final int MAX_NUMBER = 10;
     private static final String DB_NAME = "beanBotLottery";
 
     private Connection conn;
