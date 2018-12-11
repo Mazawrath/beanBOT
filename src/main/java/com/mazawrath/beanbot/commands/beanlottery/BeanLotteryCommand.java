@@ -69,7 +69,7 @@ public class BeanLotteryCommand implements CommandExecutor {
                     lottery.addEntry(author.getIdAsString(), server.getIdAsString(), numbers);
 
                     serverTextChannel.sendMessage("1 ticket bought.\n" +
-                            "The your numbers have been sent to you in a private message.");
+                            "Your numbers have been sent to you in a private message.");
                     author.sendMessage("1 ticket bought.\n" +
                             "Your numbers are:\n");
                             author.sendMessage(args[0] + " " + args[1] + " " + args[2]);

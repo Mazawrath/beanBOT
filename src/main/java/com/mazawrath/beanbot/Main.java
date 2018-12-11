@@ -64,6 +64,7 @@ public class Main {
             // Admin commands
             cmdHandler.registerCommand(new AdminPostChangeLogCommand());
             cmdHandler.registerCommand(new AdminDeleteMessageCommand());
+            cmdHandler.registerCommand(new AdminForceLotteryDrawingCommand(points, lottery));
             cmdHandler.registerCommand(new AdminAddBeanCoinCommand(points));
             cmdHandler.registerCommand(new AdminRemoveBeanCoinCommand(points));
             cmdHandler.registerCommand(new AdminPostMessageCommand());
