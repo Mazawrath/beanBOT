@@ -28,7 +28,7 @@ public class AdminPostHelpCommand implements CommandExecutor {
             showInHelpPage = false
     )
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) throws ExecutionException, InterruptedException {
-        if (!author.isBotOwner() || !server.isOwner(author)) {
+        if (!author.isBotOwner() && !server.isOwner(author)) {
             serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
             return;
         }
