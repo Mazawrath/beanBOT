@@ -18,6 +18,7 @@ import java.util.Locale;
 
 public class StockMarket {
     private static final RethinkDB r = new RethinkDB();
+    private static final String DB_NAME = "beanBotStock";
     public static final String[] COMPANIES = {"BEAN", "FBI", "SHTEB", "BEZFF", "ABD", "BNTC", "BETHS", "BEAB", "WEEB"};
     private static final String DB_VALUE_PREFIX = "P_";
     Connection conn;
@@ -27,38 +28,36 @@ public class StockMarket {
         checkTable(conn);
     }
 
-    private boolean checkTable(Connection conn) {
-        if (r.dbList().contains("beanBotStock").run(conn)) {
-            return true;
+    private void checkTable(Connection conn) {
+        if (r.dbList().contains(DB_NAME).run(conn)) {
         } else {
-            r.dbCreate("beanBotStock").run(conn);
-            return true;
+            r.dbCreate(DB_NAME).run(conn);
         }
     }
 
     private void checkServer(String serverID) {
-        if (r.db("beanBotStock").tableList().contains(serverID).run(conn)) {
+        if (r.db(DB_NAME).tableList().contains(serverID).run(conn)) {
         } else
-            r.db("beanBotStock").tableCreate(serverID).run(conn);
+            r.db(DB_NAME).tableCreate(serverID).run(conn);
 
     }
 
     private void checkUser(String userID, String serverID) {
         checkServer(serverID);
 
-        if (r.db("beanBotStock").table(serverID).getField("id").contains(userID).run(conn)) {
+        if (r.db(DB_NAME).table(serverID).getField("id").contains(userID).run(conn)) {
         } else
-            r.db("beanBotStock").table(serverID).insert(r.array(
+            r.db(DB_NAME).table(serverID).insert(r.array(
                     r.hashMap("id", userID)
             )).run(conn);
     }
 
     private void checkCompany(String userID, String serverID, String symbol) {
-        if (r.db("beanBotStock").table(serverID).get(userID).hasFields(symbol + " shares bought").run(conn)) {
+        if (r.db(DB_NAME).table(serverID).get(userID).hasFields(symbol + " shares bought").run(conn)) {
         } else {
-            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0)))
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0)))
             ).run(conn);
-            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0)))
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0)))
             ).run(conn);
         }
     }
@@ -237,13 +236,13 @@ public class StockMarket {
     public BigDecimal getShareInvested(String userID, String serverID, String symbol) {
         checkUser(userID, serverID);
         checkCompany(userID, serverID, symbol);
-        return new BigDecimal(parseValueFromDB(r.db("beanBotStock").table(serverID).get(userID).getField(symbol + " shares bought").run(conn))).setScale(Points.SCALE, Points.ROUNDING_MODE);
+        return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(serverID).get(userID).getField(symbol + " shares bought").run(conn))).setScale(Points.SCALE, Points.ROUNDING_MODE);
     }
 
     public BigDecimal getBeanCoinSpent(String userID, String serverID, String symbol) {
         checkUser(userID, serverID);
         checkCompany(userID, serverID, symbol);
-        return new BigDecimal(parseValueFromDB(r.db("beanBotStock").table(serverID).get(userID).getField(symbol + " beanCoin spent").run(conn))).setScale(Points.SCALE, Points.ROUNDING_MODE);
+        return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(serverID).get(userID).getField(symbol + " beanCoin spent").run(conn))).setScale(Points.SCALE, Points.ROUNDING_MODE);
     }
 
     public BigDecimal buyShares(String userID, String serverID, String symbol, BigDecimal investAmount) {
@@ -256,8 +255,8 @@ public class StockMarket {
 
             retVal = investAmount.divide(getStockPrice(symbol, false), 2, RoundingMode.HALF_UP);
 
-            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(retVal.add(getShareInvested(userID, serverID, symbol))))).run(conn);
-            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(getBeanCoinSpent(userID, serverID, symbol).add(investAmount)))).run(conn);
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(retVal.add(getShareInvested(userID, serverID, symbol))))).run(conn);
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(getBeanCoinSpent(userID, serverID, symbol).add(investAmount)))).run(conn);
         }
 
         return retVal;
@@ -272,9 +271,9 @@ public class StockMarket {
             checkUser(userID, serverID);
             checkCompany(userID, serverID, symbol);
 
-            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0).setScale(Points.SCALE, Points.ROUNDING_MODE)))
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0).setScale(Points.SCALE, Points.ROUNDING_MODE)))
             ).run(conn);
-            r.db("beanBotStock").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0).setScale(Points.SCALE, Points.ROUNDING_MODE)))
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0).setScale(Points.SCALE, Points.ROUNDING_MODE)))
             ).run(conn);
 
             retVal = true;
@@ -286,7 +285,7 @@ public class StockMarket {
     public ArrayList getPortfolio(String userID, String serverID) {
         checkUser(userID, serverID);
 
-        return r.db("beanBotStock").table(serverID).get(userID).run(conn);
+        return r.db(DB_NAME).table(serverID).get(userID).run(conn);
     }
 
     public static String parseValueFromDB(String value) {

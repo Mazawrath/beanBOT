@@ -14,6 +14,7 @@ import java.util.Locale;
 
 public class Points {
     private static final RethinkDB r = RethinkDB.r;
+    private static final String DB_NAME = "beanBotPoints";
     private static final String DB_VALUE_PREFIX = "P_";
     public static final int SCALE = 2;
     public static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
@@ -21,6 +22,7 @@ public class Points {
     public static final BigDecimal FREE_POINTS = new BigDecimal("25.69").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST = new BigDecimal("2.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST_SPECIAL = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal LOTTERY_TICKET_COST = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
     private Connection conn;
 
     public void connectDatabase() {
@@ -28,28 +30,25 @@ public class Points {
         checkTable(conn);
     }
 
-    private boolean checkTable(Connection conn) {
-        if (r.dbList().contains("beanBotPoints").run(conn)) {
-            return true;
+    private void checkTable(Connection conn) {
+        if (r.dbList().contains(DB_NAME).run(conn)) {
         } else {
-            r.dbCreate("beanBotPoints").run(conn);
-            return true;
+            r.dbCreate(DB_NAME).run(conn);
         }
     }
 
     private void checkServer(String serverID) {
-        if (r.db("beanBotPoints").tableList().contains(serverID).run(conn)) {
+        if (r.db(DB_NAME).tableList().contains(serverID).run(conn)) {
         } else
-            r.db("beanBotPoints").tableCreate(serverID).run(conn);
-
+            r.db(DB_NAME).tableCreate(serverID).run(conn);
     }
 
     private void checkUser(String userID, String serverID) {
         checkServer(serverID);
 
-        if (r.db("beanBotPoints").table(serverID).getField("id").contains(userID).run(conn)) {
+        if (r.db(DB_NAME).table(serverID).getField("id").contains(userID).run(conn)) {
         } else
-            r.db("beanBotPoints").table(serverID).insert(r.array(
+            r.db(DB_NAME).table(serverID).insert(r.array(
                     r.hashMap("id", userID)
                             .with("Points", buildValueForDB(ZERO_POINTS))
                             .with("Last Received Free Points", 0)
@@ -57,7 +56,7 @@ public class Points {
     }
 
     public ArrayList getLeaderboard(String serverID) {
-        return r.db("beanBotPoints").table(serverID).map(doc ->
+        return r.db(DB_NAME).table(serverID).map(doc ->
           r.object(
             "id",
             doc.getField("id"),
@@ -81,13 +80,13 @@ public class Points {
     public BigDecimal getBalance(String userID, String serverID) {
         checkUser(userID, serverID);
 
-        return new BigDecimal(parseValueFromDB(r.db("beanBotPoints").table(serverID).get(userID).getField("Points").run(conn))).setScale(SCALE, ROUNDING_MODE);
+        return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(serverID).get(userID).getField("Points").run(conn))).setScale(SCALE, ROUNDING_MODE);
     }
 
     public void addPoints(String userID, String serverID, BigDecimal points) {
         checkUser(userID, serverID);
 
-        r.db("beanBotPoints").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).add(points)))).run(conn);
+        r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).add(points)))).run(conn);
     }
 
     public boolean removePoints(String userID, String botUserID, String serverID, BigDecimal points) {
@@ -97,7 +96,7 @@ public class Points {
         }
 
         if (points.compareTo(getBalance(userID, serverID)) <= 0) {
-            r.db("beanBotPoints").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).subtract(points)))).run(conn);
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).subtract(points)))).run(conn);
             if (botUserID != null && !botUserID.isEmpty()) {
                 addPoints(botUserID, serverID, points);
             }
@@ -108,11 +107,11 @@ public class Points {
 
     public long giveFreePoints(String userID, String serverID) {
         checkUser(userID, serverID);
-        long timeLeft = r.db("beanBotPoints").table(serverID).get(userID).getField("Last Received Free Points").run(conn);
+        long timeLeft = r.db(DB_NAME).table(serverID).get(userID).getField("Last Received Free Points").run(conn);
 
         if (System.currentTimeMillis() - timeLeft > 24 * 60 * 60 * 1000) {
-            r.db("beanBotPoints").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).add(FREE_POINTS)))).run(conn);
-            r.db("beanBotPoints").table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Last Received Free Points", System.currentTimeMillis())).run(conn);
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).add(FREE_POINTS)))).run(conn);
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Last Received Free Points", System.currentTimeMillis())).run(conn);
             return 0;
         }
         return timeLeft;

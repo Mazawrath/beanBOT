@@ -1,11 +1,13 @@
 package com.mazawrath.beanbot;
 
 import com.mazawrath.beanbot.commands.*;
+import com.mazawrath.beanbot.commands.beanlottery.BeanLotteryCommand;
 import com.mazawrath.beanbot.commands.beanmarket.BeanInvestCommand;
 import com.mazawrath.beanbot.commands.beanmarket.BeanMarketCommand;
 import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
+import com.mazawrath.beanbot.utilities.Lottery;
 import com.mazawrath.beanbot.commands.admin.*;
 import com.mazawrath.beanbot.utilities.Points;
 import com.mazawrath.beanbot.utilities.StockMarket;
@@ -23,9 +25,11 @@ public class Main {
 
         Points points = new Points();
         StockMarket stockMarket = new StockMarket();
+        Lottery lottery = new Lottery();
 
         points.connectDatabase();
         stockMarket.connectDatabase();
+        lottery.connectDatabase();
 
         String token = args[0];
 
@@ -55,16 +59,19 @@ public class Main {
             // Bean Market
             cmdHandler.registerCommand(new BeanMarketCommand());
             cmdHandler.registerCommand(new BeanInvestCommand(points, stockMarket));
+            // Bean Lottery
+            cmdHandler.registerCommand(new BeanLotteryCommand(points, lottery));
             // Admin commands
             cmdHandler.registerCommand(new AdminPostChangeLogCommand());
             cmdHandler.registerCommand(new AdminDeleteMessageCommand());
+            cmdHandler.registerCommand(new AdminForceLotteryDrawingCommand(points, lottery));
             cmdHandler.registerCommand(new AdminAddBeanCoinCommand(points));
             cmdHandler.registerCommand(new AdminRemoveBeanCoinCommand(points));
             cmdHandler.registerCommand(new AdminPostMessageCommand());
             cmdHandler.registerCommand(new AdminPostHelpCommand(cmdHandler));
             // Copypasta
             cmdHandler.registerCommand(new Top500Command(points));
-            //cmdHandler.registerCommand(new GiveModCommand(points));
+            cmdHandler.registerCommand(new GiveModCommand(points));
             cmdHandler.registerCommand(new ThirtyPercentWinrateCommand(points));
             cmdHandler.registerCommand(new CodeRedCommand(points));
             cmdHandler.registerCommand(new BlessedCommand(points));
