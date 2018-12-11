@@ -31,7 +31,7 @@ public class AdminForceLotteryDrawingCommand implements CommandExecutor {
     )
 
     public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) throws ExecutionException, InterruptedException {
-        if (!author.isBotOwner() || !server.isOwner(author)) {
+        if (!author.isBotOwner() && !server.isOwner(author)) {
             // There is no better var name than this and if you think otherwise you're wrong.
             serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
             return;
