@@ -1,5 +1,6 @@
 package com.mazawrath.beanbot.commands.admin;
 
+import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.DiscordApi;
@@ -33,16 +34,24 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.6.2\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v2.6.1...v2.6.2\n" +
+                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.7.0\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v2.6.2...v2.7.0\n" +
                 "\n" +
-                "**v2.6.2**\n" +
+                "**v2.7.0**\n" +
                 "**New**\n" +
-                "\t- Bean Market\n" +
-                "\t\t- Added `WEEB` (MicroWeeb).\n" +
+                "\t- Added the Bean Lottery.\n" +
+                "\t\t- Added `.beanlottery`.\n" +
+                "\t\t- *For a limited time `.beanlottery` tickets only cost " + Points.pointsToString(Points.LOTTERY_TICKET_COST) + "!*\n" +
+                "\t\t- Added `.adminforcelotterydrawing`.\n" +
+                "\t- Added `.adminremovebeancoin`.\n" +
                 "**Changes**\n" +
-                "\t- Added extra info when using `.beaninvest` without any arguments.\n" +
+                "\t- Re-enabled `.givemod`.\n" +
+                "\t- Renamed all `.maza` commands to `.admin`.\n" +
+                "\t- `.admin` commands now tell users that only the bot owner can use commands instead of only Mazawrath.\n" +
+                "\t- Server owners can now use `.adminpostchangelog`.\n" +
+                "\t- Server owners can now use `.adminposthelp`.\n" +
                 "**Bug Fixes**\n" +
-                "\t- Fixed an issue with selling or checking stocks you never bought.";
+                "\t- Fixed an issue where normal users had access to `.adminposthelp`.\n" +
+                "\t- Fixed an issue where `.adminposthelp` could be used in a private message.";
     }
 }
