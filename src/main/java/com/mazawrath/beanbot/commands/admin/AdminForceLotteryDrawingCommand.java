@@ -37,11 +37,7 @@ public class AdminForceLotteryDrawingCommand implements CommandExecutor {
             return;
         }
 
-        //int[] winningNumbers = lottery.getWinningNumbers();
-        int[] winningNumbers = new int[3];
-        winningNumbers[0] = 1;
-        winningNumbers[1] = 1;
-        winningNumbers[2] = 1;
+        int[] winningNumbers = lottery.getWinningNumbers();
 
         ArrayList winners = lottery.getWinner(server.getIdAsString(), winningNumbers);
         MessageBuilder message = new MessageBuilder();
