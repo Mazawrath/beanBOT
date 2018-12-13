@@ -25,6 +25,8 @@ build/*
 out/
 .gradle*
 
+# Twitch Files
+config/
 
 launch.sh
 

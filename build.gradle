@@ -23,6 +23,7 @@ dependencies {
     compile "org.apache.commons:commons-lang3:3.8"
     compile "org.slf4j:slf4j-api:1.7.5"
     compile "org.slf4j:slf4j-log4j12:1.7.5"
+    compile 'com.github.twitch4j:twitch4j:v0.12.0'
 }
 
 jar {

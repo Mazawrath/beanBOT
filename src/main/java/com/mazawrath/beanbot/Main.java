@@ -7,10 +7,12 @@ import com.mazawrath.beanbot.commands.beanmarket.BeanMarketCommand;
 import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
+import com.mazawrath.beanbot.commands.twitch.CheckLiveCommand;
 import com.mazawrath.beanbot.utilities.Lottery;
 import com.mazawrath.beanbot.commands.admin.*;
 import com.mazawrath.beanbot.utilities.Points;
 import com.mazawrath.beanbot.utilities.StockMarket;
+import com.mazawrath.beanbot.utilities.Twitch;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 import org.apache.log4j.BasicConfigurator;
@@ -26,10 +28,13 @@ public class Main {
         Points points = new Points();
         StockMarket stockMarket = new StockMarket();
         Lottery lottery = new Lottery();
+        Twitch twitch = new Twitch();
 
         points.connectDatabase();
         stockMarket.connectDatabase();
         lottery.connectDatabase();
+        if (args.length == 4)
+            twitch.connectClient(args[1], args[2], args[3]);
 
         String token = args[0];
 
@@ -59,8 +64,10 @@ public class Main {
             // Bean Market
             cmdHandler.registerCommand(new BeanMarketCommand());
             cmdHandler.registerCommand(new BeanInvestCommand(points, stockMarket));
-            // Bean Lottery
+            // Bean Lottery Commands
             cmdHandler.registerCommand(new BeanLotteryCommand(points, lottery));
+            // Twitch Commands
+            cmdHandler.registerCommand(new CheckLiveCommand(twitch));
             // Admin commands
             cmdHandler.registerCommand(new AdminPostChangeLogCommand());
             cmdHandler.registerCommand(new AdminDeleteMessageCommand());
