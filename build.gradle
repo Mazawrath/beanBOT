@@ -44,7 +44,10 @@ dependencies {
 		'org.glassfish.jersey.containers:jersey-container-servlet-core:2.27',
 		'org.glassfish.jersey.containers:jersey-container-jetty-http:2.27',
 		'org.glassfish.jersey.media:jersey-media-json-jackson:2.27',
-		'org.glassfish.jersey.inject:jersey-hk2:2.27'
+		'org.glassfish.jersey.inject:jersey-hk2:2.27',
+        
+        'javax.xml.bind:jaxb-api:2.3.0',
+        'javax.activation:activation:1.1'
     )
 	
 	runtime (
