@@ -55,14 +55,6 @@ public class Points {
             )).run(conn);
     }
 
-    private void checkBeanmas (String userID, String serverID) {
-        if (r.db(DB_NAME).table(serverID).get(userID).hasFields("beanmas").run(conn)) {
-        } else {
-            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("beanmas", buildValueForDB(getBalance(userID, serverID)))
-            ).run(conn);
-        }
-    }
-
     public ArrayList getLeaderboard(String serverID) {
         return r.db(DB_NAME).table(serverID).map(doc ->
           r.object(
@@ -91,23 +83,14 @@ public class Points {
         return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(serverID).get(userID).getField("Points").run(conn))).setScale(SCALE, ROUNDING_MODE);
     }
 
-    public BigDecimal getBeanmasBalance(String userID, String serverID) {
-        checkUser(userID, serverID);
-        checkBeanmas(userID, serverID);
-
-        return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(serverID).get(userID).getField("beanmas").run(conn))).setScale(SCALE, ROUNDING_MODE);
-    }
-
     public void addPoints(String userID, String serverID, BigDecimal points) {
         checkUser(userID, serverID);
-        checkBeanmas(userID, serverID);
 
         r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).add(points)))).run(conn);
     }
 
     public boolean removePoints(String userID, String botUserID, String serverID, BigDecimal points) {
         checkUser(userID, serverID);
-        checkBeanmas(userID, serverID);
         if (botUserID != null && !botUserID.isEmpty()) {
             checkUser(botUserID, serverID);
         }
@@ -124,7 +107,6 @@ public class Points {
 
     public long giveFreePoints(String userID, String serverID) {
         checkUser(userID, serverID);
-        checkBeanmas(userID, serverID);
         long timeLeft = r.db(DB_NAME).table(serverID).get(userID).getField("Last Received Free Points").run(conn);
 
         if (System.currentTimeMillis() - timeLeft > 24 * 60 * 60 * 1000) {
@@ -133,31 +115,6 @@ public class Points {
             return 0;
         }
         return timeLeft;
-    }
-
-    public int removeBeanmas(String userID, String botUserID, String serverID, BigDecimal points) {
-        checkUser(userID, serverID);
-        checkBeanmas(userID, serverID);
-
-        if (botUserID != null && !botUserID.isEmpty()) {
-            checkUser(botUserID, serverID);
-        }
-
-        if (points.compareTo(getBeanmasBalance(userID, serverID)) <= 0) {
-            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("beanmas", buildValueForDB(getBeanmasBalance(userID, serverID).subtract(points)))).run(conn);
-            if (botUserID != null && !botUserID.isEmpty()) {
-                addPoints(botUserID, serverID, points);
-            }
-            return 1;
-        } else {
-            if (removePoints(userID, null, serverID, points.subtract(getBeanmasBalance(userID, serverID)))) {
-                r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("beanmas", buildValueForDB(BigDecimal.ZERO))
-                ).run(conn);
-                return 0;
-            }
-            else
-                return -1;
-        }
     }
 
     public static String parseValueFromDB(String value) {
