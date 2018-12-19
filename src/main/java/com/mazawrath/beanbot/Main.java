@@ -13,6 +13,7 @@ import com.mazawrath.beanbot.commands.admin.*;
 import com.mazawrath.beanbot.utilities.Points;
 import com.mazawrath.beanbot.utilities.StockMarket;
 import com.mazawrath.beanbot.utilities.Twitch;
+import com.mazawrath.beanbot.utilities.jersey.RestServer;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 import org.apache.log4j.BasicConfigurator;
@@ -29,6 +30,9 @@ public class Main {
         StockMarket stockMarket = new StockMarket();
         Lottery lottery = new Lottery();
         Twitch twitch = new Twitch();
+        Thread restServer = new Thread(new RestServer());
+
+        restServer.start();
 
         points.connectDatabase();
         stockMarket.connectDatabase();
