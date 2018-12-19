@@ -1,9 +1,11 @@
-group 'mazawrath'
+plugins {
+  id 'com.github.johnrengelman.shadow' version '4.0.3'
+}
 
 apply plugin: 'java'
-apply plugin: 'application'
 
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
 	maven {
@@ -13,33 +15,61 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    implementation group: 'org.javacord', name: 'javacord', version: '3.0.0'
-    implementation group: 'com.github.Mazawrath.sdcf4j', name: 'sdcf4j-core', version: 'v1.1.0'
-    implementation group: 'com.github.Mazawrath.sdcf4j', name: 'sdcf4j-javacord', version: 'v1.1.0'
-    compile group: 'com.rethinkdb', name: 'rethinkdb-driver', version: '2.3.3'
-    compile group: 'com.yahoofinance-api', name: 'YahooFinanceAPI', version: '3.14.0'
-    compile 'com.vdurmont:emoji-java:4.0.0'
-    compile "org.apache.commons:commons-lang3:3.8"
-    compile "org.slf4j:slf4j-api:1.7.5"
-    compile "org.slf4j:slf4j-log4j12:1.7.5"
-    compile 'com.github.twitch4j:twitch4j:v0.12.0'
-    compile group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.7'
-    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet-core', version: '2.7'
-    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-jetty-http', version: '2.7'
-    compile group: 'org.glassfish.jersey.media', name: 'jersey-media-moxy', version: '2.7'
-    compile group: 'org.eclipse.jetty.aggregate', name: 'jetty-all', version: '9.3.0.M1'
-    compile "javax.xml.bind:jaxb-api:2.3.0"
-    compile group: 'javax.activation', name: 'activation', version: '1.1.1'
+    implementation 'org.javacord:javacord:3.0.0'
+	
+	compileOnly('org.projectlombok:lombok:1.18.4')
+    annotationProcessor 'org.projectlombok:lombok:1.18.4'
+    
+    compile (        
+        'com.github.Mazawrath.sdcf4j:sdcf4j-core:v1.1.0',
+        'com.github.Mazawrath.sdcf4j:sdcf4j-javacord:v1.1.0',
+        'com.rethinkdb:rethinkdb-driver:2.3.3',
+        'com.yahoofinance-api:YahooFinanceAPI:3.14.0',
+        'com.vdurmont:emoji-java:4.0.0',
+        'org.apache.commons:commons-lang3:3.8',
+        'org.slf4j:slf4j-api:1.7.5',
+        'org.slf4j:slf4j-log4j12:1.7.5',
+		'com.github.twitch4j:twitch4j:v0.12.0',
+		'org.glassfish.jersey.core:jersey-server:2.7',
+		'org.glassfish.jersey.containers:jersey-container-servlet-core:2.7',
+		'org.glassfish.jersey.containers:jersey-container-jetty-http:2.7',
+		'org.glassfish.jersey.media:jersey-media-moxy:2.7',
+		'org.eclipse.jetty.aggregate:jetty-all:9.3.0.M1',
+		'javax.xml.bind:jaxb-api:2.3.0',
+		'javax.activation:activation:1.1.1'
+    )
+	
+	// https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-json-jackson
+	runtime (
+		'org.glassfish.jersey.media:jersey-media-json-jackson:2.27'
+	)
+
+
+    testCompile (
+        'junit:junit:4.12'
+    )
 }
 
-jar {
+shadowJar{
     manifest {
-        archiveName = 'beanBOT.jar'
-        attributes 'Main-Class': 'com.mazawrath.beanbot.Main',
-                'Class-Path': configurations.runtime.files.collect { "lib/$it.name" }.join(' '),
-                'Implementation-Version': project.version
+        attributes 'Main-Class': 'com.mazawrath.beanbot.Main'
     }
-    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {}
+    archiveName = "${projectName}-${version}.${extension}"
 }
-mainClassName = 'com.mazawrath.beanbot.Main'
+
+build.dependsOn {
+    shadowJar
+}
+
+task run(dependsOn:shadowJar) {
+    doLast {
+        if (project.hasProperty('token')) {
+            javaexec {
+                main='-jar'
+                args jar.archivePath, project.property('token')
+            }
+        } else {
+            throw new GradleException('Missing property token')
+        }
+    }
+}
