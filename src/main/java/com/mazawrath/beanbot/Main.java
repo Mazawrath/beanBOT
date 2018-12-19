@@ -16,23 +16,23 @@ import com.mazawrath.beanbot.utilities.Twitch;
 import com.mazawrath.beanbot.utilities.jersey.RestServer;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
-import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.BasicConfigurator;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.util.logging.FallbackLoggerConfiguration;
 
 public class Main {
     public static void main(String[] args) {
-        BasicConfigurator.configure();
+        //BasicConfigurator.configure();
         // Enable debugging, if no slf4j logger was found
-        FallbackLoggerConfiguration.setDebug(false);
+        //FallbackLoggerConfiguration.setDebug(false);
 
         Points points = new Points();
         StockMarket stockMarket = new StockMarket();
         Lottery lottery = new Lottery();
         Twitch twitch = new Twitch();
         Thread restServer = new Thread(new RestServer());
-
         restServer.start();
+		//new RestServer().run();
 
         points.connectDatabase();
         stockMarket.connectDatabase();

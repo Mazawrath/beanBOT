@@ -6,10 +6,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-@Path("calculator")
+@Path("/calculator")
 public class Calculator {
     @GET
-    @Path("squareRoot")
+    @Path("/squareroot")
     @Produces(MediaType.APPLICATION_JSON)
     public Result squareRoot(@QueryParam("input") double input){
         Result result = new Result("Square Root");
@@ -19,7 +19,7 @@ public class Calculator {
     }
 
     @GET
-    @Path("square")
+    @Path("/square")
     @Produces(MediaType.APPLICATION_JSON)
     public Result square(@QueryParam("input") double input){
         Result result = new Result("Square");
@@ -28,7 +28,7 @@ public class Calculator {
         return result;
     }
 
-    static class Result{
+    private class Result{
         double input;
         double output;
         String action;
