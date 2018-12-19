@@ -21,6 +21,6 @@ beanBOT is my own personal bot that I made for myself, for a discord server I'm 
  `$ java -jar beanBOT-2.0.jar "<TOKEN>"`
 
 ## Things to note about this bot
-This bot is made for my own personal use. It's currently being used by a streamer and there are a lot of commands made specificly for him such as the one under copypasta and the entire Bean Market. I also have "maza" commands that I use to handle the bot on the streamers discord server. Note that these commands are not specific to me. These commands can only be used by the bot owner. If you really want to use this bot I suggest changing the aliases of the maza commands to suit your own name.
+This bot is made for my own personal use. It's currently being used by a streamer and there are a lot of commands made specificly for him such as the one under copypasta and the entire Bean Market. There are also `.admin` commands that allow you to change values and modify the bot. Although these are not in the `.help` command, you can find these commands in the source code under `admin`. All commands can only be used by the bot owner and some can be used by the server owner.
 
 beanBOT is a Java bot that I have made for https://www.twitch.tv/shteeeb. Check him out for #EpicGamerMoments
