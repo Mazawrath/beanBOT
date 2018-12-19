@@ -1,5 +1,5 @@
 plugins {
-  id 'com.github.johnrengelman.shadow' version '4.0.3'
+    id 'com.github.johnrengelman.shadow' version '4.0.3'
 }
 
 apply plugin: 'java'
@@ -8,59 +8,59 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-	maven {
-		url 'https://jitpack.io'
-	}
-    mavenCentral()    
+    maven {
+        url 'https://jitpack.io'
+    }
+    mavenCentral()
 }
 
 dependencies {
     implementation 'org.javacord:javacord:3.0.0'
-	
-	compileOnly('org.projectlombok:lombok:1.18.4')
+
+    compileOnly('org.projectlombok:lombok:1.18.4')
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
-    
-    compile (        
-        'com.github.Mazawrath.sdcf4j:sdcf4j-core:v1.1.0',
-        'com.github.Mazawrath.sdcf4j:sdcf4j-javacord:v1.1.0',
-		
-        'com.rethinkdb:rethinkdb-driver:2.3.3',
-		
-        'com.yahoofinance-api:YahooFinanceAPI:3.14.0',
-		
-        'com.vdurmont:emoji-java:4.0.0',
-		
-        'org.apache.commons:commons-lang3:3.8',
-		
-		'com.github.twitch4j:twitch4j:v0.12.0',
-		
-		'org.slf4j:slf4j-api:1.7.25',
-		'org.slf4j:slf4j-simple:1.7.25',
 
-		'org.eclipse.jetty:jetty-server:9.4.6.v20170531',
-		'org.eclipse.jetty:jetty-servlet:9.4.6.v20170531',
+    compile(
+            'com.github.Mazawrath.sdcf4j:sdcf4j-core:v1.1.0',
+            'com.github.Mazawrath.sdcf4j:sdcf4j-javacord:v1.1.0',
 
-		'org.glassfish.jersey.core:jersey-server:2.27',
-		'org.glassfish.jersey.containers:jersey-container-servlet-core:2.27',
-		'org.glassfish.jersey.containers:jersey-container-jetty-http:2.27',
-		'org.glassfish.jersey.media:jersey-media-json-jackson:2.27',
-		'org.glassfish.jersey.inject:jersey-hk2:2.27',
-        
-        'javax.xml.bind:jaxb-api:2.3.0',
-        'javax.activation:activation:1.1'
+            'com.rethinkdb:rethinkdb-driver:2.3.3',
+
+            'com.yahoofinance-api:YahooFinanceAPI:3.14.0',
+
+            'com.vdurmont:emoji-java:4.0.0',
+
+            'org.apache.commons:commons-lang3:3.8',
+
+            'com.github.twitch4j:twitch4j:v0.12.0',
+
+            'org.slf4j:slf4j-api:1.7.25',
+            'org.slf4j:slf4j-simple:1.7.25',
+
+            'org.eclipse.jetty:jetty-server:9.4.6.v20170531',
+            'org.eclipse.jetty:jetty-servlet:9.4.6.v20170531',
+
+            'org.glassfish.jersey.core:jersey-server:2.27',
+            'org.glassfish.jersey.containers:jersey-container-servlet-core:2.27',
+            'org.glassfish.jersey.containers:jersey-container-jetty-http:2.27',
+            'org.glassfish.jersey.media:jersey-media-json-jackson:2.27',
+            'org.glassfish.jersey.inject:jersey-hk2:2.27',
+
+            'javax.xml.bind:jaxb-api:2.3.0',
+            'javax.activation:activation:1.1'
     )
-	
-	runtime (
-		'org.glassfish.jersey.media:jersey-media-json-jackson:2.27'
-	)
+
+    runtime(
+            'org.glassfish.jersey.media:jersey-media-json-jackson:2.27'
+    )
 
 
-    testCompile (
-        'junit:junit:4.12'
+    testCompile(
+            'junit:junit:4.12'
     )
 }
 
-shadowJar{
+shadowJar {
     manifest {
         attributes 'Main-Class': 'com.mazawrath.beanbot.Main'
     }
@@ -71,11 +71,11 @@ build.dependsOn {
     shadowJar
 }
 
-task run(dependsOn:shadowJar) {
+task run(dependsOn: shadowJar) {
     doLast {
         if (project.hasProperty('token')) {
             javaexec {
-                main='-jar'
+                main = '-jar'
                 args jar.archivePath, project.property('token')
             }
         } else {
