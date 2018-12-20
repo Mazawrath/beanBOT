@@ -10,6 +10,8 @@ beanBOT is my own personal bot that I made for myself, for a discord server I'm 
 - Install [RethinkDB.](https://www.rethinkdb.com/docs/install/)
 - Set up an application on [discord.](https://discordapp.com/developers/applications/)
 - Add a bot and obtain its token (TOKEN).
+- Set up an app on [twitch.](https://glass.twitch.tv/console/apps)
+- Obtain the client ID (CLIENT_ID)
 
 ### Build
 `$ gradlew build`
