@@ -34,15 +34,10 @@ public class Main {
         restServer.start();
 		//new RestServer().run();
 
-        points.connectDatabase();
-        stockMarket.connectDatabase();
-        lottery.connectDatabase();
         if (args.length == 4)
             twitch.connectClient(args[1], args[2], args[3]);
 
-        String token = args[0];
-
-        new DiscordApiBuilder().setToken(token).login().thenAccept(api -> {
+        new DiscordApiBuilder().setToken(args[0]).login().thenAccept(api -> {
             //System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
 
             // Instantiate command handler

@@ -25,7 +25,7 @@ public class Points {
     public static final BigDecimal LOTTERY_TICKET_COST = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
     private Connection conn;
 
-    public void connectDatabase() {
+    public Points() {
         conn = r.connection().hostname("localhost").port(28015).connect();
         checkTable(conn);
     }

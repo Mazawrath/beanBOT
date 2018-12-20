@@ -17,7 +17,7 @@ public class Lottery {
 
     private Connection conn;
 
-    public void connectDatabase() {
+    public Lottery() {
         conn = r.connection().hostname("localhost").port(28015).connect();
         checkTable(conn);
     }
