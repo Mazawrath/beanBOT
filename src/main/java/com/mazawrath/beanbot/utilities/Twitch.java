@@ -70,9 +70,10 @@ public class Twitch {
         int userId = getUserID(user);
 
         if (userId != -1) {
+            //TODO replace secret with secure way of making password
             curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
                     "'{\"hub.mode\":\"subscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
-                    " \"hub.callback\":\"http://" + ipAddresss + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"peepoop\"}'" +
+                    " \"hub.callback\":\"http://" + ipAddresss + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
                     " https://api.twitch.tv/helix/webhooks/hub");
             return true;
         } else
@@ -80,13 +81,14 @@ public class Twitch {
     }
 
     public boolean unsubscribeFromLiveNotfications(String user, String serverId) {
+        //TODO replace secret with secure way of making password
         int userId = getUserID(user);
         //checkUser(userId, serverId);
 
         if (userId != -1) {
             curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
                     "'{\"hub.mode\":\"unsubscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
-                    " \"hub.callback\":\"http://" + ipAddresss + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"peepoop\"}'" +
+                    " \"hub.callback\":\"http://" + ipAddresss + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
                     " https://api.twitch.tv/helix/webhooks/hub");
             return true;
         } else
