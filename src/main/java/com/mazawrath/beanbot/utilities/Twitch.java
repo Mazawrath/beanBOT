@@ -64,6 +64,21 @@ public class Twitch {
                     r.hashMap("channelId", channelId)).run(conn);
             if (subscribeToLiveNotfications(userId))
                 retVal = true;
+            else {
+                System.out.println("Subscription attempt failed. Retrying.");
+                for (int attempts = 1; attempts <= 3; attempts++) {
+                    try {
+                        System.out.println("Attempt " + attempts);
+                        Thread.sleep(5000);
+                        if (subscribeToLiveNotfications(userId)) {
+                            retVal = true;
+                            break;
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
         return retVal;
     }
