@@ -47,7 +47,11 @@ dependencies {
             'org.glassfish.jersey.inject:jersey-hk2:2.27',
 
             'javax.xml.bind:jaxb-api:2.3.0',
-            'javax.activation:activation:1.1'
+            'javax.activation:activation:1.1',
+            
+            'org.toile-libre.libe:curl:0.0.23',
+            
+            'com.google.api-client:google-api-client:1.24.1'
     )
 
     runtime(
