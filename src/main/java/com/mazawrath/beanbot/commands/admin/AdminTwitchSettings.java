@@ -1,7 +1,5 @@
 package com.mazawrath.beanbot.commands.admin;
 
-import com.mazawrath.beanbot.utilities.Lottery;
-import com.mazawrath.beanbot.utilities.Points;
 import com.mazawrath.beanbot.utilities.Twitch;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
@@ -31,18 +29,19 @@ public class AdminTwitchSettings implements CommandExecutor {
             return;
         }
 
-        if (args[0].equals("subscribe")) {
-            if (twitch.subscribeToLiveNotfications(args[1], server.getIdAsString()))
+        if (args[0].equals("addChannel")) {
+            if (twitch.addServer(args[1], server.getIdAsString(), serverTextChannel.getIdAsString())) {
+                serverTextChannel.sendMessage("Subscribe to live notifications for" + args[1] + ".");
+                twitch.addServer(args[1], server.getIdAsString(), serverTextChannel.getIdAsString());
+            } else
+                serverTextChannel.sendMessage("Could not subscribe to " + args[1] + ".");
+        } else if (args[0].equals("removeChannel")) {
+            if (twitch.removeServer(args[1], server.getIdAsString()))
                 serverTextChannel.sendMessage("Subscribe to live notifications for" + args[1] + ".");
             else
                 serverTextChannel.sendMessage("Could not subscribe to " + args[1] + ".");
-        } else if (args[0].equals("unsubscribe")) {
-            if (twitch.unsubscribeFromLiveNotfications(args[1], server.getIdAsString()))
-                serverTextChannel.sendMessage("Subscribe to live notifications for" + args[1] + ".");
-            else
-                serverTextChannel.sendMessage("Could not subscribe to " + args[1] + ".");
-        } else if (args[0].equals("notificationChannel")) {
-            // TODO Finish this thing
+        } else if (args[0].equals("setNotificationChannel")) {
+            twitch.setChannel(server.getIdAsString(), args[1]);
         }
     }
 }
