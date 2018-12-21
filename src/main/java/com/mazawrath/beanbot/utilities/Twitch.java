@@ -1,6 +1,7 @@
 package com.mazawrath.beanbot.utilities;
 
 import com.rethinkdb.RethinkDB;
+import com.rethinkdb.gen.ast.Http;
 import com.rethinkdb.net.Connection;
 import me.philippheuer.twitch4j.TwitchClient;
 import me.philippheuer.twitch4j.TwitchClientBuilder;
@@ -50,6 +51,7 @@ public class Twitch {
 
     public boolean addServer(String user, String serverId, String channelId) {
         checkServer(serverId);
+        boolean retVal = false;
         long userId = getUserID(user);
 
         if (userId != -1) {
@@ -59,23 +61,24 @@ public class Twitch {
             r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
                     r.hashMap("id", serverId))).update(r.array(
                     r.hashMap("channelId", channelId))).run(conn);
-            subscribeToLiveNotfications(userId);
-            return true;
-        } else
-            return false;
+            if (subscribeToLiveNotfications(userId));
+                retVal = true;
+        }
+        return retVal;
     }
 
     public boolean removeServer(String user, String serverId) {
         checkServer(serverId);
+        boolean retVal = false;
         long userId = getUserID(user);
 
         if (userId != -1) {
             r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
                     r.hashMap("id", serverId))).delete().run(conn);
             unsubscribeFromLiveNotfications(userId);
-            return true;
-        } else
-            return false;
+            retVal = true;
+        }
+        return retVal;
     }
 
     public void setChannel(String serverId, String channelId) {
@@ -107,6 +110,7 @@ public class Twitch {
 
     public long getUserID(String user) {
         HttpResponse response = curl("-H 'Client-ID: " + clientId + "' https://api.twitch.tv/helix/users?login=" + user);
+        long retVal = -1;
 
         if (response.getStatusLine().getStatusCode() == 200) {
             BufferedReader streamReader;
@@ -119,14 +123,12 @@ public class Twitch {
                     responseStrBuilder.append(inputStr);
                 JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
                 if (jsonObject.getJSONArray("data").length() != 0)
-                    return jsonObject.getJSONArray("data").getJSONObject(0).getInt("id");
-                else
-                    return -1;
+                    retVal = jsonObject.getJSONArray("data").getJSONObject(0).getInt("id");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return -1;
+        return retVal;
     }
 
     public void notifyLive(String userId) {
@@ -139,20 +141,20 @@ public class Twitch {
         });
     }
 
-    private void subscribeToLiveNotfications(long userId) {
-            //TODO replace secret with secure way of making password
-            curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
-                    "'{\"hub.mode\":\"subscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
-                    " \"hub.callback\":\"http://" + ipAddresss + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
-                    " https://api.twitch.tv/helix/webhooks/hub");
+    private boolean subscribeToLiveNotfications(long userId) {
+        //TODO replace secret with secure way of making password
+        return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
+                "'{\"hub.mode\":\"subscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
+                " \"hub.callback\":\"http://" + ipAddresss + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
+                " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
     }
 
-    private void unsubscribeFromLiveNotfications(long userId) {
+    private boolean unsubscribeFromLiveNotfications(long userId) {
         //TODO replace secret with secure way of making password
 
-            curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
-                    "'{\"hub.mode\":\"unsubscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
-                    " \"hub.callback\":\"http://" + ipAddresss + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
-                    " https://api.twitch.tv/helix/webhooks/hub");
+        return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
+                "'{\"hub.mode\":\"unsubscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
+                " \"hub.callback\":\"http://" + ipAddresss + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
+                " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
     }
 }
