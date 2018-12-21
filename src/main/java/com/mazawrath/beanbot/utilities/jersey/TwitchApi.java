@@ -1,8 +1,8 @@
 package com.mazawrath.beanbot.utilities.jersey;
-import com.sun.research.ws.wadl.Response;
+
+import org.json.JSONObject;
 
 import javax.ws.rs.*;
-import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import java.net.URL;
 
@@ -10,46 +10,20 @@ import java.net.URL;
 public class TwitchApi {
     @GET
     @Path("/subscription")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Result subscription(@QueryParam("hub.mode") String mode, @QueryParam("hub.topic") URL topic,
-                                        @QueryParam("hub.lease_seconds") int seconds, @QueryParam("hub.secret") String secret){
-        System.out.println("A thing happened");
-        return null;
+    @Produces(MediaType.TEXT_PLAIN)
+    public String subscription(@QueryParam("hub.mode") String mode, @QueryParam("hub.topic") URL topic,
+                               @QueryParam("hub.lease_seconds") int seconds, @QueryParam("hub.challenge") String challenge) {
+        System.out.println("Subscription to " + topic + " received.");
+        return challenge;
     }
 
-    private class Result{
-        double input;
-        double output;
-        String action;
-
-        public Result(){}
-
-        public Result(String action) {
-            this.action = action;
-        }
-
-        public String getAction() {
-            return action;
-        }
-
-        public void setAction(String action) {
-            this.action = action;
-        }
-
-        public double getInput() {
-            return input;
-        }
-
-        public void setInput(double input) {
-            this.input = input;
-        }
-
-        public double getOutput() {
-            return output;
-        }
-
-        public void setOutput(double output) {
-            this.output = output;
-        }
+    @POST
+    @Path("/subscription")
+    public void response(@HeaderParam("x-hub-signature") String signature, @HeaderParam("content-length") int length, JSONObject response) {
+        // TODO handle livestream notification
+        System.out.println("Someone went live");
+        System.out.println(response);
+        System.out.println(length);
+        System.out.println(signature);
     }
 }
