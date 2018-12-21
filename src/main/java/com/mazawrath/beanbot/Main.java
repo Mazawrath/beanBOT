@@ -17,6 +17,7 @@ import com.mazawrath.beanbot.utilities.jersey.RestServer;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 //import org.apache.log4j.BasicConfigurator;
+import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.util.logging.FallbackLoggerConfiguration;
 
@@ -29,13 +30,14 @@ public class Main {
         Points points = new Points();
         StockMarket stockMarket = new StockMarket();
         Lottery lottery = new Lottery();
-        Twitch twitch = new Twitch(args[1], args[2]);
         Thread restServer = new Thread(new RestServer());
         restServer.start();
 
 
         new DiscordApiBuilder().setToken(args[0]).login().thenAccept(api -> {
             //System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
+
+            Twitch twitch = new Twitch(args[1], args[2], api);
 
             // Instantiate command handler
             CommandHandler cmdHandler = new JavacordHandler(api);

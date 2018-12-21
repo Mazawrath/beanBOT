@@ -5,6 +5,7 @@ import com.rethinkdb.net.Connection;
 import me.philippheuer.twitch4j.TwitchClient;
 import me.philippheuer.twitch4j.TwitchClientBuilder;
 import org.apache.http.HttpResponse;
+import org.javacord.api.DiscordApi;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -15,19 +16,79 @@ public class Twitch {
     private TwitchClient client;
     private String clientId;
     private String ipAddresss;
+    private DiscordApi api;
 
     Connection conn;
 
     private static final RethinkDB r = RethinkDB.r;
     private static final String DB_NAME = "beanBotTwitch";
-    private static final String TABLE_NAME = "";
+    private static final String TABLE_NAME = "AdminTable";
 
-    public Twitch(String clientId, String ipAddresss) {
+    public Twitch(String clientId, String ipAddress, DiscordApi api) {
         this.clientId = clientId;
-        this.ipAddresss = ipAddresss;
+        this.ipAddresss = ipAddress;
+        this.api = api;
 
-        //conn = r.connection().hostname("localhost").port(28015).connect();
-        //checkTable(conn);
+        conn = r.connection().hostname("localhost").port(28015).connect();
+        checkTable(conn);
+    }
+
+    private void checkTable(Connection conn) {
+        if (r.dbList().contains(DB_NAME).run(conn)) {
+        } else {
+            r.dbCreate(DB_NAME).run(conn);
+        }
+    }
+
+    private void checkServer(String serverID) {
+        if (r.db(DB_NAME).table(TABLE_NAME).getField("id").contains(serverID).run(conn)) {
+        } else
+            r.db(DB_NAME).table(TABLE_NAME).insert(r.array(
+                    r.hashMap("id", serverID)
+            )).run(conn);
+    }
+
+    public boolean addServer(String user, String serverId, String channelId) {
+        checkServer(serverId);
+        long userId = getUserID(user);
+
+        if (userId != -1) {
+            r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
+                    r.hashMap("id", serverId))).update(r.array(
+                    r.hashMap("userId", userId))).run(conn);
+            r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
+                    r.hashMap("id", serverId))).update(r.array(
+                    r.hashMap("channelId", channelId))).run(conn);
+            subscribeToLiveNotfications(userId);
+            return true;
+        } else
+            return false;
+    }
+
+    public boolean removeServer(String user, String serverId) {
+        checkServer(serverId);
+        long userId = getUserID(user);
+
+        if (userId != -1) {
+            r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
+                    r.hashMap("id", serverId))).delete().run(conn);
+            unsubscribeFromLiveNotfications(userId);
+            return true;
+        } else
+            return false;
+    }
+
+    public void setChannel(String serverId, String channelId) {
+        // TODO I need to make super special checks for setting notifcation channel
+        checkServer(channelId);
+
+        r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
+                r.hashMap("id", serverId))).update(r.array(
+                r.hashMap("channelId", channelId))).run(conn);
+    }
+
+    public long[] getServers(String userId) {
+        return r.db(DB_NAME).table(TABLE_NAME).filter(r.array(r.hashMap("userId", userId))).getField(r.array("serverId", "channelId")).run(conn);
     }
 
     public void connectClient(String id, String secret, String credential) {
@@ -44,7 +105,7 @@ public class Twitch {
         return client.getStreamEndpoint().isLive(client.getChannelEndpoint().getChannel(channel));
     }
 
-    public int getUserID(String user) {
+    public long getUserID(String user) {
         HttpResponse response = curl("-H 'Client-ID: " + clientId + "' https://api.twitch.tv/helix/users?login=" + user);
 
         if (response.getStatusLine().getStatusCode() == 200) {
@@ -66,32 +127,30 @@ public class Twitch {
         return -1;
     }
 
-    public boolean subscribeToLiveNotfications(String user, String serverId) {
-        int userId = getUserID(user);
+    public void notifyLive(String userId) {
+        long[] ids = getServers(userId);
 
-        if (userId != -1) {
+        api.getServerById(ids[0]).ifPresent(server -> {
+            server.getTextChannelById(ids[1]).ifPresent(serverTextChannel -> {
+                serverTextChannel.sendMessage("They went live horray");
+            });
+        });
+    }
+
+    private void subscribeToLiveNotfications(long userId) {
             //TODO replace secret with secure way of making password
             curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
                     "'{\"hub.mode\":\"subscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
                     " \"hub.callback\":\"http://" + ipAddresss + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
                     " https://api.twitch.tv/helix/webhooks/hub");
-            return true;
-        } else
-            return false;
     }
 
-    public boolean unsubscribeFromLiveNotfications(String user, String serverId) {
+    private void unsubscribeFromLiveNotfications(long userId) {
         //TODO replace secret with secure way of making password
-        int userId = getUserID(user);
-        //checkUser(userId, serverId);
 
-        if (userId != -1) {
             curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
                     "'{\"hub.mode\":\"unsubscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
                     " \"hub.callback\":\"http://" + ipAddresss + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
                     " https://api.twitch.tv/helix/webhooks/hub");
-            return true;
-        } else
-            return false;
     }
 }
