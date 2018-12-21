@@ -1,15 +1,12 @@
 package com.mazawrath.beanbot.utilities.jersey;
 
 import com.google.api.client.util.Base64;
-import org.json.JSONObject;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.net.URL;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 @Path("/twitchapi")
 public class TwitchApi {
