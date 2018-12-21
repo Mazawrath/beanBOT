@@ -17,7 +17,7 @@ public class Twitch {
     private TwitchClient client;
     private String clientId;
     private String ipAddresss;
-    private DiscordApi api;
+    private static DiscordApi api;
 
     Connection conn;
 
@@ -38,6 +38,7 @@ public class Twitch {
         if (r.dbList().contains(DB_NAME).run(conn)) {
         } else {
             r.dbCreate(DB_NAME).run(conn);
+            r.db(DB_NAME).tableCreate(TABLE_NAME).run(conn);
         }
     }
 
@@ -56,12 +57,12 @@ public class Twitch {
 
         if (userId != -1) {
             r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
-                    r.hashMap("id", serverId))).update(r.array(
-                    r.hashMap("userId", userId))).run(conn);
-            r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
-                    r.hashMap("id", serverId))).update(r.array(
-                    r.hashMap("channelId", channelId))).run(conn);
-            if (subscribeToLiveNotfications(userId));
+                    r.hashMap("id", serverId))).update(
+                    r.hashMap("userId", userId)).run(conn);
+            r.db(DB_NAME).table(TABLE_NAME).filter(
+                    r.hashMap("id", serverId)).update(
+                    r.hashMap("channelId", channelId)).run(conn);
+            if (subscribeToLiveNotfications(userId))
                 retVal = true;
         }
         return retVal;
@@ -75,8 +76,8 @@ public class Twitch {
         if (userId != -1) {
             r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
                     r.hashMap("id", serverId))).delete().run(conn);
-            unsubscribeFromLiveNotfications(userId);
-            retVal = true;
+            if (unsubscribeFromLiveNotfications(userId))
+                retVal = true;
         }
         return retVal;
     }
