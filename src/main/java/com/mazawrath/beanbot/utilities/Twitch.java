@@ -118,12 +118,14 @@ public class Twitch {
                 while ((inputStr = streamReader.readLine()) != null)
                     responseStrBuilder.append(inputStr);
                 JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
-                return jsonObject.getJSONArray("data").getJSONObject(0).getInt("id");
+                if (jsonObject.getJSONArray("data").length() != 0)
+                    return jsonObject.getJSONArray("data").getJSONObject(0).getInt("id");
+                else
+                    return -1;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
         return -1;
     }
 
