@@ -29,15 +29,14 @@ public class AdminTwitchSettings implements CommandExecutor {
             return;
         }
 
-        if (args[0].equals("addChannel")) {
-            if (twitch.addServer(args[1], server.getIdAsString(), serverTextChannel.getIdAsString())) {
-                serverTextChannel.sendMessage("Subscribe to live notifications for" + args[1] + ".");
-                twitch.addServer(args[1], server.getIdAsString(), serverTextChannel.getIdAsString());
-            } else
+        if (args[0].equalsIgnoreCase("addChannel")) {
+            if (twitch.addServer(args[1], server.getIdAsString(), serverTextChannel.getIdAsString()))
+                serverTextChannel.sendMessage("Subscribed to live notifications for " + args[1] + ".");
+             else
                 serverTextChannel.sendMessage("Could not subscribe to " + args[1] + ".");
         } else if (args[0].equals("removeChannel")) {
-            if (twitch.removeServer(args[1], server.getIdAsString()))
-                serverTextChannel.sendMessage("Subscribe to live notifications for" + args[1] + ".");
+            if (twitch.removeServer(server.getIdAsString()))
+                serverTextChannel.sendMessage("Unsubscribed from live notifications for " + args[1] + ".");
             else
                 serverTextChannel.sendMessage("Could not subscribe to " + args[1] + ".");
         } else if (args[0].equals("setNotificationChannel")) {
