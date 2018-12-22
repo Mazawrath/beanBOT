@@ -63,6 +63,9 @@ public class Twitch {
             r.db(DB_NAME).table(TABLE_NAME).filter(
                     r.hashMap("id", serverId)).update(
                     r.hashMap("channelId", channelId)).run(conn);
+            r.db(DB_NAME).table(TABLE_NAME).filter(
+                    r.hashMap("id", serverId)).update(
+                    r.hashMap("delete_requested", false)).run(conn);
             if (subscribeToLiveNotfications(userId))
                 retVal = true;
             else {
@@ -90,10 +93,14 @@ public class Twitch {
         long userId = getUserID(user);
 
         if (userId != -1) {
-            r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
-                    r.hashMap("id", serverId))).delete().run(conn);
-            if (unsubscribeFromLiveNotfications(userId))
+            r.db(DB_NAME).table(TABLE_NAME).filter(
+                    r.hashMap("id", serverId)).update(
+                    r.hashMap("delete_requested", true)).run(conn);
+            if (unsubscribeFromLiveNotfications(userId)) {
                 retVal = true;
+                r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
+                        r.hashMap("id", serverId))).delete().run(conn);
+            }
         }
         return retVal;
     }
