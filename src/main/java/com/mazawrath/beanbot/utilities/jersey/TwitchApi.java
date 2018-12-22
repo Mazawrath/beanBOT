@@ -1,6 +1,9 @@
 package com.mazawrath.beanbot.utilities.jersey;
 
 import com.google.api.client.util.Base64;
+import com.mazawrath.beanbot.utilities.LivestreamNotification;
+import com.mazawrath.beanbot.utilities.StreamNotifier;
+import org.json.JSONObject;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -23,11 +26,19 @@ public class TwitchApi {
     @Path("/subscription")
     public void response(@HeaderParam("x-hub-signature") String signature, @HeaderParam("content-length") int length, String payload) {
         // TODO handle livestream notification
-        sha256Encrypter(payload, signature);
         System.out.println("Someone went live");
-        System.out.println(payload);
-        System.out.println(length);
+        sha256Encrypter(payload, "very_secret");
+
+        JSONObject payloadJson = new JSONObject(payload).getJSONArray("data").getJSONObject(0);
         System.out.println(signature);
+        System.out.println("ID: " + payloadJson.getString("id"));
+        System.out.println("User Name: " + payloadJson.getString("user_name"));
+        System.out.println("Thumbnail: " + payloadJson.getString("thumbnail_url"));
+        System.out.println("Title: " + payloadJson.getString("title"));
+
+        StreamNotifier.notifyLive(new LivestreamNotification(payloadJson.getString("user_name"), payloadJson.getString("game_id"), ((URL) payloadJson.get("thumbnail_url"))));
+
+        System.out.println(length);
     }
 
 
@@ -40,8 +51,7 @@ public class TwitchApi {
             String hash = Base64.encodeBase64String(sha256_HMAC.doFinal(payload.getBytes()));
             System.out.println(hash);
             return hash;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

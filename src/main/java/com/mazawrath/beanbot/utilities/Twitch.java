@@ -1,7 +1,6 @@
 package com.mazawrath.beanbot.utilities;
 
 import com.rethinkdb.RethinkDB;
-import com.rethinkdb.gen.ast.Http;
 import com.rethinkdb.net.Connection;
 import me.philippheuer.twitch4j.TwitchClient;
 import me.philippheuer.twitch4j.TwitchClientBuilder;
@@ -10,6 +9,8 @@ import org.javacord.api.DiscordApi;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static org.toilelibre.libe.curl.Curl.curl;
 
@@ -99,11 +100,18 @@ public class Twitch {
 
     public void setChannel(String serverId, String channelId) {
         // TODO I need to make super special checks for setting notifcation channel
-        checkServer(channelId);
+        checkServer(serverId);
 
         r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
                 r.hashMap("id", serverId))).update(r.array(
                 r.hashMap("channelId", channelId))).run(conn);
+    }
+
+    private void getChannelSubsciption(String serverId) {
+        checkServer(serverId);
+
+        r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
+                r.hashMap("id", serverId))).delete().run(conn);
     }
 
     public long[] getServers(String userId) {
@@ -172,5 +180,16 @@ public class Twitch {
                 "'{\"hub.mode\":\"unsubscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
                 " \"hub.callback\":\"http://" + ipAddresss + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
                 " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
+    }
+
+    private void startResubscribeTimer() {
+        ScheduledThreadPoolExecutor stpe = new ScheduledThreadPoolExecutor(5);
+        stpe.scheduleAtFixedRate(new resubscribe(), 0, 7, TimeUnit.DAYS);
+    }
+
+    class resubscribe implements Runnable {
+        public void run() {
+            System.out.println("Job 1");
+        }
     }
 }
