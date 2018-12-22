@@ -114,11 +114,8 @@ public class Twitch {
                 r.hashMap("channelId", channelId))).run(conn);
     }
 
-    private void getChannelSubsciption(String serverId) {
-        checkServer(serverId);
-
-        r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
-                r.hashMap("id", serverId))).delete().run(conn);
+    private long[] getChannelSubsciptionList() {
+        return r.db(DB_NAME).table(TABLE_NAME).getField("userId").run(conn);
     }
 
     public long[] getServers(String userId) {
@@ -202,7 +199,10 @@ public class Twitch {
 
     class resubscribe implements Runnable {
         public void run() {
-            System.out.println("Job 1");
+            long[] userIds = getChannelSubsciptionList();
+
+            for (int i = 0; i < userIds.length; i++)
+                subscribeToLiveNotfications(userIds[i]);
         }
     }
 }
