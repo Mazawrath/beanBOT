@@ -3,6 +3,7 @@ package com.mazawrath.beanbot.utilities.jersey;
 import com.google.api.client.util.Base64;
 import com.mazawrath.beanbot.utilities.LivestreamNotification;
 import com.mazawrath.beanbot.utilities.StreamNotifier;
+import com.mazawrath.beanbot.utilities.Twitch;
 import org.json.JSONObject;
 
 import javax.crypto.Mac;
@@ -28,15 +29,20 @@ public class TwitchApi {
         // TODO handle livestream notification
         System.out.println("Someone went live");
         sha256Encrypter(payload, "very_secret");
-
-        JSONObject payloadJson = new JSONObject(payload).getJSONArray("data").getJSONObject(0);
+        System.out.println(payload);
         System.out.println(signature);
-        System.out.println("ID: " + payloadJson.getString("id"));
-        System.out.println("User Name: " + payloadJson.getString("user_name"));
-        System.out.println("Thumbnail: " + payloadJson.getString("thumbnail_url"));
-        System.out.println("Title: " + payloadJson.getString("title"));
 
-        StreamNotifier.notifyLive(new LivestreamNotification(payloadJson.getString("id"), payloadJson.getString("user_name"), payloadJson.getString("game_id"), ((URL) payloadJson.get("thumbnail_url"))));
+        JSONObject payloadJson = new JSONObject(payload);
+        if (payloadJson.getJSONArray("data").length() != 0) {
+            payloadJson = new JSONObject(payload).getJSONArray("data").getJSONObject(0);
+            System.out.println("ID: " + payloadJson.getString("user_id"));
+            System.out.println("User Name: " + payloadJson.getString("user_name"));
+            System.out.println("Thumbnail: " + payloadJson.getString("thumbnail_url"));
+            System.out.println("Title: " + payloadJson.getString("title"));
+
+            Twitch.notifyLive(new LivestreamNotification(payloadJson.getString("id"), payloadJson.getString("user_name"), payloadJson.getString("game_id"), payloadJson.getString("thumbnail_url")));
+        } else
+            System.out.println("Someone went offline");
 
         System.out.println(length);
     }

@@ -6,9 +6,9 @@ public class LivestreamNotification {
     private String userId;
     private String userName;
     private String gameId;
-    private URL thumbnail;
+    private String thumbnail;
 
-    public LivestreamNotification(String userId, String userName, String gameId, URL thumbnail) {
+    public LivestreamNotification(String userId, String userName, String gameId, String thumbnail) {
         this.userId = userId;
         this.userName = userName;
         this.gameId = gameId;
@@ -27,7 +27,7 @@ public class LivestreamNotification {
         return gameId;
     }
 
-    URL getThumbnail() {
+    String getThumbnail() {
         return thumbnail;
     }
 }

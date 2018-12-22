@@ -20,7 +20,7 @@ public class Twitch {
     private String ipAddresss;
     private static DiscordApi api;
 
-    private Connection conn;
+    private static Connection conn;
 
     private static final RethinkDB r = RethinkDB.r;
     private static final String DB_NAME = "beanBotTwitch";
@@ -162,14 +162,20 @@ public class Twitch {
         return retVal;
     }
 
-    public void notifyLive(String userId) {
-        long[] ids = getServers(userId);
+    public static void notifyLive(LivestreamNotification livestreamNotification) {
+        String[] servers = r.db(DB_NAME).table(TABLE_NAME).filter(r.hashMap("userId", livestreamNotification.getUserId())).getField("id").run(conn);
+        String[] channels = r.db(DB_NAME).table(TABLE_NAME).filter(r.hashMap("userId", livestreamNotification.getUserId())).getField("channelId").run(conn);
 
-        api.getServerById(ids[0]).ifPresent(server -> {
-            server.getTextChannelById(ids[1]).ifPresent(serverTextChannel -> {
-                serverTextChannel.sendMessage("They went live horray");
+        System.out.println("Notifying channel...");
+
+        for(int i = 0; i < servers.length; i++) {
+            int finalI = i;
+            api.getServerById(servers[i]).ifPresent(server -> {
+                server.getTextChannelById(channels[finalI]).ifPresent(serverTextChannel -> {
+                    serverTextChannel.sendMessage(livestreamNotification.getUserName() + " has gone live!");
+                });
             });
-        });
+        }
     }
 
     private boolean subscribeToLiveNotfications(long userId) {
