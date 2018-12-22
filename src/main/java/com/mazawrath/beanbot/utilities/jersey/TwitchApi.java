@@ -36,7 +36,7 @@ public class TwitchApi {
         System.out.println("Thumbnail: " + payloadJson.getString("thumbnail_url"));
         System.out.println("Title: " + payloadJson.getString("title"));
 
-        StreamNotifier.notifyLive(new LivestreamNotification(payloadJson.getString("user_name"), payloadJson.getString("game_id"), ((URL) payloadJson.get("thumbnail_url"))));
+        StreamNotifier.notifyLive(new LivestreamNotification(payloadJson.getString("id"), payloadJson.getString("user_name"), payloadJson.getString("game_id"), ((URL) payloadJson.get("thumbnail_url"))));
 
         System.out.println(length);
     }
