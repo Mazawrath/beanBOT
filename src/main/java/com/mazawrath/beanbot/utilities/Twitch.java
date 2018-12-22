@@ -19,19 +19,19 @@ public class Twitch {
     private String ipAddresss;
     private static DiscordApi api;
 
-    Connection conn;
+    private Connection conn;
 
     private static final RethinkDB r = RethinkDB.r;
     private static final String DB_NAME = "beanBotTwitch";
     private static final String TABLE_NAME = "AdminTable";
 
-    public Twitch(String clientId, String ipAddress, DiscordApi api) {
+    public Twitch(String clientId, String ipAddress, Connection conn) {
         this.clientId = clientId;
         this.ipAddresss = ipAddress;
-        this.api = api;
+        this.conn = conn;
 
-        conn = r.connection().hostname("localhost").port(28015).connect();
         checkTable(conn);
+        startResubscribeTimer();
     }
 
     private void checkTable(Connection conn) {

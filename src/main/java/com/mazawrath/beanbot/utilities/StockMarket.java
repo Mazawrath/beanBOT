@@ -23,8 +23,9 @@ public class StockMarket {
     private static final String DB_VALUE_PREFIX = "P_";
     Connection conn;
 
-    public StockMarket() {
-        conn = r.connection().hostname("localhost").port(28015).connect();
+    public StockMarket(Connection conn) {
+        this.conn = conn;
+
         checkTable(conn);
     }
 

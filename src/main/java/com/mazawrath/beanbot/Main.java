@@ -8,16 +8,16 @@ import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
 import com.mazawrath.beanbot.commands.twitch.CheckLiveCommand;
-import com.mazawrath.beanbot.utilities.Lottery;
+import com.mazawrath.beanbot.utilities.*;
 import com.mazawrath.beanbot.commands.admin.*;
-import com.mazawrath.beanbot.utilities.Points;
-import com.mazawrath.beanbot.utilities.StockMarket;
-import com.mazawrath.beanbot.utilities.Twitch;
 import com.mazawrath.beanbot.utilities.jersey.RestServer;
+import com.rethinkdb.net.Connection;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 //import org.apache.log4j.BasicConfigurator;
 import org.javacord.api.DiscordApiBuilder;
+
+import static com.rethinkdb.RethinkDB.r;
 
 public class Main {
     public static void main(String[] args) {
@@ -25,9 +25,11 @@ public class Main {
         // Enable debugging, if no slf4j logger was found
         //FallbackLoggerConfiguration.setDebug(false);
 
-        Points points = new Points();
-        StockMarket stockMarket = new StockMarket();
-        Lottery lottery = new Lottery();
+        Connection conn = r.connection().hostname("localhost").port(28015).connect();
+
+        Points points = new Points(conn);
+        StockMarket stockMarket = new StockMarket(conn);
+        Lottery lottery = new Lottery(conn);
         Thread restServer = new Thread(new RestServer());
         restServer.start();
 
@@ -35,7 +37,8 @@ public class Main {
         new DiscordApiBuilder().setToken(args[0]).login().thenAccept(api -> {
             //System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
 
-            Twitch twitch = new Twitch(args[1], args[2], api);
+            Twitch twitch = new Twitch(args[1], args[2], conn);
+            streamNotifier = new StreamNotifier(api);
 
             // Instantiate command handler
             CommandHandler cmdHandler = new JavacordHandler(api);
