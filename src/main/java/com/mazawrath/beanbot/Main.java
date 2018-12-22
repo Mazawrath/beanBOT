@@ -17,9 +17,7 @@ import com.mazawrath.beanbot.utilities.jersey.RestServer;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 //import org.apache.log4j.BasicConfigurator;
-import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.util.logging.FallbackLoggerConfiguration;
 
 public class Main {
     public static void main(String[] args) {
