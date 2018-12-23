@@ -38,8 +38,6 @@ public class Main {
             System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
 
             Twitch twitch = new Twitch(args[1], args[2], conn, api);
-            StreamNotifier.setApi(api);
-            StreamNotifier.setConn(conn);
 
             // Instantiate command handler
             CommandHandler cmdHandler = new JavacordHandler(api);
