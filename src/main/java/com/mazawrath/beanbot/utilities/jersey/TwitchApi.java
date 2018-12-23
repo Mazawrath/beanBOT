@@ -2,7 +2,6 @@ package com.mazawrath.beanbot.utilities.jersey;
 
 import com.google.api.client.util.Base64;
 import com.mazawrath.beanbot.utilities.LivestreamNotification;
-import com.mazawrath.beanbot.utilities.StreamNotifier;
 import com.mazawrath.beanbot.utilities.Twitch;
 import org.json.JSONObject;
 
