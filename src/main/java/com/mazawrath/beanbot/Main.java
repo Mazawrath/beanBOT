@@ -37,7 +37,7 @@ public class Main {
         new DiscordApiBuilder().setToken(args[0]).login().thenAccept(api -> {
             System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
 
-            Twitch twitch = new Twitch(args[1], args[2], conn);
+            Twitch twitch = new Twitch(args[1], args[2], conn, api);
             StreamNotifier.setApi(api);
             StreamNotifier.setConn(conn);
 

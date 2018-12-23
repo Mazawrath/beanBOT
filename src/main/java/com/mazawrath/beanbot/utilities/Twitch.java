@@ -6,9 +6,11 @@ import me.philippheuer.twitch4j.TwitchClient;
 import me.philippheuer.twitch4j.TwitchClientBuilder;
 import org.apache.http.HttpResponse;
 import org.javacord.api.DiscordApi;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -26,10 +28,11 @@ public class Twitch {
     private static final String DB_NAME = "beanBotTwitch";
     private static final String TABLE_NAME = "AdminTable";
 
-    public Twitch(String clientId, String ipAddress, Connection conn) {
+    public Twitch(String clientId, String ipAddress, Connection conn, DiscordApi api) {
         this.clientId = clientId;
         this.ipAddresss = ipAddress;
-        this.conn = conn;
+        Twitch.conn = conn;
+        Twitch.api = api;
 
         checkTable(conn);
         startResubscribeTimer();
@@ -57,8 +60,8 @@ public class Twitch {
         long userId = getUserID(user);
 
         if (userId != -1) {
-            r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
-                    r.hashMap("id", serverId))).update(
+            r.db(DB_NAME).table(TABLE_NAME).filter(
+                    r.hashMap("id", serverId)).update(
                     r.hashMap("userId", userId)).run(conn);
             r.db(DB_NAME).table(TABLE_NAME).filter(
                     r.hashMap("id", serverId)).update(
@@ -87,7 +90,7 @@ public class Twitch {
         return retVal;
     }
 
-    public boolean removeServer(String user, String serverId) {
+    public boolean flagRemoval(String user, String serverId) {
         checkServer(serverId);
         boolean retVal = false;
         long userId = getUserID(user);
@@ -96,11 +99,8 @@ public class Twitch {
             r.db(DB_NAME).table(TABLE_NAME).filter(
                     r.hashMap("id", serverId)).update(
                     r.hashMap("delete_requested", true)).run(conn);
-            if (unsubscribeFromLiveNotfications(userId)) {
+            if (unsubscribeFromLiveNotfications(userId))
                 retVal = true;
-                r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
-                        r.hashMap("id", serverId))).delete().run(conn);
-            }
         }
         return retVal;
     }
@@ -114,8 +114,8 @@ public class Twitch {
                 r.hashMap("channelId", channelId))).run(conn);
     }
 
-    private long[] getChannelSubsciptionList() {
-        return r.db(DB_NAME).table(TABLE_NAME).getField("userId").run(conn);
+    private ArrayList getChannelSubsciptionList() {
+        return r.db(DB_NAME).table(TABLE_NAME).getField("channelId").run(conn);
     }
 
     public long[] getServers(String userId) {
@@ -160,19 +160,22 @@ public class Twitch {
     }
 
     public static void notifyLive(LivestreamNotification livestreamNotification) {
-        String[] servers = r.db(DB_NAME).table(TABLE_NAME).filter(r.hashMap("userId", livestreamNotification.getUserId())).getField("id").run(conn);
-        String[] channels = r.db(DB_NAME).table(TABLE_NAME).filter(r.hashMap("userId", livestreamNotification.getUserId())).getField("channelId").run(conn);
+        JSONArray serverJson = new JSONArray(new ArrayList<>(r.db(DB_NAME).table(TABLE_NAME).filter(r.hashMap("userId", livestreamNotification.getUserId())).getField("id").run(conn)));
+        JSONArray channelJson = new JSONArray(new ArrayList<>(r.db(DB_NAME).table(TABLE_NAME).filter(r.hashMap("userId", livestreamNotification.getUserId())).getField("channelId").run(conn)));
+
 
         System.out.println("Notifying channel...");
 
-        for(int i = 0; i < servers.length; i++) {
+        for (int i = 0; i < serverJson.length(); i++) {
             int finalI = i;
-            api.getServerById(servers[i]).ifPresent(server -> {
-                server.getTextChannelById(channels[finalI]).ifPresent(serverTextChannel -> {
-                    serverTextChannel.sendMessage(livestreamNotification.getUserName() + " has gone live!");
-                });
-            });
+            api.getServerById(serverJson.getString(i)).ifPresent(server ->
+                    server.getTextChannelById(channelJson.getString(finalI)).ifPresent(serverTextChannel -> serverTextChannel.sendMessage(livestreamNotification.getUserName() + " has gone live!")));
         }
+    }
+
+    public static void removeServer(String serverId) {
+        r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
+                r.hashMap("id", serverId))).delete().run(conn);
     }
 
     private boolean subscribeToLiveNotfications(long userId) {
@@ -199,10 +202,17 @@ public class Twitch {
 
     class resubscribe implements Runnable {
         public void run() {
-            long[] userIds = getChannelSubsciptionList();
+            ArrayList userIds = getChannelSubsciptionList();
 
-            for (int i = 0; i < userIds.length; i++)
-                subscribeToLiveNotfications(userIds[i]);
+            for (int i = 0; i < userIds.size(); i++)
+                subscribeToLiveNotfications(convertToLong(userIds.get(i)));
         }
+    }
+
+    public static Long convertToLong(Object o){
+        String stringToConvert = String.valueOf(o);
+        Long convertedLong = Long.parseLong(stringToConvert);
+        return convertedLong;
+
     }
 }

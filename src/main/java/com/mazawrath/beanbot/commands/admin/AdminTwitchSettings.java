@@ -35,7 +35,7 @@ public class AdminTwitchSettings implements CommandExecutor {
              else
                 serverTextChannel.sendMessage("Could not subscribe to " + args[1] + ".");
         } else if (args[0].equals("removeChannel")) {
-            if (twitch.removeServer(args[1], server.getIdAsString()))
+            if (twitch.flagRemoval(args[1], server.getIdAsString()))
                 serverTextChannel.sendMessage("Unsubscribed from live notifications for " + args[1] + ".");
             else
                 serverTextChannel.sendMessage("Could not subscribe to " + args[1] + ".");

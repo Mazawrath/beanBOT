@@ -36,7 +36,7 @@ public class BeanTransferCommand implements CommandExecutor {
                 serverTextChannel.sendMessage("Username is not valid!");
                 return;
             }
-            
+
             api.getUserById(args[0]).thenAccept(user -> {
                 if (Points.isProperDecimal(args[1])) {
                     BigDecimal transferPoints = new BigDecimal(args[1]).setScale(Points.SCALE, Points.ROUNDING_MODE);
