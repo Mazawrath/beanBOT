@@ -34,24 +34,17 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.7.0\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v2.6.2...v2.7.0\n" +
+                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.0.0\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v2.8.0...v3.0.0\n" +
                 "\n" +
-                "**v2.7.0**\n" +
-                "**New**\n" +
-                "\t- Added the Bean Lottery.\n" +
-                "\t\t- Added `.beanlottery`.\n" +
-                "\t\t- *For a limited time `.beanlottery` tickets only cost " + Points.pointsToString(Points.LOTTERY_TICKET_COST) + "!*\n" +
-                "\t\t- Added `.adminforcelotterydrawing`.\n" +
-                "\t- Added `.adminremovebeancoin`.\n" +
+                "**v3.0.0**\n" +
+//                "**New**\n" +
+//                "\t- Added the Bean Lottery.\n" +
                 "**Changes**\n" +
-                "\t- Re-enabled `.givemod`.\n" +
-                "\t- Renamed all `.maza` commands to `.admin`.\n" +
-                "\t- `.admin` commands now tell users that only the bot owner can use commands instead of only Mazawrath.\n" +
-                "\t- Server owners can now use `.adminpostchangelog`.\n" +
-                "\t- Server owners can now use `.adminposthelp`.\n" +
-                "**Bug Fixes**\n" +
-                "\t- Fixed an issue where normal users had access to `.adminposthelp`.\n" +
-                "\t- Fixed an issue where `.adminposthelp` could be used in a private message.";
+                "\t- Completely redesigned way to build and run beanBOT.\n" +
+                "\t- Reverted Beanmas.\n" +
+                "\t- Added an automated way to do weekly bean lottery drawings.\n";
+//                "**Bug Fixes**\n" +
+//                "\t- Fixed an issue where normal users had access to `.adminposthelp`.\n";
     }
 }
