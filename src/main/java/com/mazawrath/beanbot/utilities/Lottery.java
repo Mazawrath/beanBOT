@@ -1,10 +1,17 @@
 package com.mazawrath.beanbot.utilities;
 
 import com.rethinkdb.net.Connection;
+import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.message.MessageBuilder;
+import org.javacord.api.entity.server.Server;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.rethinkdb.RethinkDB.r;
@@ -102,6 +109,41 @@ public class Lottery {
         });
 
         ticketsTrans.forEach(ticket -> System.out.println(ticket));
+    }
+
+    public void drawNumbers(Points points, Server server, DiscordApi api, ServerTextChannel serverTextChannel) {
+        int[] winningNumbers = generateNumbers();
+
+        ArrayList winners = getWinner(server.getIdAsString(), winningNumbers);
+        MessageBuilder message = new MessageBuilder();
+
+        message.append("The numbers drawn were:\n");
+        for (int i = 0; i < winningNumbers.length; i++)
+            message.append(winningNumbers[i] + " ");
+        message.append("\n");
+        if (winners.size() == 0)
+            message.append("No one has won. All bean lottery tickets have been saved until the next drawing.");
+        else {
+            BigDecimal prizePool = points.getBalance(api.getYourself().getIdAsString(), server.getIdAsString());
+            BigDecimal amountWon = prizePool.divide(new BigDecimal(winners.size())).setScale(Points.SCALE, Points.ROUNDING_MODE);
+            points.removePoints(api.getYourself().getIdAsString(), null, server.getIdAsString(), points.getBalance(api.getYourself().getIdAsString(), server.getIdAsString()));
+
+            winners.forEach(winner -> points.addPoints(((HashMap) winner).get("id").toString(), server.getIdAsString(), amountWon));
+
+            message.append("The following users have won:\n");
+            winners.forEach(winner ->
+                    api.getCachedUserById((((HashMap) winner).get("id").toString())).ifPresent(user ->
+                            message.append(user.getMentionTag() + " has won!\n")));
+
+            message.append("The prize pool was " + Points.pointsToString(prizePool) + " and divided between " + winners.size());
+            if (winners.size() == 1)
+                message.append(" winner, they get the entire prize pool!");
+            else
+                message.append(" winners, each gets " + Points.pointsToString(amountWon) + "!");
+            message.append("\nAll bean lottery tickets have been deleted for the next bean lottery drawing.");
+            clearTickets(server.getIdAsString());
+        }
+        message.send(serverTextChannel);
     }
 
     public int[] getWinningNumbers() {
