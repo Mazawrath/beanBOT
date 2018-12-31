@@ -33,6 +33,7 @@ public class AsgCommand implements CommandExecutor {
                     .setImage("https://cdn.discordapp.com/attachments/480959729330290688/492393589939109935/asg.png")
                     .setFooter("asg", "https://cdn.discordapp.com/attachments/480959729330290688/492393589939109935/asg.png");
             serverTextChannel.sendMessage(embed);
-        }
+        } else
+            serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
     }
 }
