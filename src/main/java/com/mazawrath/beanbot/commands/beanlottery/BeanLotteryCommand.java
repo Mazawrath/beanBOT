@@ -41,6 +41,12 @@ public class BeanLotteryCommand implements CommandExecutor {
                     lottery.scheduleWeeklyDrawing(points, server, api, serverTextChannel);
                     return;
                 }
+            } else if (args[0].equalsIgnoreCase("draw")) {
+                if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_DRAWING_COST)) {
+                    lottery.drawNumbers(points, server, api, serverTextChannel);
+                    return;
+                } else
+                    serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -90,7 +96,7 @@ public class BeanLotteryCommand implements CommandExecutor {
                 } else
                     serverTextChannel.sendMessage("You do not have enough beanCoin to buy a ticket.");
             } else
-                serverTextChannel.sendMessage("You must either have 1 number with how many tickets you want to buy or " + Lottery.AMOUNT_DRAWN + " numbers >= " + Lottery.MIN_NUMBER + " and <= " + Lottery.MAX_NUMBER + ".");
+                serverTextChannel.sendMessage("You must have 1 number with how many tickets you want to buy, " + Lottery.AMOUNT_DRAWN + " numbers >= " + Lottery.MIN_NUMBER + " and <= " + Lottery.MAX_NUMBER + ", or the word `draw` to have your own drawing.");
         } catch (NumberFormatException | NullPointerException e) {
             serverTextChannel.sendMessage("Invalid number(s).");
         }

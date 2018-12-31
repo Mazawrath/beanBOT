@@ -23,6 +23,7 @@ public class Points {
     public static final BigDecimal COMMAND_COST = new BigDecimal("2.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST_SPECIAL = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal LOTTERY_TICKET_COST = new BigDecimal("20.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal LOTTERY_DRAWING_COST = new BigDecimal("400.00").setScale(SCALE, ROUNDING_MODE);
     private Connection conn;
 
     public void connectDatabase() {
