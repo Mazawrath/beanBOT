@@ -43,7 +43,8 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
                 "**Changes**\n" +
                 "\t- Completely redesigned way to build and run beanBOT.\n" +
                 "\t- Reverted Beanmas.\n" +
-                "\t- Added an automated way to do weekly bean lottery drawings.\n";
+                "\t- Added an automated way to do weekly bean lottery drawings.\n" +
+                "\t- Added `.beanlottery draw` that anyone can use to start a bean lottery drawing.";
 //                "**Bug Fixes**\n" +
 //                "\t- Fixed an issue where normal users had access to `.adminposthelp`.\n";
     }
