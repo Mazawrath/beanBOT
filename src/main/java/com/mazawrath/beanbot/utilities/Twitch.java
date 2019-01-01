@@ -35,9 +35,6 @@ public class Twitch {
         Twitch.api = api;
 
         checkTable(conn);
-        System.out.println("Test");
-        Twitch.notifyLive(new LivestreamNotification("19571641", "Mazawrath", "46346", "www.bean.com"));
-        System.out.println("Test");
         startResubscribeTimer();
     }
 
