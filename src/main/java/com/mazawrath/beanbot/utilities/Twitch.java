@@ -116,7 +116,7 @@ public class Twitch {
     }
 
     private List getChannelSubsciptionList() {
-        Cursor retVal =  r.db(DB_NAME).table(TABLE_NAME).getField("userId").run(conn);
+        Cursor retVal = r.db(DB_NAME).table(TABLE_NAME).getField("userId").run(conn);
         return retVal.toList();
     }
 
@@ -210,12 +210,11 @@ public class Twitch {
         public void run() {
             List userIds = getChannelSubsciptionList();
 
-            for (int i = 0; i < userIds.size(); i++)
-                subscribeToLiveNotifications(convertToLong(userIds.get(i)));
+            for (Object userId : userIds) subscribeToLiveNotifications(convertToLong(userId));
         }
     }
 
-    private static Long convertToLong(Object o){
+    private static Long convertToLong(Object o) {
         String stringToConvert = String.valueOf(o);
         return Long.parseLong(stringToConvert);
 
