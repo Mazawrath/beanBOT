@@ -19,7 +19,7 @@ import static org.toilelibre.libe.curl.Curl.curl;
 public class Twitch {
     private TwitchClient client;
     private String clientId;
-    private String ipAddresss;
+    private String ipAddress;
     private static DiscordApi api;
 
     private static Connection conn;
@@ -30,11 +30,14 @@ public class Twitch {
 
     public Twitch(String clientId, String ipAddress, Connection conn, DiscordApi api) {
         this.clientId = clientId;
-        this.ipAddresss = ipAddress;
+        this.ipAddress = ipAddress;
         Twitch.conn = conn;
         Twitch.api = api;
 
         checkTable(conn);
+        System.out.println("Test");
+        Twitch.notifyLive(new LivestreamNotification("19571641", "Mazawrath", "46346", "www.bean.com"));
+        System.out.println("Test");
         startResubscribeTimer();
     }
 
@@ -182,7 +185,7 @@ public class Twitch {
         //TODO replace secret with secure way of making password
         return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
                 "'{\"hub.mode\":\"subscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
-                " \"hub.callback\":\"http://" + ipAddresss + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
+                " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
                 " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
     }
 
@@ -191,7 +194,7 @@ public class Twitch {
 
         return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
                 "'{\"hub.mode\":\"unsubscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
-                " \"hub.callback\":\"http://" + ipAddresss + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
+                " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
                 " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
     }
 
