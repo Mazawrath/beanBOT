@@ -9,7 +9,6 @@ import org.javacord.api.DiscordApi;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -69,7 +68,7 @@ public class Twitch {
             r.db(DB_NAME).table(TABLE_NAME).filter(
                     r.hashMap("id", serverId)).update(
                     r.hashMap("delete_requested", false)).run(conn);
-            if (subscribeToLiveNotfications(userId))
+            if (subscribeToLiveNotifications(userId))
                 retVal = true;
             else {
                 System.out.println("Subscription attempt failed. Retrying.");
@@ -77,7 +76,7 @@ public class Twitch {
                     try {
                         System.out.println("Attempt " + attempts);
                         Thread.sleep(5000);
-                        if (subscribeToLiveNotfications(userId)) {
+                        if (subscribeToLiveNotifications(userId)) {
                             retVal = true;
                             break;
                         }
@@ -99,7 +98,7 @@ public class Twitch {
             r.db(DB_NAME).table(TABLE_NAME).filter(
                     r.hashMap("id", serverId)).update(
                     r.hashMap("delete_requested", true)).run(conn);
-            if (unsubscribeFromLiveNotfications(userId))
+            if (unsubscribeFromLiveNotifications(userId))
                 retVal = true;
         }
         return retVal;
@@ -178,7 +177,7 @@ public class Twitch {
                 r.hashMap("id", serverId))).delete().run(conn);
     }
 
-    private boolean subscribeToLiveNotfications(long userId) {
+    private boolean subscribeToLiveNotifications(long userId) {
         //TODO replace secret with secure way of making password
         return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
                 "'{\"hub.mode\":\"subscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
@@ -186,7 +185,7 @@ public class Twitch {
                 " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
     }
 
-    private boolean unsubscribeFromLiveNotfications(long userId) {
+    private boolean unsubscribeFromLiveNotifications(long userId) {
         //TODO replace secret with secure way of making password
 
         return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
@@ -205,7 +204,7 @@ public class Twitch {
             ArrayList userIds = getChannelSubsciptionList();
 
             for (int i = 0; i < userIds.size(); i++)
-                subscribeToLiveNotfications(convertToLong(userIds.get(i)));
+                subscribeToLiveNotifications(convertToLong(userIds.get(i)));
         }
     }
 
