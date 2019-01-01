@@ -1,17 +1,16 @@
 package com.mazawrath.beanbot.utilities;
 
 import com.rethinkdb.RethinkDB;
+import com.rethinkdb.gen.ast.GetField;
 import com.rethinkdb.net.Connection;
 import com.rethinkdb.net.Cursor;
 import me.philippheuer.twitch4j.TwitchClient;
 import me.philippheuer.twitch4j.TwitchClientBuilder;
 import org.apache.http.HttpResponse;
 import org.javacord.api.DiscordApi;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -29,7 +28,8 @@ public class Twitch {
 
     private static final RethinkDB r = RethinkDB.r;
     private static final String DB_NAME = "beanBotTwitch";
-    private static final String TABLE_NAME = "AdminTable";
+    private static final String SERVER_SUBSCRIPTION_LIST_TABLE = "ServerSubscriptionList";
+    private static final String TWITCH_CHANNEL_LIST_TABLE = "TwitchChannelList";
 
     public Twitch(String clientId, String ipAddress, Connection conn) {
         this.clientId = clientId;
@@ -40,18 +40,29 @@ public class Twitch {
         startResubscribeTimer();
     }
 
-    private void checkTable(Connection conn) {
+    private void checkDatabase() {
         if (r.dbList().contains(DB_NAME).run(conn)) {
         } else {
             r.dbCreate(DB_NAME).run(conn);
-            r.db(DB_NAME).tableCreate(TABLE_NAME).run(conn);
+        }
+    }
+
+    private void checkTable() {
+        if (r.db(DB_NAME).tableList().contains(SERVER_SUBSCRIPTION_LIST_TABLE).run(conn)) {
+        } else {
+            r.db(DB_NAME).tableCreate(SERVER_SUBSCRIPTION_LIST_TABLE).run(conn);
+        }
+        
+        if (r.db(DB_NAME).tableList().contains(TWITCH_CHANNEL_LIST_TABLE).run(conn)) {
+        } else {
+            r.db(DB_NAME).tableCreate(TWITCH_CHANNEL_LIST_TABLE).run(conn);
         }
     }
 
     private void checkServer(String serverID) {
-        if (r.db(DB_NAME).table(TABLE_NAME).getField("id").contains(serverID).run(conn)) {
+        if (r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).getField("id").contains(serverID).run(conn)) {
         } else
-            r.db(DB_NAME).table(TABLE_NAME).insert(r.array(
+            r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).insert(r.array(
                     r.hashMap("id", serverID)
             )).run(conn);
     }
@@ -62,13 +73,13 @@ public class Twitch {
         long userId = getUserID(user);
 
         if (userId != -1) {
-            r.db(DB_NAME).table(TABLE_NAME).filter(
+            r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
                     r.hashMap("id", serverId)).update(
                     r.hashMap("userId", userId)).run(conn);
-            r.db(DB_NAME).table(TABLE_NAME).filter(
+            r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
                     r.hashMap("id", serverId)).update(
                     r.hashMap("channelId", channelId)).run(conn);
-            r.db(DB_NAME).table(TABLE_NAME).filter(
+            r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
                     r.hashMap("id", serverId)).update(
                     r.hashMap("delete_requested", false)).run(conn);
             if (subscribeToLiveNotifications(userId))
@@ -98,7 +109,7 @@ public class Twitch {
         long userId = getUserID(user);
 
         if (userId != -1) {
-            r.db(DB_NAME).table(TABLE_NAME).filter(
+            r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
                     r.hashMap("id", serverId)).update(
                     r.hashMap("delete_requested", true)).run(conn);
             if (unsubscribeFromLiveNotifications(userId))
@@ -111,18 +122,18 @@ public class Twitch {
         // TODO I need to make super special checks for setting notifcation channel
         checkServer(serverId);
 
-        r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
+        r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.array(
                 r.hashMap("id", serverId))).update(r.array(
                 r.hashMap("channelId", channelId))).run(conn);
     }
 
     private List getChannelSubsciptionList() {
-        Cursor retVal = r.db(DB_NAME).table(TABLE_NAME).getField("userId").run(conn);
+        Cursor retVal = r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).getField("userId").run(conn);
         return retVal.toList();
     }
 
     public long[] getServers(String userId) {
-        return r.db(DB_NAME).table(TABLE_NAME).filter(r.array(r.hashMap("userId", userId))).getField(r.array("serverId", "channelId")).run(conn);
+        return r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.array(r.hashMap("userId", userId))).getField(r.array("serverId", "channelId")).run(conn);
     }
 
     public void connectClient(String id, String secret, String credential) {
@@ -163,11 +174,11 @@ public class Twitch {
     }
 
     public static void notifyLive(LivestreamNotification livestreamNotification) {
-        Cursor serverCursor = r.db(DB_NAME).table(TABLE_NAME).filter(r.array("userId", livestreamNotification.getUserId())).getField("id").run(conn);
+        Cursor serverCursor = r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.array("userId", livestreamNotification.getUserId())).getField("id").run(conn);
         List serverId = serverCursor.toList();
         System.out.println(serverId.get(0).toString());
 
-        Cursor channelJson = r.db(DB_NAME).table(TABLE_NAME).filter(r.array("userId", livestreamNotification.getUserId())).getField("channelId").run(conn);
+        Cursor channelJson = r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.array("userId", livestreamNotification.getUserId())).getField("channelId").run(conn);
         List channelId = channelJson.toList();
         System.out.println(channelId.get(0).toString());
 
@@ -181,7 +192,7 @@ public class Twitch {
     }
 
     public static void removeServer(String serverId) {
-        r.db(DB_NAME).table(TABLE_NAME).filter(r.array(
+        r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.array(
                 r.hashMap("id", serverId))).delete().run(conn);
     }
 
