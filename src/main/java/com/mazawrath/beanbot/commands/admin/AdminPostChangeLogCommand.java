@@ -34,18 +34,16 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.0.0\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v2.8.0...v3.0.0\n" +
+                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.0.1\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.0.0...v3.0.1\n" +
                 "\n" +
-                "**v3.0.0**\n" +
+                "**v3.0.1**\n" +
 //                "**New**\n" +
 //                "\t- Added the Bean Lottery.\n" +
-                "**Changes**\n" +
-                "\t- Completely redesigned way to build and run beanBOT.\n" +
-                "\t- Reverted Beanmas.\n" +
-                "\t- Added an automated way to do weekly bean lottery drawings.\n" +
-                "\t- Added `.beanlottery draw` that anyone can use to start a bean lottery drawing.";
-//                "**Bug Fixes**\n" +
-//                "\t- Fixed an issue where normal users had access to `.adminposthelp`.\n";
+//                "**Changes**\n" +
+//                "\t- Completely redesigned way to build and run beanBOT.\n" +
+//                "\t- Reverted Beanmas.\n" +
+                "**Bug Fixes**\n" +
+                "\t- Fixed an issue with `.beanlottery` not giving help information.\n";
     }
 }
