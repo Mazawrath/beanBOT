@@ -2,6 +2,7 @@ package com.mazawrath.beanbot.utilities;
 
 import com.rethinkdb.RethinkDB;
 import com.rethinkdb.net.Connection;
+import com.rethinkdb.net.Cursor;
 import me.philippheuer.twitch4j.TwitchClient;
 import me.philippheuer.twitch4j.TwitchClientBuilder;
 import org.apache.http.HttpResponse;
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -113,8 +115,9 @@ public class Twitch {
                 r.hashMap("channelId", channelId))).run(conn);
     }
 
-    private ArrayList getChannelSubsciptionList() {
-        return r.db(DB_NAME).table(TABLE_NAME).getField("channelId").run(conn);
+    private List getChannelSubsciptionList() {
+        Cursor retVal =  r.db(DB_NAME).table(TABLE_NAME).getField("userId").run(conn);
+        return retVal.toList();
     }
 
     public long[] getServers(String userId) {
@@ -201,17 +204,16 @@ public class Twitch {
 
     class resubscribe implements Runnable {
         public void run() {
-            ArrayList userIds = getChannelSubsciptionList();
+            List userIds = getChannelSubsciptionList();
 
             for (int i = 0; i < userIds.size(); i++)
                 subscribeToLiveNotifications(convertToLong(userIds.get(i)));
         }
     }
 
-    public static Long convertToLong(Object o){
+    private static Long convertToLong(Object o){
         String stringToConvert = String.valueOf(o);
-        Long convertedLong = Long.parseLong(stringToConvert);
-        return convertedLong;
+        return Long.parseLong(stringToConvert);
 
     }
 
