@@ -9,6 +9,7 @@ import org.javacord.api.DiscordApi;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -28,11 +29,10 @@ public class Twitch {
     private static final String DB_NAME = "beanBotTwitch";
     private static final String TABLE_NAME = "AdminTable";
 
-    public Twitch(String clientId, String ipAddress, Connection conn, DiscordApi api) {
+    public Twitch(String clientId, String ipAddress, Connection conn) {
         this.clientId = clientId;
         this.ipAddress = ipAddress;
         Twitch.conn = conn;
-        Twitch.api = api;
 
         checkTable(conn);
         startResubscribeTimer();
@@ -214,5 +214,9 @@ public class Twitch {
         Long convertedLong = Long.parseLong(stringToConvert);
         return convertedLong;
 
+    }
+
+    public static void setApi(DiscordApi api) {
+        Twitch.api = api;
     }
 }

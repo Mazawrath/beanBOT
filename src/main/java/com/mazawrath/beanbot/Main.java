@@ -15,11 +15,14 @@ import com.rethinkdb.net.Connection;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 //import org.apache.log4j.BasicConfigurator;
+import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 
 import static com.rethinkdb.RethinkDB.r;
 
 public class Main {
+    private static DiscordApi api;
+    
     public static void main(String[] args) {
         //BasicConfigurator.configure();
         // Enable debugging, if no slf4j logger was found
@@ -32,12 +35,14 @@ public class Main {
         Lottery lottery = new Lottery(conn);
         Thread restServer = new Thread(new RestServer());
         restServer.start();
+        Twitch twitch = new Twitch(args[1], args[2], conn);
 
 
         new DiscordApiBuilder().setToken(args[0]).login().thenAccept(api -> {
             System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
 
-            Twitch twitch = new Twitch(args[1], args[2], conn, api);
+            Main.api = api;
+            Twitch.setApi(api);
 
             // Instantiate command handler
             CommandHandler cmdHandler = new JavacordHandler(api);
@@ -89,5 +94,9 @@ public class Main {
             cmdHandler.registerCommand(new GnomedCommand(points));
             cmdHandler.registerCommand(new EightBallCommand(points));
         });
+    }
+
+    public static DiscordApi getApi() {
+        return api;
     }
 }
