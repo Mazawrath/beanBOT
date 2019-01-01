@@ -22,7 +22,7 @@ import static com.rethinkdb.RethinkDB.r;
 
 public class Main {
     private static DiscordApi api;
-    
+
     public static void main(String[] args) {
         //BasicConfigurator.configure();
         // Enable debugging, if no slf4j logger was found
@@ -96,7 +96,4 @@ public class Main {
         });
     }
 
-    public static DiscordApi getApi() {
-        return api;
-    }
 }
