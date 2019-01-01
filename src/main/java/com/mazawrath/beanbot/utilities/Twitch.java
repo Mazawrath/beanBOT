@@ -162,16 +162,20 @@ public class Twitch {
     }
 
     public static void notifyLive(LivestreamNotification livestreamNotification) {
-        JSONArray serverJson = new JSONArray(new ArrayList<>(r.db(DB_NAME).table(TABLE_NAME).filter(r.hashMap("userId", livestreamNotification.getUserId())).getField("id").run(conn)));
-        JSONArray channelJson = new JSONArray(new ArrayList<>(r.db(DB_NAME).table(TABLE_NAME).filter(r.hashMap("userId", livestreamNotification.getUserId())).getField("channelId").run(conn)));
+        Cursor serverCursor = r.db(DB_NAME).table(TABLE_NAME).filter(r.array("userId", livestreamNotification.getUserId())).getField("id").run(conn);
+        List serverId = serverCursor.toList();
+        System.out.println(serverId.get(0).toString());
 
+        Cursor channelJson = r.db(DB_NAME).table(TABLE_NAME).filter(r.array("userId", livestreamNotification.getUserId())).getField("channelId").run(conn);
+        List channelId = channelJson.toList();
+        System.out.println(channelId.get(0).toString());
 
         System.out.println("Notifying channel...");
 
-        for (int i = 0; i < serverJson.length(); i++) {
+        for (int i = 0; i < serverId.size(); i++) {
             int finalI = i;
-            api.getServerById(serverJson.getString(i)).ifPresent(server ->
-                    server.getTextChannelById(channelJson.getString(finalI)).ifPresent(serverTextChannel -> serverTextChannel.sendMessage(livestreamNotification.getUserName() + " has gone live!")));
+            api.getServerById(serverId.get(i).toString()).ifPresent(server ->
+                    server.getTextChannelById(channelId.get(finalI).toString()).ifPresent(serverTextChannel -> serverTextChannel.sendMessage(livestreamNotification.getUserName() + " has gone live!")));
         }
     }
 
