@@ -37,36 +37,6 @@ public class AdminForceLotteryDrawingCommand implements CommandExecutor {
             return;
         }
 
-        int[] winningNumbers = lottery.getWinningNumbers();
-
-        ArrayList winners = lottery.getWinner(server.getIdAsString(), winningNumbers);
-        MessageBuilder message = new MessageBuilder();
-
-        message.append("The numbers drawn were:\n");
-        for (int i = 0; i < winningNumbers.length; i++)
-            message.append(winningNumbers[i] + " ");
-        message.append("\n");
-        if (winners.size() == 0)
-            message.append("No one has won.");
-        else {
-            BigDecimal prizePool = points.getBalance(api.getYourself().getIdAsString(), server.getIdAsString());
-            BigDecimal amountWon = prizePool.divide(new BigDecimal(winners.size())).setScale(Points.SCALE, Points.ROUNDING_MODE);
-            points.removePoints(api.getYourself().getIdAsString(), null, server.getIdAsString(), points.getBalance(api.getYourself().getIdAsString(), server.getIdAsString()));
-
-            winners.forEach(winner -> points.addPoints(((HashMap) winner).get("id").toString(), server.getIdAsString(), amountWon));
-
-            message.append("The following users have won:\n");
-            winners.forEach(winner ->
-                    api.getCachedUserById((((HashMap) winner).get("id").toString())).ifPresent(user ->
-                            message.append(user.getMentionTag() + " has won!\n")));
-
-            message.append("The prize pool was " + Points.pointsToString(prizePool) + " and divided between " + winners.size());
-            if (winners.size() == 1)
-                message.append(" winner, they get the entire prize pool!");
-            else
-                message.append(" winners, each gets " + Points.pointsToString(amountWon) + "!");
-            lottery.clearTickets(server.getIdAsString());
-        }
-        message.send(serverTextChannel);
+        lottery.drawNumbers(points, server, api, serverTextChannel);
     }
 }

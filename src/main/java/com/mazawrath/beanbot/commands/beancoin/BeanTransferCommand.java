@@ -41,13 +41,9 @@ public class BeanTransferCommand implements CommandExecutor {
                 if (Points.isProperDecimal(args[1])) {
                     BigDecimal transferPoints = new BigDecimal(args[1]).setScale(Points.SCALE, Points.ROUNDING_MODE);
                     if (transferPoints.compareTo(BigDecimal.ZERO) != 0) {
-                        int transfer = points.removeBeanmas(author.getIdAsString(), "", server.getIdAsString(), transferPoints);
-                        if (transfer == 1) {
+                        if (points.removePoints(author.getIdAsString(), "", server.getIdAsString(), transferPoints)) {
                             points.addPoints(user.getIdAsString(), server.getIdAsString(), transferPoints);
-                            serverTextChannel.sendMessage("Sent " + Points.pointsToString(transferPoints) + " to " + user.getDisplayName(server) + " using your Beanmas balance! You have " + Points.pointsToString(points.getBeanmasBalance(author.getIdAsString(), server.getIdAsString())) + " left of your Beanmas balance.");
-                        } else if (transfer == 0) {
-                            points.addPoints(user.getIdAsString(), server.getIdAsString(), transferPoints);
-                            serverTextChannel.sendMessage("Sent " + Points.pointsToString(transferPoints) + " to " + user.getDisplayName(server) + ". Your Beanmas balance is gone, but your regular balance was used.");
+                            serverTextChannel.sendMessage("Sent " + Points.pointsToString(transferPoints) + " to " + user.getDisplayName(server) + ".");
                         } else
                             serverTextChannel.sendMessage("You do not have enough beanCoin to send that much.");
                     } else

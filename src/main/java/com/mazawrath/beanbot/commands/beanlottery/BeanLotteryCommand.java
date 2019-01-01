@@ -12,6 +12,7 @@ import org.javacord.api.entity.user.User;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class BeanLotteryCommand implements CommandExecutor {
     private Points points;
@@ -32,11 +33,26 @@ public class BeanLotteryCommand implements CommandExecutor {
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
         try {
             if (args.length == 1) {
+                if (args[0].equalsIgnoreCase("start")) {
+                    if (!author.isBotOwner() && !server.isOwner(author)) {
+                        serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
+                        return;
+                    } else {
+                        serverTextChannel.sendMessage("Weekly drawings now active. When the bot has more than " + Points.pointsToString(Lottery.MIN_WEEKLY_VALUE) + " it will do an automatic drawing every 7 days.");
+                        lottery.scheduleWeeklyDrawing(points, server, api, serverTextChannel);
+                        return;
+                    }
+                } else if (args[0].equalsIgnoreCase("draw")) {
+                    if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_DRAWING_COST)) {
+                        lottery.drawNumbers(points, server, api, serverTextChannel);
+                    } else
+                        serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
+                    return;
+                }
                 if (Integer.parseInt(args[0]) > 200) {
                     serverTextChannel.sendMessage("You can only buy 200 tickets at a time.");
                     return;
                 }
-
                 if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_TICKET_COST.multiply(new BigDecimal(Integer.parseInt(args[0]))))) {
                     ArrayList<ArrayList<Integer>> numbers = lottery.addEntry(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]));
 
@@ -72,13 +88,13 @@ public class BeanLotteryCommand implements CommandExecutor {
                             "Your numbers have been sent to you in a private message.");
                     author.sendMessage("1 ticket bought.\n" +
                             "Your numbers are:\n");
-                            author.sendMessage(args[0] + " " + args[1] + " " + args[2]);
+                    author.sendMessage(args[0] + " " + args[1] + " " + args[2]);
                 } else
                     serverTextChannel.sendMessage("You do not have enough beanCoin to buy a ticket.");
             } else
-                serverTextChannel.sendMessage("You must either have 1 number with how many tickets you want to buy or " + Lottery.AMOUNT_DRAWN  + " numbers >= " + Lottery.MIN_NUMBER + " and <= " + Lottery.MAX_NUMBER + ".");
-        } catch (NumberFormatException | NullPointerException e) {
-            serverTextChannel.sendMessage("Invalid number(s).");
+                serverTextChannel.sendMessage("You must have 1 number with how many tickets you want to buy, " + Lottery.AMOUNT_DRAWN + " numbers >= " + Lottery.MIN_NUMBER + " and <= " + Lottery.MAX_NUMBER + ", or the word `draw` to have your own drawing.");
+        } catch (NumberFormatException | NullPointerException | InterruptedException | ExecutionException e) {
+            serverTextChannel.sendMessage("Invalid number(s) / bad things happened.");
         }
     }
 }

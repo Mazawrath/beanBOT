@@ -34,15 +34,16 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v2.8.0\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v2.7.0...v2.8.0\n" +
+                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.0.1\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.0.0...v3.0.1\n" +
                 "\n" +
-                "**v2.8.0**\n" +
-                "**New**\n" +
-                "\t- Beanmas\n" +
-                "\t\t- Beanmas is here! Every user in the server has been awarded with a free credit the amount of their current balance to give to other users on the server without effecting their balance!\n" +
-                "\t\t- But it will only be here for a limited time! So give while you can!\n" +
+                "**v3.0.1**\n" +
+//                "**New**\n" +
+//                "\t- Added the Bean Lottery.\n" +
+//                "**Changes**\n" +
+//                "\t- Completely redesigned way to build and run beanBOT.\n" +
+//                "\t- Reverted Beanmas.\n" +
                 "**Bug Fixes**\n" +
-                "\t- Fixed an issue where the server owner or bot owner couldn't use `.adminposthelp` or `.adminpostchangelog`.";
+                "\t- Fixed an issue with `.beanlottery` not giving help information.\n";
     }
 }
