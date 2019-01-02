@@ -11,6 +11,7 @@ import org.javacord.api.DiscordApi;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -36,7 +37,8 @@ public class Twitch {
         this.ipAddress = ipAddress;
         Twitch.conn = conn;
 
-        checkTable(conn);
+        checkDatabase();
+        checkTable();
         startResubscribeTimer();
     }
 
@@ -52,7 +54,7 @@ public class Twitch {
         } else {
             r.db(DB_NAME).tableCreate(SERVER_SUBSCRIPTION_LIST_TABLE).run(conn);
         }
-        
+
         if (r.db(DB_NAME).tableList().contains(TWITCH_CHANNEL_LIST_TABLE).run(conn)) {
         } else {
             r.db(DB_NAME).tableCreate(TWITCH_CHANNEL_LIST_TABLE).run(conn);
@@ -67,9 +69,12 @@ public class Twitch {
             )).run(conn);
     }
 
-    public boolean addServer(String user, String serverId, String channelId) {
+    public int addServer(String user, String serverId, String channelId) {
         checkServer(serverId);
-        boolean retVal = false;
+        if  (r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE) .getAll(serverId).count().eq(1).run(conn))
+            return -1;
+
+        int retVal = 0;
         long userId = getUserID(user);
 
         if (userId != -1) {
@@ -83,7 +88,7 @@ public class Twitch {
                     r.hashMap("id", serverId)).update(
                     r.hashMap("delete_requested", false)).run(conn);
             if (subscribeToLiveNotifications(userId))
-                retVal = true;
+                retVal = 1;
             else {
                 System.out.println("Subscription attempt failed. Retrying.");
                 for (int attempts = 1; attempts <= 3; attempts++) {
@@ -91,11 +96,12 @@ public class Twitch {
                         System.out.println("Attempt " + attempts);
                         Thread.sleep(5000);
                         if (subscribeToLiveNotifications(userId)) {
-                            retVal = true;
+                            retVal = 1;
                             break;
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+                        retVal = 0;
                     }
                 }
             }
@@ -103,10 +109,10 @@ public class Twitch {
         return retVal;
     }
 
-    public boolean flagRemoval(String user, String serverId) {
+    public boolean flagRemoval( String serverId) {
         checkServer(serverId);
         boolean retVal = false;
-        long userId = getUserID(user);
+        //long userId = getUserID(user);
 
         if (userId != -1) {
             r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
@@ -128,7 +134,7 @@ public class Twitch {
     }
 
     private List getChannelSubsciptionList() {
-        Cursor retVal = r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).getField("userId").run(conn);
+        Cursor retVal = r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).getField("id").run(conn);
         return retVal.toList();
     }
 
@@ -157,7 +163,7 @@ public class Twitch {
         if (response.getStatusLine().getStatusCode() == 200) {
             BufferedReader streamReader;
             try {
-                streamReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+                streamReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8));
                 StringBuilder responseStrBuilder = new StringBuilder();
 
                 String inputStr;
@@ -196,11 +202,25 @@ public class Twitch {
                 r.hashMap("id", serverId))).delete().run(conn);
     }
 
+    private String getHubSecret(long userId) {
+        Cursor passwordDb = r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("secret").run(conn);
+
+        List list = passwordDb.toList();
+        System.out.println(list.get(0));
+        if (passwordDb.toList().isEmpty()) {
+            String password = randomPasswordGenerator();
+            r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).insert(r.array(r.hashMap("id", userId).with("secret", password))).run(conn);
+            return password;
+        }
+        else
+            return passwordDb.toList().get(0).toString();
+    }
+
     private boolean subscribeToLiveNotifications(long userId) {
         //TODO replace secret with secure way of making password
         return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
                 "'{\"hub.mode\":\"subscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
-                " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
+                " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"" + getHubSecret(userId) + "\"}'" +
                 " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
     }
 
@@ -209,7 +229,7 @@ public class Twitch {
 
         return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
                 "'{\"hub.mode\":\"unsubscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
-                " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"very_secret\"}'" +
+                " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"" + getHubSecret(userId) + "\"}'" +
                 " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
     }
 
@@ -232,11 +252,8 @@ public class Twitch {
 
     }
 
-    char[] randomPasswordGenerator()
+    private String randomPasswordGenerator()
     {
-        System.out.println("Generating password using random() : ");
-        System.out.print("Your new password is : ");
-
         // A strong password has Cap_chars, Lower_chars,
         // numeric value and symbols. So we are using all of
         // them to generate our password
@@ -252,7 +269,7 @@ public class Twitch {
         // Using random method
         Random rndm_method = new Random();
 
-        int passwordLength = 10;
+        int passwordLength = 24;
         char[] password = new char[passwordLength];
 
         for (int i = 0; i < passwordLength; i++)
@@ -263,7 +280,7 @@ public class Twitch {
                     values.charAt(rndm_method.nextInt(values.length()));
 
         }
-        return password;
+        return String.valueOf(password);
     }
 
     public static void setApi(DiscordApi api) {
