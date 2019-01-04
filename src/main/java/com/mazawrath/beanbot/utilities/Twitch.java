@@ -35,7 +35,7 @@ public class Twitch {
     private static final String TWITCH_CHANNEL_LIST_TABLE = "TwitchChannelList";
 
     public Twitch(String clientId, String ipAddress, Connection conn) {
-        this.clientId = clientId;
+        Twitch.clientId = clientId;
         this.ipAddress = ipAddress;
         Twitch.conn = conn;
 
@@ -250,6 +250,12 @@ public class Twitch {
         }
         else
             return passwordDb.toList().get(0).toString();
+    }
+
+    public static String getHubSecret2(long userId) {
+        Cursor passwordDb = r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("secret").run(conn);
+
+        return passwordDb.toList().size() == 0 ? null : passwordDb.toList().get(0).toString();
     }
 
     private boolean subscribeToLiveNotifications(long userId) {

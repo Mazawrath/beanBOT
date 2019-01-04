@@ -54,9 +54,7 @@ public class TwitchApi {
             SecretKeySpec secret_key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
             sha256_HMAC.init(secret_key);
 
-            String hash = Base64.encodeBase64String(sha256_HMAC.doFinal(payload.getBytes()));
-            System.out.println(hash);
-            return hash;
+            return Base64.encodeBase64String(sha256_HMAC.doFinal(payload.getBytes()));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
