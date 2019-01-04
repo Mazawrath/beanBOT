@@ -39,7 +39,8 @@ public class TwitchApi {
             System.out.println("Thumbnail: " + payloadJson.getString("thumbnail_url"));
             System.out.println("Title: " + payloadJson.getString("title"));
 
-            Twitch.notifyLive(new LivestreamNotification(payloadJson.getString("id"), payloadJson.getString("user_name"), payloadJson.getString("game_id"), payloadJson.getString("thumbnail_url")));
+            Twitch.notifyLive(new LivestreamNotification(payloadJson.getString("id"), payloadJson.getString("user_name"), payloadJson.getString("title"), payloadJson.getString("game_id"), payloadJson.getString("thumbnail_url")));
+
         } else
             System.out.println("Someone went offline");
 

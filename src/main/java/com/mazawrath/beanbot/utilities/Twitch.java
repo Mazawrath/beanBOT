@@ -8,6 +8,8 @@ import me.philippheuer.twitch4j.TwitchClient;
 import me.philippheuer.twitch4j.TwitchClientBuilder;
 import org.apache.http.HttpResponse;
 import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.message.MessageBuilder;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -21,7 +23,7 @@ import static org.toilelibre.libe.curl.Curl.curl;
 
 public class Twitch {
     private TwitchClient client;
-    private String clientId;
+    private static String clientId;
     private String ipAddress;
     private static DiscordApi api;
 
@@ -70,14 +72,14 @@ public class Twitch {
     }
 
     public int addServer(String user, String serverId, String channelId) {
-        checkServer(serverId);
-        if  (r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE) .getAll(serverId).count().eq(1).run(conn))
-            return -1;
-
         int retVal = 0;
-        long userId = getUserID(user);
+        String userId = String.valueOf(getUserID(user));
 
-        if (userId != -1) {
+        if (!userId.equalsIgnoreCase("-1")) {
+            if  (r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE) .getAll(serverId).count().eq(1).run(conn))
+                return -1;
+
+            checkServer(serverId);
             r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
                     r.hashMap("id", serverId)).update(
                     r.hashMap("userId", userId)).run(conn);
@@ -87,7 +89,7 @@ public class Twitch {
             r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
                     r.hashMap("id", serverId)).update(
                     r.hashMap("delete_requested", false)).run(conn);
-            if (subscribeToLiveNotifications(userId))
+            if (subscribeToLiveNotifications(Long.parseLong(userId)))
                 retVal = 1;
             else {
                 System.out.println("Subscription attempt failed. Retrying.");
@@ -95,7 +97,7 @@ public class Twitch {
                     try {
                         System.out.println("Attempt " + attempts);
                         Thread.sleep(5000);
-                        if (subscribeToLiveNotifications(userId)) {
+                        if (subscribeToLiveNotifications(Long.parseLong(userId))) {
                             retVal = 1;
                             break;
                         }
@@ -109,18 +111,17 @@ public class Twitch {
         return retVal;
     }
 
-    public boolean flagRemoval( String serverId) {
+    public boolean flagRemoval(String serverId) {
         checkServer(serverId);
         boolean retVal = false;
-        //long userId = getUserID(user);
 
-        if (userId != -1) {
+            long userId = r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
+                    r.hashMap("id", serverId)).getField("userId").run(conn);
             r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
                     r.hashMap("id", serverId)).update(
                     r.hashMap("delete_requested", true)).run(conn);
             if (unsubscribeFromLiveNotifications(userId))
                 retVal = true;
-        }
         return retVal;
     }
 
@@ -179,21 +180,57 @@ public class Twitch {
         return retVal;
     }
 
+    public static String getGameName(String gameId) {
+        HttpResponse response = curl("-H 'Client-ID: " + clientId + "' https://api.twitch.tv/helix/games?id=" + gameId);
+        String retVal = null;
+
+        if (response.getStatusLine().getStatusCode() == 200) {
+            BufferedReader streamReader;
+            try {
+                streamReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8));
+                StringBuilder responseStrBuilder = new StringBuilder();
+
+                String inputStr;
+                while ((inputStr = streamReader.readLine()) != null)
+                    responseStrBuilder.append(inputStr);
+                JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
+                if (jsonObject.getJSONArray("data").length() != 0)
+                    retVal = jsonObject.getJSONArray("data").getJSONObject(0).getString("name");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return retVal;
+    }
+
     public static void notifyLive(LivestreamNotification livestreamNotification) {
-        Cursor serverCursor = r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.array("userId", livestreamNotification.getUserId())).getField("id").run(conn);
+        Cursor serverCursor = r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.hashMap("userId", livestreamNotification.getUserId())).getField("id").run(conn);
         List serverId = serverCursor.toList();
         System.out.println(serverId.get(0).toString());
 
-        Cursor channelJson = r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.array("userId", livestreamNotification.getUserId())).getField("channelId").run(conn);
+        Cursor channelJson = r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.hashMap("userId", livestreamNotification.getUserId())).getField("channelId").run(conn);
         List channelId = channelJson.toList();
         System.out.println(channelId.get(0).toString());
 
         System.out.println("Notifying channel...");
 
+        System.out.println(livestreamNotification.getThumbnail());
+
+        EmbedBuilder embed = new EmbedBuilder()
+                .setTitle(livestreamNotification.getUserName())
+                .setDescription("[" + livestreamNotification.getTitle() + "]" + "(https://www.twitch.tv/" + livestreamNotification.getUserName() + ")")
+                .setImage(livestreamNotification.getThumbnail())
+                .setFooter("Playing: " + Twitch.getGameName(livestreamNotification.getGameId()));
+
+        MessageBuilder message = new MessageBuilder()
+                .append("@everyone " + livestreamNotification.getUserName() + " has gone live!")
+                .setEmbed(embed);
+
+
         for (int i = 0; i < serverId.size(); i++) {
             int finalI = i;
             api.getServerById(serverId.get(i).toString()).ifPresent(server ->
-                    server.getTextChannelById(channelId.get(finalI).toString()).ifPresent(serverTextChannel -> serverTextChannel.sendMessage(livestreamNotification.getUserName() + " has gone live!")));
+                    server.getTextChannelById(channelId.get(finalI).toString()).ifPresent(message::send));
         }
     }
 
@@ -206,7 +243,6 @@ public class Twitch {
         Cursor passwordDb = r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("secret").run(conn);
 
         List list = passwordDb.toList();
-        System.out.println(list.get(0));
         if (passwordDb.toList().isEmpty()) {
             String password = randomPasswordGenerator();
             r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).insert(r.array(r.hashMap("id", userId).with("secret", password))).run(conn);
