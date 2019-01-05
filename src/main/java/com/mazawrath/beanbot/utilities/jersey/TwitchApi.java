@@ -18,9 +18,9 @@ public class TwitchApi {
     @Produces(MediaType.TEXT_PLAIN)
     public String subscription(@QueryParam("hub.mode") String mode, @QueryParam("password") String password, @QueryParam("hub.topic") URL topic,
                                @QueryParam("hub.lease_seconds") int seconds, @QueryParam("hub.challenge") String challenge) {
-        System.out.println("Subscription to " + String.valueOf(topic).substring(45) + " received.");
+        System.out.println("Subscription to " + String.valueOf(topic).substring(44) + " received.");
         System.out.println("Password: " + password);
-        String databasePassword = Twitch.getPassword(Long.valueOf(String.valueOf(topic).substring(45)));
+        String databasePassword = Twitch.getPassword(Long.valueOf(String.valueOf(topic).substring(44)));
         System.out.println("Database password = " + databasePassword);
 
         if (databasePassword != null) {

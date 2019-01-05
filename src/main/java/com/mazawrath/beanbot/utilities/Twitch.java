@@ -116,19 +116,22 @@ public class Twitch {
         checkServer(serverId);
         boolean retVal = false;
 
-        Cursor get = r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
+        Cursor cursor = r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
                 r.hashMap("id", serverId)).getField("userId").run(conn);
+        List userIdList = cursor.toList();
 
-        long userId = Long.valueOf(get.toList().get(0).toString());
+        if (userIdList.size() != 0) {
+            long userId = Long.valueOf(userIdList.get(0).toString());
 
-        if (unsubscribeFromLiveNotifications(userId))
-            retVal = true;
+            if (unsubscribeFromLiveNotifications(userId))
+                retVal = true;
 
-        if (r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.hashMap("userId", String.valueOf(userId))).count().eq(1).run(conn))  {
-            r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).delete().run(conn);
+            if (r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.hashMap("userId", String.valueOf(userId))).count().eq(1).run(conn)) {
+                r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).delete().run(conn);
+            }
+            r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.hashMap(
+                    "id", serverId)).delete().run(conn);
         }
-        r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.hashMap(
-                "id", serverId)).delete().run(conn);
         return retVal;
     }
 
@@ -139,6 +142,7 @@ public class Twitch {
         r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.array(
                 r.hashMap("id", serverId))).update(r.array(
                 r.hashMap("channelId", channelId))).run(conn);
+        r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.hashMap("id", serverId)).update(r.hashMap("channelId", channelId)).run(conn);
     }
 
     private List getChannelSubsciptionList() {
@@ -266,62 +270,65 @@ public class Twitch {
     }
 
     private String checkHubSecret(long userId) {
+        checkTwitchId(userId);
+
         Cursor passwordDb = r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("secret").run(conn);
 
-        List list = passwordDb.toList();
-        if (passwordDb.toList().isEmpty()) {
+        List secretVar = passwordDb.toList();
+        if (secretVar.isEmpty()) {
             String password = randomPasswordGenerator(24);
-            r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).insert(r.array(r.hashMap("id", userId).with("secret", password))).run(conn);
+            r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).update(r.hashMap("secret", password)).run(conn);
             return password;
         } else
-            return passwordDb.toList().get(0).toString();
+            return secretVar.get(0).toString();
     }
 
     public static String getHubSecret(long userId) {
         Cursor passwordDb = r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("secret").run(conn);
+        List password = passwordDb.toList();
 
-        return passwordDb.toList().size() == 0 ? null : passwordDb.toList().get(0).toString();
+        return password.size() == 0 ? null : password.get(0).toString();
     }
 
     private String checkPassword(long userId) {
+        checkTwitchId(userId);
+
         Cursor passwordDb = r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("password").run(conn);
 
-        List list = passwordDb.toList();
-        if (passwordDb.toList().isEmpty()) {
+        List passwordVar = passwordDb.toList();
+        if (passwordVar.isEmpty()) {
             String password = randomPasswordGenerator(5);
-            r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).insert(r.array(r.hashMap("id", userId).with("password", password))).run(conn);
+            r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).update(r.hashMap("password", password)).run(conn);
             return password;
         } else
-            return passwordDb.toList().get(0).toString();
+            return passwordVar.get(0).toString();
     }
 
     public static String getPassword(long userId) {
         Cursor passwordDb = r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("password").run(conn);
-
         List password = passwordDb.toList();
 
-        if (password.size() == 0)
-            return null;
-        else
-            return password.get(0).toString();
+        return password.size() == 0 ? null : password.get(0).toString();
+    }
 
-        //return passwordDb.toList().size() == 0 ? null : passwordDb.toList().get(0).toString();
+    private void checkTwitchId(long userId) {
+        if (r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).getField("id").contains(userId).run(conn)) {
+        } else
+            r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).insert(r.hashMap("id", userId
+            )).run(conn);
     }
 
     private boolean subscribeToLiveNotifications(long userId) {
-        //TODO replace secret with secure way of making password
         return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
                 "'{\"hub.mode\":\"subscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
-                " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/stream_changed?username=" + getUserName(userId) + "&password=" + checkPassword(userId) + "\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"" + checkHubSecret(userId) + "\"}'" +
-                " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
+                " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/stream_changed?username=" + getUserName(userId) + "&password=" + checkPassword(userId) + "\"," +
+                " \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"" + checkHubSecret(userId) + "\"}'" + " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
     }
 
     private boolean unsubscribeFromLiveNotifications(long userId) {
-        //TODO replace secret with secure way of making password
-
         return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
                 "'{\"hub.mode\":\"unsubscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
-                " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/subscription\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"" + checkHubSecret(userId) + "\"}'" +
+                " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/stream_changed?username=" + getUserName(userId) + "&password=" + checkPassword(userId) + "\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"" + checkHubSecret(userId) + "\"}'" +
                 " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
     }
 
@@ -351,11 +358,11 @@ public class Twitch {
         String Capital_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String Small_chars = "abcdefghijklmnopqrstuvwxyz";
         String numbers = "0123456789";
-        String symbols = "!@#$%^&*_=+-/.?<>)";
+        //String symbols = "!@#$%^&*_=+-/.?<>)";
 
 
         String values = Capital_chars + Small_chars +
-                numbers + symbols;
+                numbers;
 
         // Using random method
         Random random_method = new Random();
