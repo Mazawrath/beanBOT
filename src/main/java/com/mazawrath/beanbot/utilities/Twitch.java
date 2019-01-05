@@ -113,7 +113,6 @@ public class Twitch {
     }
 
     public boolean removeServer(String serverId) {
-        checkServer(serverId);
         boolean retVal = false;
 
         Cursor cursor = r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
