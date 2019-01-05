@@ -16,12 +16,18 @@ public class TwitchApi {
     @GET
     @Path("/stream_changed")
     @Produces(MediaType.TEXT_PLAIN)
-    public String subscription(@QueryParam("hub.mode") String mode, @QueryParam("password") String password, @QueryParam("hub.topic") URL topic,
+    public String subscription(@QueryParam("hub.mode") String mode, @QueryParam("password") String password, @QueryParam("hub.topic") String topic,
                                @QueryParam("hub.lease_seconds") int seconds, @QueryParam("hub.challenge") String challenge) {
-        System.out.println("Subscription to " + String.valueOf(topic).substring(44) + " received.");
         System.out.println("Password: " + password);
-        String databasePassword = Twitch.getPassword(Long.valueOf(String.valueOf(topic).substring(44)));
+        String databasePassword = Twitch.getPassword(Long.valueOf(topic.substring(44)));
         System.out.println("Database password = " + databasePassword);
+
+        if (mode.equals("subscribe"))
+            System.out.println("Subscription to " + topic.substring(44) + " received.");
+        else if (mode.equals("unsubscribe")) {
+            System.out.println("Unsubscribe from " + topic.substring(44) + " received.");
+            Twitch.removeTwitchChannel(Long.valueOf(topic.substring(44)));
+        }
 
         if (databasePassword != null) {
             if (password.equals(databasePassword)) {
@@ -43,6 +49,10 @@ public class TwitchApi {
             payloadJson = new JSONObject(payload).getJSONArray("data").getJSONObject(0);
 
             String databasePassword = Twitch.getPassword(Long.valueOf(payloadJson.getString("user_id")));
+
+            System.out.println("Password: " + password);
+            System.out.println("Database password = " + databasePassword);
+
             if (databasePassword != null) {
                 if (password.equals(databasePassword)) {
                     System.out.println("Password matches");

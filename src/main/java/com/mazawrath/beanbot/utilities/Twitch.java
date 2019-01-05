@@ -134,6 +134,10 @@ public class Twitch {
         return retVal;
     }
 
+    public static void removeTwitchChannel (long userId) {
+        r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).delete().run(conn);
+    }
+
     public void setChannel(String serverId, String channelId) {
         // TODO I need to make super special checks for setting notifcation channel
         checkServer(serverId);
@@ -327,7 +331,7 @@ public class Twitch {
     private boolean unsubscribeFromLiveNotifications(long userId) {
         return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
                 "'{\"hub.mode\":\"unsubscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
-                " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/stream_changed?username=" + getUserName(userId) + "&password=" + checkPassword(userId) + "\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"" + checkHubSecret(userId) + "\"}'" +
+                " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/stream_changed?username=" + getUserName(userId) + "&password=" + Twitch.getPassword(userId) + "\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"" + Twitch.getHubSecret(userId) + "\"}'" +
                 " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
     }
 
