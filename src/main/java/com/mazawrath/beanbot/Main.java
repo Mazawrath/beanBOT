@@ -79,7 +79,7 @@ public class Main {
             cmdHandler.registerCommand(new AdminRemoveBeanCoinCommand(points));
             cmdHandler.registerCommand(new AdminPostMessageCommand());
             cmdHandler.registerCommand(new AdminPostHelpCommand(cmdHandler));
-            cmdHandler.registerCommand(new AdminTwitchSettings(twitch));
+            cmdHandler.registerCommand(new AdminTwitch(twitch));
             // Copypasta
             cmdHandler.registerCommand(new Top500Command(points));
             cmdHandler.registerCommand(new GiveModCommand(points));

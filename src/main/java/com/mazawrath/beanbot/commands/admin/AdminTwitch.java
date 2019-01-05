@@ -10,15 +10,15 @@ import org.javacord.api.entity.user.User;
 
 import java.util.concurrent.ExecutionException;
 
-public class AdminTwitchSettings implements CommandExecutor {
+public class AdminTwitch implements CommandExecutor {
     private Twitch twitch;
 
-    public AdminTwitchSettings(Twitch twitch) {
+    public AdminTwitch(Twitch twitch) {
         this.twitch = twitch;
     }
 
     @Command(
-            aliases = {"AdminTwitchSettings"},
+            aliases = {"AdminTwitch"},
             privateMessages = false,
             showInHelpPage = false
     )
@@ -45,8 +45,13 @@ public class AdminTwitchSettings implements CommandExecutor {
                 serverTextChannel.sendMessage("Could not unsubscribe from live notifications. Most likely you are not subscribed to " +
                         "live notifications for a channel. Use `.admintwitchsettings add [channel name]` to subscribe for livestream notifications for that channel.");
         } else if (args[0].equals("set")) {
-            if (api.getServerTextChannelById(args[1]).isPresent()) {
-                twitch.setChannel(server.getIdAsString(), args[1]);
+            String serverTextChannelId = args[1].substring(2,args[1].length() -1);
+            if (api.getServerTextChannelById(serverTextChannelId).isPresent()) {
+                if (twitch.setChannel(server.getIdAsString(), serverTextChannelId))
+                serverTextChannel.sendMessage("Notification channel set to " + api.getServerTextChannelById(serverTextChannelId).get().getName() + ".");
+                else
+                    serverTextChannel.sendMessage("Could not set a text channel for live notifications. Most likely you are not subscribed to " +
+                            "live notifications for a twitch channel. Use `.admintwitchsettings add [channel name]` to subscribe for livestream notifications for that channel.");
             } else
                 serverTextChannel.sendMessage("Invalid channel.");
         }

@@ -9,7 +9,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.net.URL;
 
 @Path("/twitchapi")
 public class TwitchApi {
@@ -48,18 +47,20 @@ public class TwitchApi {
         if (payloadJson.getJSONArray("data").length() != 0) {
             payloadJson = new JSONObject(payload).getJSONArray("data").getJSONObject(0);
 
+            System.out.println("ID: " + payloadJson.getString("user_id"));
+
             String databasePassword = Twitch.getPassword(Long.valueOf(payloadJson.getString("user_id")));
 
-            System.out.println("Password: " + password);
-            System.out.println("Database password = " + databasePassword);
-
-            if (databasePassword != null) {
-                if (password.equals(databasePassword)) {
-                    System.out.println("Password matches");
-                } else
-                    System.out.println("Password doesn't match");
-            } else
-                System.out.println("Database password not found");
+                System.out.println("Password: " + password);
+                System.out.println("Database password = " + databasePassword);
+    //
+    //            if (databasePassword != null) {
+    //                if (password.equals(databasePassword)) {
+    //                    System.out.println("Password matches");
+    //                } else
+    //                    System.out.println("Password doesn't match");
+    //            } else
+    //                System.out.println("Database password not found");
 
             System.out.println("ID: " + payloadJson.getString("user_id"));
             System.out.println("User Name: " + payloadJson.getString("user_name"));
@@ -67,11 +68,11 @@ public class TwitchApi {
             System.out.println("Thumbnail: " + payloadJson.getString("thumbnail_url"));
             System.out.println("Title: " + payloadJson.getString("title"));
 
-            //String hashCheck = sha256Encrypter(payload.substring(2, payload.length() - 1), Twitch.getHubSecret(payloadJson.getLong("id")));
-            //System.out.println(hashCheck);
-            System.out.println(signature);
+            String hashCheck = sha256Encryptor(payload.substring(2, payload.length() - 1), Twitch.getHubSecret(payloadJson.getLong("user_id")));
+            System.out.println("Hash check : " + hashCheck);
+            System.out.println("Actual signature: " + signature);
 
-            Twitch.notifyLive(new LivestreamNotification(payloadJson.getString("user_id"), userName, payloadJson.getString("title"), payloadJson.getString("game_id"), payloadJson.getString("thumbnail_url")));
+            Twitch.notifyLive(new LivestreamNotification(payloadJson.getString("user_id"), payloadJson.getString("user_name"), payloadJson.getString("title"), payloadJson.getString("game_id"), payloadJson.getString("thumbnail_url")));
 
         } else
             System.out.println("Someone went offline");
@@ -80,7 +81,7 @@ public class TwitchApi {
     }
 
 
-    private String sha256Encrypter(String payload, String secret) {
+    private String sha256Encryptor(String payload, String secret) {
         try {
             Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
             SecretKeySpec secret_key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");

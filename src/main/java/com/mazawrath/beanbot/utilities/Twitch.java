@@ -135,14 +135,23 @@ public class Twitch {
         r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).delete().run(conn);
     }
 
-    public void setChannel(String serverId, String channelId) {
-        // TODO I need to make super special checks for setting notifcation channel
-        checkServer(serverId);
+    public boolean setChannel(String serverId, String channelId) {
+        boolean retVal = false;
 
-        r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.array(
-                r.hashMap("id", serverId))).update(r.array(
-                r.hashMap("channelId", channelId))).run(conn);
-        r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.hashMap("id", serverId)).update(r.hashMap("channelId", channelId)).run(conn);
+        Cursor cursor = r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
+                r.hashMap("id", serverId)).getField("userId").run(conn);
+        List userIdList = cursor.toList();
+
+        if (userIdList.size() != 0) {
+
+            r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.array(
+                    r.hashMap("id", serverId))).update(r.array(
+                    r.hashMap("channelId", channelId))).run(conn);
+            r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.hashMap("id", serverId)).update(r.hashMap("channelId", channelId)).run(conn);
+
+            retVal = true;
+        }
+        return retVal;
     }
 
     private List getChannelSubsciptionList() {
