@@ -29,7 +29,7 @@ public class AdminTwitchSettings implements CommandExecutor {
             return;
         }
 
-        if (args[0].equalsIgnoreCase("addChannel")) {
+        if (args[0].equalsIgnoreCase("add")) {
             int subscriptionStatus = twitch.addServer(args[1], server.getIdAsString(), serverTextChannel.getIdAsString());
             if (subscriptionStatus == 1)
                 serverTextChannel.sendMessage("Subscribed to live notifications for " + args[1] + ".");
@@ -38,9 +38,9 @@ public class AdminTwitchSettings implements CommandExecutor {
              else
                  serverTextChannel.sendMessage("Could not subscribe to " + args[1] + ". You are already subscribed to livestream " +
                          "notifications for another channel. Use `.admintwitchsettings removechannel` to unsubscribe from those notifications.");
-        } else if (args[0].equalsIgnoreCase("removeChannel")) {
-            if (twitch.flagRemoval(server.getIdAsString()))
-                serverTextChannel.sendMessage("Unsubscribed from live notifications for " + args[1] + ".");
+        } else if (args[0].equalsIgnoreCase("remove")) {
+            if (twitch.removeServer(server.getIdAsString()))
+                serverTextChannel.sendMessage("Unsubscribed from live notifications.");
             else
                 serverTextChannel.sendMessage("Could not unsubscribe from " + args[1] + ".");
         } else if (args[0].equals("setNotificationChannel")) {
