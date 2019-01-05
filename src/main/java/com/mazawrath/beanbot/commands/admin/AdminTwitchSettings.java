@@ -37,14 +37,18 @@ public class AdminTwitchSettings implements CommandExecutor {
                 serverTextChannel.sendMessage("Could not subscribe to " + args[1] + ".");
              else
                  serverTextChannel.sendMessage("Could not subscribe to " + args[1] + ". You are already subscribed to livestream " +
-                         "notifications for another channel. Use `.admintwitchsettings removechannel` to unsubscribe from those notifications.");
+                         "notifications for another channel. Use `.admintwitchsettings remove` to unsubscribe from those notifications.");
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (twitch.removeServer(server.getIdAsString()))
                 serverTextChannel.sendMessage("Unsubscribed from live notifications.");
             else
-                serverTextChannel.sendMessage("Could not unsubscribe from " + args[1] + ".");
-        } else if (args[0].equals("setNotificationChannel")) {
-            twitch.setChannel(server.getIdAsString(), args[1]);
+                serverTextChannel.sendMessage("Could not unsubscribe from live notifications. Most likely you are not subscribed to " +
+                        "live notifications for a channel. Use `.admintwitchsettings add [channel name]` to subscribe for livestream notifications for that channel.");
+        } else if (args[0].equals("set")) {
+            if (api.getServerTextChannelById(args[1]).isPresent()) {
+                twitch.setChannel(server.getIdAsString(), args[1]);
+            } else
+                serverTextChannel.sendMessage("Invalid channel.");
         }
     }
 }
