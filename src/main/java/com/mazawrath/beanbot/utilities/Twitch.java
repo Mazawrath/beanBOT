@@ -38,8 +38,6 @@ public class Twitch {
         this.ipAddress = ipAddress;
         Twitch.conn = conn;
 
-        System.out.println(Twitch.getPassword(134213757 ));
-
         checkDatabase();
         checkTable();
         startResubscribeTimer();
@@ -126,7 +124,6 @@ public class Twitch {
                 retVal = true;
 
             if (r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.hashMap("userId", String.valueOf(userId))).count().eq(1).run(conn)) {
-                r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).delete().run(conn);
             }
             r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.hashMap(
                     "id", serverId)).delete().run(conn);
