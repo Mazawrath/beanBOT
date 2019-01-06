@@ -45,7 +45,8 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
                 "**Changes**\n" +
                 "\t- Increased price of `.beanlottery draw` from 400 beanCoin to 50,000 beanCoin.\n" +
                 "\t- Users can now be mentioned when transferring beancoin or looking up user info.\n" +
-                "\t\t- Commands like `.userinfo` and `.beantransfer` now can have users tagged with `@`.";
+                "\t\t- Commands like `.userinfo` and `.beantransfer` now can have users tagged with `@`.\n" +
+                "\t- Added a mysterious tax for coins going to beanBOT...";
 //                "**Bug Fixes**\n" +
 //                "\t- Fixed an issue with `.beanlottery` not giving help information.\n";
     }
