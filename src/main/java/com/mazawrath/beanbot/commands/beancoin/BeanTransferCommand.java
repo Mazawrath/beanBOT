@@ -28,14 +28,16 @@ public class BeanTransferCommand implements CommandExecutor {
 
     public void onCommand(String[] args, ServerTextChannel serverTextChannel, DiscordApi api, User author, Server server) {
         if (args.length >= 2) {
-            if (!args[0].contains("#")) {
+            if (args[0].contains("@")) {
+                args[0] = args[0].substring(2,args[0].length() - 1);
+            } else if (args[0].contains("#")) {
+                api.getCachedUserByDiscriminatedNameIgnoreCase(args[0]).ifPresent(user -> args[0] = user.getIdAsString());
+            } else {
                 serverTextChannel.sendMessage("Username is not valid!");
-                args[0] = "null#000000000000";
-            } else if (args[0].contains("@")) {
-                serverTextChannel.sendMessage("Do not mention the user, put in their full username (Example#0000) without a '@' in front.");
-                args[0] = "null#000000000000";
+                return;
             }
-            api.getCachedUserByDiscriminatedNameIgnoreCase(args[0]).ifPresent(user -> {
+
+            api.getUserById(args[0]).thenAccept(user -> {
                 if (Points.isProperDecimal(args[1])) {
                     BigDecimal transferPoints = new BigDecimal(args[1]).setScale(Points.SCALE, Points.ROUNDING_MODE);
                     if (transferPoints.compareTo(BigDecimal.ZERO) != 0) {

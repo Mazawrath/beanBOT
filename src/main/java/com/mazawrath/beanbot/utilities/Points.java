@@ -11,6 +11,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Random;
 
 public class Points {
     private static final RethinkDB r = RethinkDB.r;
@@ -26,8 +27,11 @@ public class Points {
     public static final BigDecimal LOTTERY_DRAWING_COST = new BigDecimal("400.00").setScale(SCALE, ROUNDING_MODE);
     private Connection conn;
 
-    public void connectDatabase() {
-        conn = r.connection().hostname("localhost").port(28015).connect();
+    private static final BigDecimal NUMBER_TO_PERCENT = new BigDecimal(.01);
+
+    public Points(Connection conn) {
+        this.conn = conn;
+
         checkTable(conn);
     }
 
@@ -99,7 +103,11 @@ public class Points {
         if (points.compareTo(getBalance(userID, serverID)) <= 0) {
             r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).subtract(points)))).run(conn);
             if (botUserID != null && !botUserID.isEmpty()) {
-                addPoints(botUserID, serverID, points);
+                Random r = new Random();
+                BigDecimal blackHolePercent = new BigDecimal(r.nextInt(25 - 8 + 1) + 8).multiply(NUMBER_TO_PERCENT);
+                BigDecimal mysteriousTax = points.multiply(blackHolePercent);
+
+                addPoints(botUserID, serverID, points.subtract(mysteriousTax));
             }
             return true;
         } else

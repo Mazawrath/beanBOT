@@ -20,13 +20,14 @@ public class Lottery {
     public static final int AMOUNT_DRAWN = 3;
     public static final int MIN_NUMBER = 1;
     public static final int MAX_NUMBER = 20;
-    public static final BigDecimal MIN_WEEKLY_VALUE = new BigDecimal(40000);
+    public static final BigDecimal MIN_WEEKLY_VALUE = new BigDecimal(50000);
     private static final String DB_NAME = "beanBotLottery";
 
     private Connection conn;
 
-    public void connectDatabase() {
-        conn = r.connection().hostname("localhost").port(28015).connect();
+    public Lottery(Connection conn) {
+        this.conn = conn;
+
         checkTable(conn);
     }
 
@@ -37,27 +38,27 @@ public class Lottery {
         }
     }
 
-    private void checkServer(String serverID) {
-        if (r.db(DB_NAME).tableList().contains(serverID).run(conn)) {
+    private void checkServer(String serverId) {
+        if (r.db(DB_NAME).tableList().contains(serverId).run(conn)) {
         } else
-            r.db(DB_NAME).tableCreate(serverID).run(conn);
+            r.db(DB_NAME).tableCreate(serverId).run(conn);
     }
 
-    private void checkUser(String userID, String serverID) {
-        checkServer(serverID);
+    private void checkUser(String userId, String serverId) {
+        checkServer(serverId);
 
-        if (r.db(DB_NAME).table(serverID).getField("id").contains(userID).run(conn)) {
+        if (r.db(DB_NAME).table(serverId).getField("id").contains(userId).run(conn)) {
         } else
-            r.db(DB_NAME).table(serverID).insert(r.array(
-                    r.hashMap("id", userID))).run(conn);
+            r.db(DB_NAME).table(serverId).insert(r.array(
+                    r.hashMap("id", userId))).run(conn);
     }
 
-    public void clearTickets(String serverID) {
-        r.db(DB_NAME).table(serverID).delete().run(conn);
+    public void clearTickets(String serverId) {
+        r.db(DB_NAME).table(serverId).delete().run(conn);
     }
 
-    public ArrayList<ArrayList<Integer>> addEntry(String userID, String serverID, int amount) {
-        checkUser(userID, serverID);
+    public ArrayList<ArrayList<Integer>> addEntry(String userId, String serverId, int amount) {
+        checkUser(userId, serverId);
         ArrayList<ArrayList<Integer>> ticketArray = new ArrayList<>();
         int[] generatedNumbers;
 
@@ -71,25 +72,25 @@ public class Lottery {
 
         for (int i = 0; i < ticketArray.size(); i++) {
             int finalI = i;
-            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID))
+            r.db(DB_NAME).table(serverId).filter(r.hashMap("id", userId))
                     .update(row -> r.hashMap("Lottery ticket", row.g("Lottery ticket").default_(r.array()).append(ticketArray.get(finalI)))).run(conn);
         }
         return ticketArray;
     }
 
-    public void addEntry(String userID, String serverID, int[] numbers) {
-        checkUser(userID, serverID);
-        r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID))
+    public void addEntry(String userId, String serverId, int[] numbers) {
+        checkUser(userId, serverId);
+        r.db(DB_NAME).table(serverId).filter(r.hashMap("id", userId))
                 .update(row -> r.hashMap("Lottery ticket", row.g("Lottery ticket").default_(r.array()).append(r.array(numbers[0], numbers[1], numbers[2])))).run(conn);
     }
 
-    public ArrayList getWinner(String serverID, int[] winningNumbers) {
+    public ArrayList getWinner(String serverId, int[] winningNumbers) {
         ArrayList<Integer> ticket = new ArrayList<>();
 
         for (int i = 0; i < winningNumbers.length; i++)
             ticket.add(winningNumbers[i]);
 
-        ArrayList users = r.db(DB_NAME).table(serverID)
+        ArrayList users = r.db(DB_NAME).table(serverId)
                 .map(row -> r.object("id", row.getField("id"), "Lottery ticket", row.getField("Lottery ticket")))
                 .filter(row -> row.g("Lottery ticket").contains(ticket))
                 .without("Lottery ticket")
@@ -100,8 +101,8 @@ public class Lottery {
         //users.forEach(user -> System.out.println(((HashMap)user).get("id")));
     }
 
-    private void getUserTickets(String userID, String serverID) {
-        ArrayList<ArrayList<Long>> tickets = r.db(DB_NAME).table(serverID).get(userID).getField("Lottery ticket").run(conn);
+    private void getUserTickets(String userId, String serverId) {
+        ArrayList<ArrayList<Long>> tickets = r.db(DB_NAME).table(serverId).get(userId).getField("Lottery ticket").run(conn);
         ArrayList<String> ticketsTrans = new ArrayList<String>();
 
         tickets.forEach(ticket -> {

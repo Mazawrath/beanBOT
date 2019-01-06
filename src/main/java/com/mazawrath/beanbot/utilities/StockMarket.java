@@ -23,8 +23,9 @@ public class StockMarket {
     private static final String DB_VALUE_PREFIX = "P_";
     Connection conn;
 
-    public void connectDatabase() {
-        conn = r.connection().hostname("localhost").port(28015).connect();
+    public StockMarket(Connection conn) {
+        this.conn = conn;
+
         checkTable(conn);
     }
 
@@ -35,29 +36,29 @@ public class StockMarket {
         }
     }
 
-    private void checkServer(String serverID) {
-        if (r.db(DB_NAME).tableList().contains(serverID).run(conn)) {
+    private void checkServer(String serverId) {
+        if (r.db(DB_NAME).tableList().contains(serverId).run(conn)) {
         } else
-            r.db(DB_NAME).tableCreate(serverID).run(conn);
+            r.db(DB_NAME).tableCreate(serverId).run(conn);
 
     }
 
-    private void checkUser(String userID, String serverID) {
-        checkServer(serverID);
+    private void checkUser(String userId, String serverId) {
+        checkServer(serverId);
 
-        if (r.db(DB_NAME).table(serverID).getField("id").contains(userID).run(conn)) {
+        if (r.db(DB_NAME).table(serverId).getField("id").contains(userId).run(conn)) {
         } else
-            r.db(DB_NAME).table(serverID).insert(r.array(
-                    r.hashMap("id", userID)
+            r.db(DB_NAME).table(serverId).insert(r.array(
+                    r.hashMap("id", userId)
             )).run(conn);
     }
 
-    private void checkCompany(String userID, String serverID, String symbol) {
-        if (r.db(DB_NAME).table(serverID).get(userID).hasFields(symbol + " shares bought").run(conn)) {
+    private void checkCompany(String userId, String serverId, String symbol) {
+        if (r.db(DB_NAME).table(serverId).get(userId).hasFields(symbol + " shares bought").run(conn)) {
         } else {
-            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0)))
+            r.db(DB_NAME).table(serverId).filter(r.hashMap("id", userId)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0)))
             ).run(conn);
-            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0)))
+            r.db(DB_NAME).table(serverId).filter(r.hashMap("id", userId)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0)))
             ).run(conn);
         }
     }
@@ -233,47 +234,47 @@ public class StockMarket {
         return null;
     }
 
-    public BigDecimal getShareInvested(String userID, String serverID, String symbol) {
-        checkUser(userID, serverID);
-        checkCompany(userID, serverID, symbol);
-        return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(serverID).get(userID).getField(symbol + " shares bought").run(conn))).setScale(Points.SCALE, Points.ROUNDING_MODE);
+    public BigDecimal getShareInvested(String userId, String serverId, String symbol) {
+        checkUser(userId, serverId);
+        checkCompany(userId, serverId, symbol);
+        return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(serverId).get(userId).getField(symbol + " shares bought").run(conn))).setScale(Points.SCALE, Points.ROUNDING_MODE);
     }
 
-    public BigDecimal getBeanCoinSpent(String userID, String serverID, String symbol) {
-        checkUser(userID, serverID);
-        checkCompany(userID, serverID, symbol);
-        return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(serverID).get(userID).getField(symbol + " beanCoin spent").run(conn))).setScale(Points.SCALE, Points.ROUNDING_MODE);
+    public BigDecimal getBeanCoinSpent(String userId, String serverId, String symbol) {
+        checkUser(userId, serverId);
+        checkCompany(userId, serverId, symbol);
+        return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(serverId).get(userId).getField(symbol + " beanCoin spent").run(conn))).setScale(Points.SCALE, Points.ROUNDING_MODE);
     }
 
-    public BigDecimal buyShares(String userID, String serverID, String symbol, BigDecimal investAmount) {
+    public BigDecimal buyShares(String userId, String serverId, String symbol, BigDecimal investAmount) {
         BigDecimal retVal = new BigDecimal(-1).setScale(Points.SCALE, Points.ROUNDING_MODE);
         symbol = getSymbol(symbol);
 
         if (symbol != null) {
-            checkUser(userID, serverID);
-            checkCompany(userID, serverID, symbol);
+            checkUser(userId, serverId);
+            checkCompany(userId, serverId, symbol);
 
             retVal = investAmount.divide(getStockPrice(symbol, false), 2, RoundingMode.HALF_UP);
 
-            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(retVal.add(getShareInvested(userID, serverID, symbol))))).run(conn);
-            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(getBeanCoinSpent(userID, serverID, symbol).add(investAmount)))).run(conn);
+            r.db(DB_NAME).table(serverId).filter(r.hashMap("id", userId)).update(r.hashMap(symbol + " shares bought", buildValueForDB(retVal.add(getShareInvested(userId, serverId, symbol))))).run(conn);
+            r.db(DB_NAME).table(serverId).filter(r.hashMap("id", userId)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(getBeanCoinSpent(userId, serverId, symbol).add(investAmount)))).run(conn);
         }
 
         return retVal;
     }
 
-    public boolean sellShares(String userID, String serverID, String symbol) {
+    public boolean sellShares(String userId, String serverId, String symbol) {
         boolean retVal = false;
 
         symbol = getSymbol(symbol);
 
         if (symbol != null) {
-            checkUser(userID, serverID);
-            checkCompany(userID, serverID, symbol);
+            checkUser(userId, serverId);
+            checkCompany(userId, serverId, symbol);
 
-            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0).setScale(Points.SCALE, Points.ROUNDING_MODE)))
+            r.db(DB_NAME).table(serverId).filter(r.hashMap("id", userId)).update(r.hashMap(symbol + " shares bought", buildValueForDB(new BigDecimal(0).setScale(Points.SCALE, Points.ROUNDING_MODE)))
             ).run(conn);
-            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0).setScale(Points.SCALE, Points.ROUNDING_MODE)))
+            r.db(DB_NAME).table(serverId).filter(r.hashMap("id", userId)).update(r.hashMap(symbol + " beanCoin spent", buildValueForDB(new BigDecimal(0).setScale(Points.SCALE, Points.ROUNDING_MODE)))
             ).run(conn);
 
             retVal = true;
@@ -282,10 +283,10 @@ public class StockMarket {
         return retVal;
     }
 
-    public ArrayList getPortfolio(String userID, String serverID) {
-        checkUser(userID, serverID);
+    public ArrayList getPortfolio(String userId, String serverId) {
+        checkUser(userId, serverId);
 
-        return r.db(DB_NAME).table(serverID).get(userID).run(conn);
+        return r.db(DB_NAME).table(serverId).get(userId).run(conn);
     }
 
     public static String parseValueFromDB(String value) {

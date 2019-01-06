@@ -7,34 +7,41 @@ import com.mazawrath.beanbot.commands.beanmarket.BeanMarketCommand;
 import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
-import com.mazawrath.beanbot.utilities.Lottery;
+import com.mazawrath.beanbot.utilities.*;
 import com.mazawrath.beanbot.commands.admin.*;
-import com.mazawrath.beanbot.utilities.Points;
-import com.mazawrath.beanbot.utilities.StockMarket;
+import com.mazawrath.beanbot.utilities.jersey.RestServer;
+import com.rethinkdb.net.Connection;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
-import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.BasicConfigurator;
+import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.util.logging.FallbackLoggerConfiguration;
+
+import static com.rethinkdb.RethinkDB.r;
 
 public class Main {
+    private static DiscordApi api;
+
     public static void main(String[] args) {
-        BasicConfigurator.configure();
+        //BasicConfigurator.configure();
         // Enable debugging, if no slf4j logger was found
-        FallbackLoggerConfiguration.setDebug(false);
+        //FallbackLoggerConfiguration.setDebug(false);
 
-        Points points = new Points();
-        StockMarket stockMarket = new StockMarket();
-        Lottery lottery = new Lottery();
+        Connection conn = r.connection().hostname("localhost").port(28015).connect();
 
-        points.connectDatabase();
-        stockMarket.connectDatabase();
-        lottery.connectDatabase();
+        Points points = new Points(conn);
+        StockMarket stockMarket = new StockMarket(conn);
+        Lottery lottery = new Lottery(conn);
+        Thread restServer = new Thread(new RestServer());
+        restServer.start();
+        Twitch twitch = new Twitch(args[1], args[2], conn);
 
-        String token = args[0];
 
-        new DiscordApiBuilder().setToken(token).login().thenAccept(api -> {
-            //System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
+        new DiscordApiBuilder().setToken(args[0]).login().thenAccept(api -> {
+            System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
+
+            Main.api = api;
+            Twitch.setApi(api);
 
             // Instantiate command handler
             CommandHandler cmdHandler = new JavacordHandler(api);
@@ -59,7 +66,7 @@ public class Main {
             // Bean Market
             cmdHandler.registerCommand(new BeanMarketCommand());
             cmdHandler.registerCommand(new BeanInvestCommand(points, stockMarket));
-            // Bean Lottery
+            // Bean Lottery Commands
             cmdHandler.registerCommand(new BeanLotteryCommand(points, lottery));
             // Admin commands
             cmdHandler.registerCommand(new AdminPostChangeLogCommand());
@@ -69,6 +76,7 @@ public class Main {
             cmdHandler.registerCommand(new AdminRemoveBeanCoinCommand(points));
             cmdHandler.registerCommand(new AdminPostMessageCommand());
             cmdHandler.registerCommand(new AdminPostHelpCommand(cmdHandler));
+            cmdHandler.registerCommand(new AdminTwitch(twitch));
             // Copypasta
             cmdHandler.registerCommand(new Top500Command(points));
             cmdHandler.registerCommand(new GiveModCommand(points));
@@ -84,4 +92,5 @@ public class Main {
             cmdHandler.registerCommand(new EightBallCommand(points));
         });
     }
+
 }
