@@ -89,7 +89,7 @@ public class TwitchApi {
             long streamStartInstant = Instant.parse(payloadJson.getString("started_at")).getEpochSecond();
             System.out.println("Started at: " + streamStartInstant);
 
-            if ((System.currentTimeMillis() / 1000) - streamStartInstant < 300)
+            if ((System.currentTimeMillis() / 1000) - streamStartInstant < 180)
                 Twitch.notifyLive(new LivestreamNotification(payloadJson.getString("user_id"), userName, payloadJson.getString("title"), payloadJson.getString("game_id"), payloadJson.getInt("viewer_count"), payloadJson.getString("thumbnail_url")));
 
         } else
