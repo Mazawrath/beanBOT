@@ -7,17 +7,19 @@ public class LivestreamNotification {
     private String userName;
     private String title;
     private String gameId;
+    private int viewerCount;
     private String thumbnail;
 
-    public LivestreamNotification(String userId, String userName, String title, String gameId, String thumbnail) {
+    public LivestreamNotification(String userId, String userName, String title, String gameId, int viewerCount, String thumbnail) {
         this.userId = userId;
         this.userName = userName;
         this.title = title;
         this.gameId = gameId;
+        this.viewerCount = viewerCount;
         this.thumbnail = thumbnail.replace("{width}x{height}", "1920x1080");
     }
 
-    public String getUserId() {
+    String getUserId() {
         return userId;
     }
 
@@ -25,12 +27,16 @@ public class LivestreamNotification {
         return userName;
     }
 
-    public String getTitle() {
+    String getTitle() {
         return title;
     }
 
     String getGameId() {
         return gameId;
+    }
+
+    int getViewerCount() {
+        return viewerCount;
     }
 
     String getThumbnail() {

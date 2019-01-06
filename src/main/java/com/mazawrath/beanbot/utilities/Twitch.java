@@ -58,7 +58,7 @@ public class Twitch {
 
         if (r.db(DB_NAME).tableList().contains(TWITCH_CHANNEL_LIST_TABLE).run(conn)) {
         } else {
-            r.db(DB_NAME).tableCreate(TWITCH_CHANNEL_LIST_TABLE).run(conn);
+            r.db(DB_NAME).tableCreate(TWITCH_CHANNEL_LIST_TABLE).withFields(r.hashMap("previously_live", false)).run(conn);
         }
     }
 
@@ -131,7 +131,7 @@ public class Twitch {
         return retVal;
     }
 
-    public static void removeTwitchChannel (long userId) {
+    public static void removeTwitchChannel(long userId) {
         r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).delete().run(conn);
     }
 
@@ -263,6 +263,7 @@ public class Twitch {
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(livestreamNotification.getUserName())
                 .setDescription("[" + livestreamNotification.getTitle() + "]" + "(https://www.twitch.tv/" + livestreamNotification.getUserName() + ")")
+                .addInlineField("Viewer count", String.valueOf(livestreamNotification.getViewerCount()))
                 .setImage(livestreamNotification.getThumbnail())
                 .setFooter("Playing: " + Twitch.getGameName(livestreamNotification.getGameId()));
 
@@ -273,9 +274,31 @@ public class Twitch {
 
         for (int i = 0; i < serverId.size(); i++) {
             int finalI = i;
-            api.getServerById(serverId.get(i).toString()).ifPresent(server ->
-                    server.getTextChannelById(channelId.get(finalI).toString()).ifPresent(message::send));
+            if (checkServer(api, serverId.get(i).toString(), channelId.get(i).toString())) {
+                System.out.println("Valid server.");
+                api.getServerById(serverId.get(i).toString()).ifPresent(server ->
+                        server.getTextChannelById(channelId.get(finalI).toString()).ifPresent(message::send));
+            } else {
+                System.out.println("Invalid server.");
+                r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.hashMap(
+                        "id", serverId.get(i).toString())).delete().run(conn);
+
+                if (serverId.size() == 1)
+                    Twitch.removeTwitchChannel(Long.valueOf(livestreamNotification.getUserId()));
+            }
         }
+    }
+
+//    private static boolean checkPreviouslyLive(long userId) {
+//        return r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("previously_live");
+//    }
+
+    private static boolean checkServer(DiscordApi api, String serverId, String textChannelId) {
+        boolean retVal = false;
+        if (api.getServerById(serverId).isPresent())
+            if (api.getServerById(serverId).get().getTextChannelById(textChannelId).isPresent())
+                retVal = true;
+        return retVal;
     }
 
     private String checkHubSecret(long userId) {

@@ -9,6 +9,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.time.Instant;
 
 @Path("/twitchapi")
 public class TwitchApi {
@@ -17,25 +18,28 @@ public class TwitchApi {
     @Produces(MediaType.TEXT_PLAIN)
     public String subscription(@QueryParam("hub.mode") String mode, @QueryParam("password") String password, @QueryParam("hub.topic") String topic,
                                @QueryParam("hub.lease_seconds") int seconds, @QueryParam("hub.challenge") String challenge) {
+        String retVal = "";
+
         System.out.println("Password: " + password);
         String databasePassword = Twitch.getPassword(Long.valueOf(topic.substring(44)));
         System.out.println("Database password = " + databasePassword);
 
-        if (mode.equals("subscribe"))
-            System.out.println("Subscription to " + topic.substring(44) + " received.");
-        else if (mode.equals("unsubscribe")) {
-            System.out.println("Unsubscribe from " + topic.substring(44) + " received.");
-            Twitch.removeTwitchChannel(Long.valueOf(topic.substring(44)));
-        }
-
         if (databasePassword != null) {
             if (password.equals(databasePassword)) {
                 System.out.println("Password matches");
+
+                if (mode.equals("subscribe"))
+                    System.out.println("Subscription to " + topic.substring(44) + " received.");
+                else if (mode.equals("unsubscribe")) {
+                    System.out.println("Unsubscribe from " + topic.substring(44) + " received.");
+                    Twitch.removeTwitchChannel(Long.valueOf(topic.substring(44)));
+                }
+                retVal = challenge;
             } else
                 System.out.println("Password doesn't match");
         } else
             System.out.println("Database password not found");
-        return challenge;
+        return retVal;
     }
 
     @POST
@@ -51,16 +55,16 @@ public class TwitchApi {
 
             String databasePassword = Twitch.getPassword(Long.valueOf(payloadJson.getString("user_id")));
 
-                System.out.println("Password: " + password);
-                System.out.println("Database password = " + databasePassword);
-    //
-    //            if (databasePassword != null) {
-    //                if (password.equals(databasePassword)) {
-    //                    System.out.println("Password matches");
-    //                } else
-    //                    System.out.println("Password doesn't match");
-    //            } else
-    //                System.out.println("Database password not found");
+            System.out.println("Password: " + password);
+            System.out.println("Database password = " + databasePassword);
+            //
+            //            if (databasePassword != null) {
+            //                if (password.equals(databasePassword)) {
+            //                    System.out.println("Password matches");
+            //                } else
+            //                    System.out.println("Password doesn't match");
+            //            } else
+            //                System.out.println("Database password not found");
 
             System.out.println("ID: " + payloadJson.getString("user_id"));
             System.out.println("User Name: " + payloadJson.getString("user_name"));
@@ -68,11 +72,25 @@ public class TwitchApi {
             System.out.println("Thumbnail: " + payloadJson.getString("thumbnail_url"));
             System.out.println("Title: " + payloadJson.getString("title"));
 
-            String hashCheck = sha256Encryptor(payload.substring(2, payload.length() - 1), Twitch.getHubSecret(payloadJson.getLong("user_id")));
-            System.out.println("Hash check : " + hashCheck);
+            if (!payloadJson.getString("user_name").equals(""))
+                userName = payloadJson.getString("user_name");
+
+            String hubSecret = Twitch.getHubSecret(payloadJson.getLong("user_id"));
+
+            if (hubSecret != null) {
+                System.out.println("Key found.");
+
+                String hashCheck = sha256Encryptor(payload, hubSecret);
+                System.out.println("Hash check : " + hashCheck);
+            } else
+                System.out.println("Secret not found.");
             System.out.println("Actual signature: " + signature);
 
-            Twitch.notifyLive(new LivestreamNotification(payloadJson.getString("user_id"), payloadJson.getString("user_name"), payloadJson.getString("title"), payloadJson.getString("game_id"), payloadJson.getString("thumbnail_url")));
+            long streamStartInstant = Instant.parse(payloadJson.getString("started_at")).getEpochSecond();
+            System.out.println("Started at: " + streamStartInstant);
+
+            if ((System.currentTimeMillis() / 1000) - streamStartInstant < 300)
+                Twitch.notifyLive(new LivestreamNotification(payloadJson.getString("user_id"), userName, payloadJson.getString("title"), payloadJson.getString("game_id"), payloadJson.getInt("viewer_count"), payloadJson.getString("thumbnail_url")));
 
         } else
             System.out.println("Someone went offline");
