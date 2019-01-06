@@ -7,7 +7,6 @@ import com.mazawrath.beanbot.commands.beanmarket.BeanMarketCommand;
 import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
-import com.mazawrath.beanbot.commands.twitch.CheckLiveCommand;
 import com.mazawrath.beanbot.utilities.*;
 import com.mazawrath.beanbot.commands.admin.*;
 import com.mazawrath.beanbot.utilities.jersey.RestServer;
@@ -69,8 +68,6 @@ public class Main {
             cmdHandler.registerCommand(new BeanInvestCommand(points, stockMarket));
             // Bean Lottery Commands
             cmdHandler.registerCommand(new BeanLotteryCommand(points, lottery));
-            // Twitch Commands
-            cmdHandler.registerCommand(new CheckLiveCommand(twitch));
             // Admin commands
             cmdHandler.registerCommand(new AdminPostChangeLogCommand());
             cmdHandler.registerCommand(new AdminDeleteMessageCommand());
