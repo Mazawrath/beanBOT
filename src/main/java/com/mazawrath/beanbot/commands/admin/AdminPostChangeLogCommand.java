@@ -39,11 +39,13 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
                 "\n" +
                 "**v3.1.0**\n" +
                 "**New**\n" +
-                "\t- Twitch update\n" +
+                "\t- Twitch Update\n" +
+                "\t\t- beanBOT can now notify servers when a Twitch channel goes live.\n" +
                 "\t\t- Server owners can now type `.admintwitch add [twitch channel name]` to subscribe to live notifications for a twitch channel.\n" +
                 "**Changes**\n" +
                 "\t- Increased price of `.beanlottery draw` from 400 beanCoin to 50,000 beanCoin.\n" +
-                "\t- Commands like `.userinfo` and `.beantransfer` now can have users tagged with `@`.";
+                "\t- Users can now be mentioned when transferring beancoin or looking up user info.\n" +
+                "\t\t- Commands like `.userinfo` and `.beantransfer` now can have users tagged with `@`.";
 //                "**Bug Fixes**\n" +
 //                "\t- Fixed an issue with `.beanlottery` not giving help information.\n";
     }
