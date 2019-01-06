@@ -34,16 +34,17 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.0.1\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.0.0...v3.0.1\n" +
+                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.1.0\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.0.1...v3.1.0\n" +
                 "\n" +
-                "**v3.0.1**\n" +
-//                "**New**\n" +
-//                "\t- Added the Bean Lottery.\n" +
-//                "**Changes**\n" +
-//                "\t- Completely redesigned way to build and run beanBOT.\n" +
-//                "\t- Reverted Beanmas.\n" +
-                "**Bug Fixes**\n" +
-                "\t- Fixed an issue with `.beanlottery` not giving help information.\n";
+                "**v3.1.0**\n" +
+                "**New**\n" +
+                "\t- Twitch update\n" +
+                "\t\t- Server owners can now type `.admintwitch add [twitch channel name]` to subscribe to live notifications for a twitch channel.\n" +
+                "**Changes**\n" +
+                "\t- Increased price of `.beanlottery draw` from 400 beanCoin to 50,000 beanCoin.\n" +
+                "\t- Commands like `.userinfo` and `.beantransfer` now can have users tagged with `@`.";
+//                "**Bug Fixes**\n" +
+//                "\t- Fixed an issue with `.beanlottery` not giving help information.\n";
     }
 }
