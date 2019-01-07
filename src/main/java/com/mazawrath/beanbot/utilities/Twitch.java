@@ -159,19 +159,6 @@ public class Twitch {
         return retVal.toList();
     }
 
-    public long[] getServers(String userId) {
-        return r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.array(r.hashMap("userId", userId))).getField(r.array("serverId", "channelId")).run(conn);
-    }
-
-    public void connectClient(String id, String secret, String credential) {
-        client = TwitchClientBuilder.init()
-                .withClientId(id)
-                .withClientSecret(secret)
-                .withAutoSaveConfiguration(true)
-                .withConfigurationDirectory(new File("config"))
-                .withCredential(credential) // Get your token at: https://twitchapps.com/tmi/
-                .connect();
-    }
 
     public boolean checkIfLive(String channel) {
         return client.getStreamEndpoint().isLive(client.getChannelEndpoint().getChannel(channel));
