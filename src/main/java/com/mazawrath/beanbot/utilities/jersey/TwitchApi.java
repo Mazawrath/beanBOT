@@ -9,6 +9,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.awt.*;
 import java.time.Instant;
 
 @Path("/twitchapi")
@@ -89,11 +90,20 @@ public class TwitchApi {
             long streamStartInstant = Instant.parse(payloadJson.getString("started_at")).getEpochSecond();
             System.out.println("Started at: " + streamStartInstant);
 
-            if ((System.currentTimeMillis() / 1000) - streamStartInstant < 180)
+            //if ((System.currentTimeMillis() / 1000) - streamStartInstant < 180)
+            if (!Twitch.getStatus(payloadJson.getLong("user_id")) && System.currentTimeMillis() - Twitch.getOfflineTime(payloadJson.getLong("user_id")) > 600000) {
                 Twitch.notifyLive(new LivestreamNotification(payloadJson.getString("user_id"), userName, payloadJson.getString("title"), payloadJson.getString("game_id"), payloadJson.getInt("viewer_count"), payloadJson.getString("thumbnail_url")));
+                Twitch.setStatus(payloadJson.getLong("user_id"));
+            } else
+                System.out.println("Streamer recently live. Not notifying.");
 
-        } else
+        } else {
             System.out.println("Someone went offline");
+            long userId = Twitch.getUserID(userName);
+
+            Twitch.setStatus(userId);
+            Twitch.setOfflineTime(userId);
+        }
 
         System.out.println(length);
     }
