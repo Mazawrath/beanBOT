@@ -133,7 +133,7 @@ public class Lottery {
                     }
                 }
             }
-        }, 0, 10050, TimeUnit.MINUTES);
+        }, 0, 4280, TimeUnit.MINUTES);
     }
 
     public void drawNumbers(Points points, Server server, DiscordApi api, ServerTextChannel serverTextChannel) {

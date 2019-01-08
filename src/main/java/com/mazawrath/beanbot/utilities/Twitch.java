@@ -58,7 +58,7 @@ public class Twitch {
 
         if (r.db(DB_NAME).tableList().contains(TWITCH_CHANNEL_LIST_TABLE).run(conn)) {
         } else {
-            r.db(DB_NAME).tableCreate(TWITCH_CHANNEL_LIST_TABLE).withFields(r.hashMap("previously_live", false)).run(conn);
+            r.db(DB_NAME).tableCreate(TWITCH_CHANNEL_LIST_TABLE).run(conn);
         }
     }
 
@@ -79,6 +79,7 @@ public class Twitch {
                 return -1;
 
             checkServer(serverId);
+            checkTwitchId(Long.valueOf(userId));
             r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
                     r.hashMap("id", serverId)).update(
                     r.hashMap("userId", userId)).run(conn);
@@ -88,6 +89,9 @@ public class Twitch {
             r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(
                     r.hashMap("id", serverId)).update(
                     r.hashMap("delete_requested", false)).run(conn);
+
+            r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", Long.valueOf(userId))).update(r.hashMap("previously_live", false)).run(conn);
+            r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", Long.valueOf(userId))).update(r.hashMap("previous_time_live", 0)).run(conn);
             if (subscribeToLiveNotifications(Long.parseLong(userId)))
                 retVal = 1;
             else {
@@ -177,7 +181,7 @@ public class Twitch {
         return client.getStreamEndpoint().isLive(client.getChannelEndpoint().getChannel(channel));
     }
 
-    public long getUserID(String user) {
+    public static long getUserID(String user) {
         HttpResponse response = curl("-H 'Client-ID: " + clientId + "' https://api.twitch.tv/helix/users?login=" + user);
         long retVal = -1;
 
@@ -200,7 +204,7 @@ public class Twitch {
         return retVal;
     }
 
-    public String getUserName(long userId) {
+    public static String getUserName(long userId) {
         HttpResponse response = curl("-H 'Client-ID: " + clientId + "' https://api.twitch.tv/helix/users?id=" + userId);
         String retVal = null;
 
@@ -320,6 +324,27 @@ public class Twitch {
         List password = passwordDb.toList();
 
         return password.size() == 0 ? null : password.get(0).toString();
+    }
+
+    public static boolean getStatus(long userId) {
+        Cursor dbReturn = r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("previously_live").run(conn);
+        
+        return ((boolean) dbReturn.toList().get(0));
+    }
+
+    public static void setStatus(long userId, boolean status) {
+        r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).update(r.hashMap("previously_live", status)).run(conn);
+    }
+
+    public static long getOfflineTime(long userId) {
+        Cursor dbReturn = r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("previous_time_live").run(conn);
+        List offlineTime = dbReturn.toList();
+
+        return (long) offlineTime.get(0);
+    }
+
+    public static void setOfflineTime(long userId) {
+        r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).update(r.hashMap("previous_time_live", System.currentTimeMillis())).run(conn);
     }
 
     private String checkPassword(long userId) {
