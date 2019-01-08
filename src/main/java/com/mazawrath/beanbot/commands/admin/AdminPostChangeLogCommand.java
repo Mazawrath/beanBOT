@@ -34,19 +34,18 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.1.0\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.0.1...v3.1.0\n" +
+                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.1.1\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.1.0...v3.1.1\n" +
                 "\n" +
-                "**v3.1.0**\n" +
-                "**New**\n" +
-                "\t- Twitch Update\n" +
-                "\t\t- beanBOT can now notify servers when a Twitch channel goes live.\n" +
-                "\t\t- Server owners can now type `.admintwitch add [twitch channel name]` to subscribe to live notifications for a twitch channel.\n" +
+                "**v3.1.1**\n" +
+//                "**New**\n" +
+//                "\t- Twitch Update\n" +
+//                "\t\t- beanBOT can now notify servers when a Twitch channel goes live.\n" +
+//                "\t\t- Server owners can now type `.admintwitch add [twitch channel name]` to subscribe to live notifications for a twitch channel.\n" +
                 "**Changes**\n" +
-                "\t- Increased price of `.beanlottery draw` from 400 beanCoin to 50,000 beanCoin.\n" +
-                "\t- Users can now be mentioned when transferring beancoin or looking up user info.\n" +
-                "\t\t- Commands like `.userinfo` and `.beantransfer` now can have users tagged with `@`.\n" +
-                "\t- Added a mysterious tax for coins going to beanBOT...";
+                "\t- Set up Twitch to only notify servers if streamer was previously offline and has not been online within the past 10 minutes.\n" +
+                "\t- Changed price of `.beanlottery draw` from 400 beanCoin to 20,000 beanCoin.\n" +
+                "\t- Lowered time of bean lottery drawing from 7 days to 3 days.";
 //                "**Bug Fixes**\n" +
 //                "\t- Fixed an issue with `.beanlottery` not giving help information.\n";
     }
