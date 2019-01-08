@@ -91,7 +91,7 @@ public class Twitch {
                     r.hashMap("delete_requested", false)).run(conn);
 
             r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", Long.valueOf(userId))).update(r.hashMap("previously_live", false)).run(conn);
-            r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", Long.valueOf(userId))).update(r.hashMap("previousTimeLive", 0)).run(conn);
+            r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", Long.valueOf(userId))).update(r.hashMap("previous_time_live", 0)).run(conn);
             if (subscribeToLiveNotifications(Long.parseLong(userId)))
                 retVal = 1;
             else {
@@ -327,22 +327,24 @@ public class Twitch {
     }
 
     public static boolean getStatus(long userId) {
-        return r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("previouslyLive").run(conn);
+        Cursor dbReturn = r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("previously_live").run(conn);
+        
+        return ((boolean) dbReturn.toList().get(0));
     }
 
-    public static void setStatus(long userId) {
-        if (r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("previouslyLive").run(conn))
-            r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).update(r.hashMap("previouslyLive", false)).run(conn);
-        else
-            r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).update(r.hashMap("previouslyLive", true)).run(conn);
+    public static void setStatus(long userId, boolean status) {
+        r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).update(r.hashMap("previously_live", status)).run(conn);
     }
 
     public static long getOfflineTime(long userId) {
-        return r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("previousTimeLive").run(conn);
+        Cursor dbReturn = r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).getField("previous_time_live").run(conn);
+        List offlineTime = dbReturn.toList();
+
+        return (long) offlineTime.get(0);
     }
 
     public static void setOfflineTime(long userId) {
-        r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).update(r.hashMap("previousTimeLive", System.currentTimeMillis())).run(conn);
+        r.db(DB_NAME).table(TWITCH_CHANNEL_LIST_TABLE).filter(r.hashMap("id", userId)).update(r.hashMap("previous_time_live", System.currentTimeMillis())).run(conn);
     }
 
     private String checkPassword(long userId) {

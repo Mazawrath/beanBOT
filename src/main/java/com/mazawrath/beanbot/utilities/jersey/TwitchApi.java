@@ -46,10 +46,10 @@ public class TwitchApi {
     @POST
     @Path("/stream_changed")
     public void response(@HeaderParam("x-hub-signature") String signature, @HeaderParam("content-length") int length, @QueryParam("password") String password, @QueryParam("username") String userName, String payload) {
-        System.out.println("Someone went live");
-
+        System.out.println("POST received.");
         JSONObject payloadJson = new JSONObject(payload);
         if (payloadJson.getJSONArray("data").length() != 0) {
+            System.out.println("Someone went live");
             payloadJson = new JSONObject(payload).getJSONArray("data").getJSONObject(0);
 
             System.out.println("ID: " + payloadJson.getString("user_id"));
@@ -93,7 +93,7 @@ public class TwitchApi {
             //if ((System.currentTimeMillis() / 1000) - streamStartInstant < 180)
             if (!Twitch.getStatus(payloadJson.getLong("user_id")) && System.currentTimeMillis() - Twitch.getOfflineTime(payloadJson.getLong("user_id")) > 600000) {
                 Twitch.notifyLive(new LivestreamNotification(payloadJson.getString("user_id"), userName, payloadJson.getString("title"), payloadJson.getString("game_id"), payloadJson.getInt("viewer_count"), payloadJson.getString("thumbnail_url")));
-                Twitch.setStatus(payloadJson.getLong("user_id"));
+                Twitch.setStatus(payloadJson.getLong("user_id"), true);
             } else
                 System.out.println("Streamer recently live. Not notifying.");
 
@@ -101,7 +101,7 @@ public class TwitchApi {
             System.out.println("Someone went offline");
             long userId = Twitch.getUserID(userName);
 
-            Twitch.setStatus(userId);
+            Twitch.setStatus(userId, false);
             Twitch.setOfflineTime(userId);
         }
 
