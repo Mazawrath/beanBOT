@@ -27,6 +27,13 @@ public class Main {
         // Enable debugging, if no slf4j logger was found
         //FallbackLoggerConfiguration.setDebug(false);
 
+        GoogleCloudVision cloudVision = new GoogleCloudVision();
+        try {
+            cloudVision.checkImange();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         Connection conn = r.connection().hostname("localhost").port(28015).connect();
 
         Points points = new Points(conn);

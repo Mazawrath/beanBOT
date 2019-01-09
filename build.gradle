@@ -51,7 +51,10 @@ dependencies {
             
             'org.toile-libre.libe:curl:0.0.23',
             
-            'com.google.api-client:google-api-client:1.24.1'
+            'com.google.api-client:google-api-client:1.24.1',
+
+            'com.google.cloud:google-cloud-vision:1.55.0',
+            'com.google.cloud:google-cloud-storage:1.55.0'
     )
 
     runtime(
