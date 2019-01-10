@@ -6,9 +6,7 @@ import com.google.protobuf.ByteString;
 import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -50,6 +48,76 @@ public class GoogleCloudVision {
         return null;
     }
 
+    public SafeSearchAnnotation detectSafeSearch(URL image) throws IOException {
+        List<AnnotateImageRequest> requests = new ArrayList<>();
+
+        ByteString imgBytes = ByteString.copyFrom(Objects.requireNonNull(downloadFile(image)));
+
+        Image img = Image.newBuilder().setContent(imgBytes).build();
+        Feature feat = Feature.newBuilder().setType(Type.SAFE_SEARCH_DETECTION).build();
+        AnnotateImageRequest request =
+                AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
+        requests.add(request);
+
+        try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
+            BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
+            List<AnnotateImageResponse> responses = response.getResponsesList();
+
+            for (AnnotateImageResponse res : responses) {
+                if (res.hasError()) {
+                    return null;
+                }
+
+                // For full list of available annotations, see http://g.co/cloud/vision/docs
+                return res.getSafeSearchAnnotation();
+            }
+        }
+        return null;
+    }
+
+    public AnnotateImageResponse getFaceDetection(URL image) throws Exception, IOException {
+        List<AnnotateImageRequest> requests = new ArrayList<>();
+
+        ByteString imgBytes = ByteString.copyFrom(Objects.requireNonNull(downloadFile(image)));
+
+        Image img = Image.newBuilder().setContent(imgBytes).build();
+        Feature feat = Feature.newBuilder().setType(Type.FACE_DETECTION).build();
+        AnnotateImageRequest request =
+                AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
+        requests.add(request);
+
+        try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
+            BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
+            return response.getResponsesList().get(0);
+        }
+    }
+
+    public List<EntityAnnotation> detectLogos(URL image) throws Exception, IOException {
+        List<AnnotateImageRequest> requests = new ArrayList<>();
+
+        ByteString imgBytes = ByteString.copyFrom(Objects.requireNonNull(downloadFile(image)));
+
+        Image img = Image.newBuilder().setContent(imgBytes).build();
+        Feature feat = Feature.newBuilder().setType(Type.LOGO_DETECTION).build();
+        AnnotateImageRequest request =
+                AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
+        requests.add(request);
+
+        try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
+            BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
+            List<AnnotateImageResponse> responses = response.getResponsesList();
+
+            for (AnnotateImageResponse res : responses) {
+                if (res.hasError()) {
+                    return null;
+                }
+
+                return res.getLabelAnnotationsList();
+            }
+        }
+        return null;
+    }
+
     private static byte[] downloadFile(URL url) {
         try {
             URLConnection conn = url.openConnection();
@@ -65,22 +133,5 @@ public class GoogleCloudVision {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public List<AnnotateImageResponse> getFaceDetection(URL image) throws Exception, IOException {
-        List<AnnotateImageRequest> requests = new ArrayList<>();
-
-        ByteString imgBytes = ByteString.copyFrom(Objects.requireNonNull(downloadFile(image)));
-
-        Image img = Image.newBuilder().setContent(imgBytes).build();
-        Feature feat = Feature.newBuilder().setType(Type.FACE_DETECTION).build();
-        AnnotateImageRequest request =
-                AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
-        requests.add(request);
-
-        try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
-            BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
-            return response.getResponsesList();
-        }
     }
 }
