@@ -92,6 +92,26 @@ public class GoogleCloudVision {
         }
     }
 
+    public WebDetection getWebDetection(URL image) throws Exception,
+            IOException {
+        List<AnnotateImageRequest> requests = new ArrayList<>();
+
+        ByteString imgBytes = ByteString.copyFrom(Objects.requireNonNull(downloadFile(image)));
+
+        Image img = Image.newBuilder().setContent(imgBytes).build();
+        Feature feat = Feature.newBuilder().setType(Type.WEB_DETECTION).build();
+        AnnotateImageRequest request =
+                AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
+        requests.add(request);
+
+        try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
+            BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
+
+            return response.getResponsesList().get(0).getWebDetection();
+        }
+    }
+
+
     private static byte[] downloadFile(URL url) {
         try {
             URLConnection conn = url.openConnection();
