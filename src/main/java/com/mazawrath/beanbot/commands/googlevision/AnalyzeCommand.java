@@ -14,7 +14,6 @@ import org.javacord.api.entity.user.User;
 
 import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -48,7 +47,7 @@ public class AnalyzeCommand implements CommandExecutor {
                 return;
             }
         }
-        if (checkImage(url)) {
+        if (urlContainsImage(url)) {
             try {
                 labelAnnotation = cloudVision.getLabelDetection(url);
                 faceDetection = cloudVision.getFaceDetection(url);
@@ -66,7 +65,7 @@ public class AnalyzeCommand implements CommandExecutor {
         messageBuilder.send(serverTextChannel);
     }
 
-    private boolean checkImage(URL url) {
+    private boolean urlContainsImage(URL url) {
         File f = new File(url.toString());
         String mimetype= new MimetypesFileTypeMap().getContentType(f);
         String type = mimetype.split("/")[0];

@@ -80,8 +80,7 @@ public class GoogleCloudVision {
 
         try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
-            List<AnnotateImageResponse> responses = response.getResponsesList();
-                return responses;
+            return response.getResponsesList();
         }
     }
 }
