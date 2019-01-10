@@ -5,6 +5,7 @@ import com.google.cloud.vision.v1.EntityAnnotation;
 import com.google.cloud.vision.v1.SafeSearchAnnotation;
 import com.google.cloud.vision.v1.WebDetection;
 import com.mazawrath.beanbot.utilities.GoogleCloudVision;
+import com.mazawrath.beanbot.utilities.Points;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import org.apache.commons.lang3.text.WordUtils;
@@ -23,9 +24,11 @@ import java.net.URL;
 import java.util.List;
 
 public class AnalyzeCommand implements CommandExecutor {
+    private Points points;
     private GoogleCloudVision cloudVision;
 
-    public AnalyzeCommand(GoogleCloudVision cloudVision) {
+    public AnalyzeCommand(Points points, GoogleCloudVision cloudVision) {
+        this.points = points;
         this.cloudVision = cloudVision;
     }
 
@@ -37,6 +40,12 @@ public class AnalyzeCommand implements CommandExecutor {
     )
 
     public void onCommand(String[] args, Message message, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
+        if (!points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.GOOGLE_VISION_COST)) {
+            serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
+            return;
+        }
+        serverTextChannel.sendMessage("Analyzing image...");
+
         List<EntityAnnotation> labelAnnotation;
         AnnotateImageResponse faceDetection;
         SafeSearchAnnotation safeSearchAnnotation;

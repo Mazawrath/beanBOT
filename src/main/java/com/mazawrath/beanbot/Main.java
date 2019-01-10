@@ -72,7 +72,7 @@ public class Main {
             // Bean Lottery Commands
             cmdHandler.registerCommand(new BeanLotteryCommand(points, lottery));
             // Google Vision Commands
-            cmdHandler.registerCommand(new AnalyzeCommand(cloudVision));
+            cmdHandler.registerCommand(new AnalyzeCommand(points, cloudVision));
             // Admin commands
             cmdHandler.registerCommand(new AdminPostChangeLogCommand());
             cmdHandler.registerCommand(new AdminDeleteMessageCommand());
