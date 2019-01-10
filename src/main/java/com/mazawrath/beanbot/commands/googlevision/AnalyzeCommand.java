@@ -3,6 +3,7 @@ package com.mazawrath.beanbot.commands.googlevision;
 import com.google.cloud.vision.v1.AnnotateImageResponse;
 import com.google.cloud.vision.v1.EntityAnnotation;
 import com.google.cloud.vision.v1.SafeSearchAnnotation;
+import com.google.cloud.vision.v1.WebDetection;
 import com.mazawrath.beanbot.utilities.GoogleCloudVision;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
@@ -10,8 +11,6 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.MessageBuilder;
-import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -41,6 +40,7 @@ public class AnalyzeCommand implements CommandExecutor {
         List<EntityAnnotation> labelAnnotation;
         AnnotateImageResponse faceDetection;
         SafeSearchAnnotation safeSearchAnnotation;
+        WebDetection webDetection;
 
         URL url;
         if (message.getAttachments().size() != 0)
@@ -59,6 +59,7 @@ public class AnalyzeCommand implements CommandExecutor {
                 labelAnnotation = cloudVision.getLabelDetection(url);
                 faceDetection = cloudVision.getFaceDetection(url);
                 safeSearchAnnotation = cloudVision.detectSafeSearch(url);
+                webDetection = cloudVision.getWebDetection(url);
             } catch (Exception e) {
                 e.printStackTrace();
                 serverTextChannel.sendMessage("Something went wrong.");
@@ -83,7 +84,7 @@ public class AnalyzeCommand implements CommandExecutor {
 
         embed.addField("Things I see", labels.toString());
 
-        embed.addField("Faces I See", String.valueOf(faceDetection.getFaceAnnotationsCount()));
+        embed.addInlineField("Faces I See", String.valueOf(faceDetection.getFaceAnnotationsCount()));
 
         for (int i = 0; i < faceDetection.getFaceAnnotationsCount(); i++) {
             StringBuilder emotionsSeen = new StringBuilder();
@@ -97,21 +98,31 @@ public class AnalyzeCommand implements CommandExecutor {
                 emotionsSeen.append("surprise, ");
 
             if (emotionsSeen.length() != 0)
-                embed.addField("Face " + (i + 1) + "'s Possible Emotions", emotionsSeen.substring(0, emotionsSeen.length() - 2));
+                embed.addInlineField("Face " + (i + 1) + "'s Possible Emotions", emotionsSeen.substring(0, emotionsSeen.length() - 2));
             else
-                embed.addField("Face " + (i + 1) + "'s Possible Emotions", "none");
+                embed.addInlineField("Face " + (i + 1) + "'s Possible Emotions", "none");
         }
+        embed.addInlineField("Best Guess", webDetection.getBestGuessLabels(0).getLabel());
+
+        StringBuilder webLabels = new StringBuilder();
+        for (int i = 0; i < webDetection.getWebEntitiesCount(); i++) {
+            if (i != webDetection.getWebEntitiesCount() - 1)
+                webLabels.append(webDetection.getWebEntities(i).getDescription()).append(" (").append(Math.round(webDetection.getWebEntities(i).getScore() * 100)).append("%), ");
+            else
+                webLabels.append(webDetection.getWebEntities(i).getDescription()).append(" (").append(Math.round(webDetection.getWebEntities(i).getScore() * 100)).append("%)");
+        }
+        embed.addField("Things I Think This Is", webLabels.toString());
 
         if (safeSearchAnnotation.getAdultValue() > 2)
-            embed.addField("Adult Content", WordUtils.capitalizeFully(safeSearchAnnotation.getAdult().name().replaceAll("_", " ")));
+            embed.addInlineField("Adult Content", WordUtils.capitalizeFully(safeSearchAnnotation.getAdult().name().replaceAll("_", " ")));
         if (safeSearchAnnotation.getSpoofValue() > 2)
-            embed.addField("Spoof / Edited Phto", WordUtils.capitalizeFully(safeSearchAnnotation.getSpoof().name().replaceAll("_", " ")));
+            embed.addInlineField("Spoof / Edited Photo", WordUtils.capitalizeFully(safeSearchAnnotation.getSpoof().name().replaceAll("_", " ")));
         if (safeSearchAnnotation.getMedicalValue() > 2)
-            embed.addField("Blood / Gore", WordUtils.capitalizeFully(safeSearchAnnotation.getMedical().name().replaceAll("_", " ")));
+            embed.addInlineField("Medical / Surgery", WordUtils.capitalizeFully(safeSearchAnnotation.getMedical().name().replaceAll("_", " ")));
         if (safeSearchAnnotation.getViolenceValue() > 2)
-            embed.addField("Violence", WordUtils.capitalizeFully(safeSearchAnnotation.getViolence().name().replaceAll("_", " ")));
+            embed.addInlineField("Violence / Blood / Gore", WordUtils.capitalizeFully(safeSearchAnnotation.getViolence().name().replaceAll("_", " ")));
         if (safeSearchAnnotation.getRacyValue() > 2)
-            embed.addField("Skimpy / Nudity", WordUtils.capitalizeFully(safeSearchAnnotation.getRacy().name().replaceAll("_", " ")));
+            embed.addInlineField("Skimpy / Nudity", WordUtils.capitalizeFully(safeSearchAnnotation.getRacy().name().replaceAll("_", " ")));
 
         serverTextChannel.sendMessage(embed);
     }
