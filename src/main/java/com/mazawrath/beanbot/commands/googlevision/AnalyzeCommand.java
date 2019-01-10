@@ -40,7 +40,6 @@ public class AnalyzeCommand implements CommandExecutor {
         List<EntityAnnotation> labelAnnotation;
         AnnotateImageResponse faceDetection;
         SafeSearchAnnotation safeSearchAnnotation;
-        List<EntityAnnotation> logoDetection;
 
         URL url;
         if (message.getAttachments().size() != 0)
@@ -59,7 +58,6 @@ public class AnalyzeCommand implements CommandExecutor {
                 labelAnnotation = cloudVision.getLabelDetection(url);
                 faceDetection = cloudVision.getFaceDetection(url);
                 safeSearchAnnotation = cloudVision.detectSafeSearch(url);
-                logoDetection = cloudVision.detectLogos(url);
             } catch (Exception e) {
                 e.printStackTrace();
                 serverTextChannel.sendMessage("Something went wrong.");
@@ -102,15 +100,6 @@ public class AnalyzeCommand implements CommandExecutor {
             else
                 embed.addField("Face " + (i + 1) + "'s Possible Emotions", "none");
         }
-        StringBuilder logos = new StringBuilder();
-        for (int i = 0; i < logoDetection.size(); i++) {
-            if (i != logoDetection.size() -1 ){
-                logos.append(logoDetection.get(i)).append(", ");
-            } else
-                logos.append(logoDetection.get(i));
-        }
-        if (logos.length() != 0)
-            embed.addField("Logos I See", logos.toString());
 
         if (safeSearchAnnotation.getAdultValue() > 2)
             embed.addField("Adult Content", WordUtils.capitalizeFully(safeSearchAnnotation.getAdult().name().replaceAll("_", " ")));

@@ -92,32 +92,6 @@ public class GoogleCloudVision {
         }
     }
 
-    public List<EntityAnnotation> detectLogos(URL image) throws Exception, IOException {
-        List<AnnotateImageRequest> requests = new ArrayList<>();
-
-        ByteString imgBytes = ByteString.copyFrom(Objects.requireNonNull(downloadFile(image)));
-
-        Image img = Image.newBuilder().setContent(imgBytes).build();
-        Feature feat = Feature.newBuilder().setType(Type.LOGO_DETECTION).build();
-        AnnotateImageRequest request =
-                AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
-        requests.add(request);
-
-        try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
-            BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
-            List<AnnotateImageResponse> responses = response.getResponsesList();
-
-            for (AnnotateImageResponse res : responses) {
-                if (res.hasError()) {
-                    return null;
-                }
-
-                return res.getLabelAnnotationsList();
-            }
-        }
-        return null;
-    }
-
     private static byte[] downloadFile(URL url) {
         try {
             URLConnection conn = url.openConnection();
