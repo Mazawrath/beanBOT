@@ -33,7 +33,8 @@ public class AnalyzeCommand implements CommandExecutor {
     @Command(
             aliases = {"analyze"},
             usage = "cloudVision",
-            privateMessages = false
+            privateMessages = false,
+            async = true
     )
 
     public void onCommand(String[] args, Message message, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
