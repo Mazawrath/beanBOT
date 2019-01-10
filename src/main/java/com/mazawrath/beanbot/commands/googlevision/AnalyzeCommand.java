@@ -40,21 +40,10 @@ public class AnalyzeCommand implements CommandExecutor {
     )
 
     public void onCommand(String[] args, Message message, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
-        if (!points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.GOOGLE_VISION_COST)) {
-            serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
-            return;
-        }
-        serverTextChannel.sendMessage("Analyzing image...");
-
-        List<EntityAnnotation> labelAnnotation;
-        AnnotateImageResponse faceDetection;
-        SafeSearchAnnotation safeSearchAnnotation;
-        WebDetection webDetection;
-
         URL url;
         if (message.getAttachments().size() != 0)
             url = message.getAttachments().get(0).getUrl();
-        else {
+        else if (args.length > 0) {
             try {
                 url = new URL(args[0]);
             } catch (MalformedURLException e) {
@@ -62,7 +51,23 @@ public class AnalyzeCommand implements CommandExecutor {
                 serverTextChannel.sendMessage("URL is not valid.");
                 return;
             }
+        } else {
+            serverTextChannel.sendMessage("You must either have a URL in your message or an attachment.");
+            return;
         }
+
+        if (!points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.GOOGLE_VISION_COST)) {
+            serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
+            return;
+        }
+
+        serverTextChannel.sendMessage("Analyzing image...");
+
+        List<EntityAnnotation> labelAnnotation;
+        AnnotateImageResponse faceDetection;
+        SafeSearchAnnotation safeSearchAnnotation;
+        WebDetection webDetection;
+
         if (urlContainsImage(url)) {
             try {
                 labelAnnotation = cloudVision.getLabelDetection(url);
@@ -91,7 +96,7 @@ public class AnalyzeCommand implements CommandExecutor {
                 labels.append(labelAnnotation.get(i).getDescription()).append(" (").append(Math.round(labelAnnotation.get(0).getScore() * 100)).append("%)");
         }
 
-        embed.addField("Things I see", labels.toString());
+        embed.addField("Things I See", labels.toString());
 
         embed.addInlineField("Faces I See", String.valueOf(faceDetection.getFaceAnnotationsCount()));
 
