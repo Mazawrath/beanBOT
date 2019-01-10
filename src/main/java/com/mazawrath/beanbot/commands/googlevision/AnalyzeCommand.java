@@ -108,9 +108,9 @@ public class AnalyzeCommand implements CommandExecutor {
         if (safeSearchAnnotation.getMedicalValue() > 2)
             embed.addField("Blood / Gore", WordUtils.capitalizeFully(safeSearchAnnotation.getMedical().name().replaceAll("_", " ")));
         if (safeSearchAnnotation.getViolenceValue() > 2)
-            embed.addField("Violence", WordUtils.capitalizeFully(safeSearchAnnotation.getMedical().name().replaceAll("_", " ")));
+            embed.addField("Violence", WordUtils.capitalizeFully(safeSearchAnnotation.getViolence().name().replaceAll("_", " ")));
         if (safeSearchAnnotation.getRacyValue() > 2)
-            embed.addField("Skimpy / Nudity", WordUtils.capitalizeFully(safeSearchAnnotation.getMedical().name().replaceAll("_", " ")));
+            embed.addField("Skimpy / Nudity", WordUtils.capitalizeFully(safeSearchAnnotation.getRacy().name().replaceAll("_", " ")));
 
         serverTextChannel.sendMessage(embed);
     }
