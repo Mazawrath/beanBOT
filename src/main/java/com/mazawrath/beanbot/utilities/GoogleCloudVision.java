@@ -19,7 +19,7 @@ public class GoogleCloudVision {
         System.setProperty("http.agent", "Chrome");
     }
 
-    public List<EntityAnnotation> getLabelDetection(URL image) {
+    List<EntityAnnotation> getLabelDetection(URL image) {
         try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
 
             ByteString imgBytes = ByteString.copyFrom(Objects.requireNonNull(downloadFile(image)));
@@ -38,21 +38,14 @@ public class GoogleCloudVision {
             BatchAnnotateImagesResponse response = vision.batchAnnotateImages(requests);
             List<AnnotateImageResponse> responses = response.getResponsesList();
 
-            for (AnnotateImageResponse res : responses) {
-                if (res.hasError()) {
-                    System.out.printf("Error: %s\n", res.getError().getMessage());
-                    return null;
-                }
-
-                return res.getLabelAnnotationsList();
-            }
+            return responses.get(0).getLabelAnnotationsList();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public SafeSearchAnnotation detectSafeSearch(URL image) throws IOException {
+    SafeSearchAnnotation detectSafeSearch(URL image) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
         ByteString imgBytes = ByteString.copyFrom(Objects.requireNonNull(downloadFile(image)));
@@ -67,19 +60,11 @@ public class GoogleCloudVision {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
             List<AnnotateImageResponse> responses = response.getResponsesList();
 
-            for (AnnotateImageResponse res : responses) {
-                if (res.hasError()) {
-                    return null;
-                }
-
-                // For full list of available annotations, see http://g.co/cloud/vision/docs
-                return res.getSafeSearchAnnotation();
-            }
+            return responses.get(0).getSafeSearchAnnotation();
         }
-        return null;
     }
 
-    public AnnotateImageResponse getFaceDetection(URL image) throws Exception, IOException {
+    AnnotateImageResponse getFaceDetection(URL image) throws Exception {
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
         ByteString imgBytes = ByteString.copyFrom(Objects.requireNonNull(downloadFile(image)));
@@ -92,12 +77,12 @@ public class GoogleCloudVision {
 
         try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
+            
             return response.getResponsesList().get(0);
         }
     }
 
-    public WebDetection getWebDetection(URL image) throws Exception,
-            IOException {
+    WebDetection getWebDetection(URL image) throws Exception {
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
         ByteString imgBytes = ByteString.copyFrom(Objects.requireNonNull(downloadFile(image)));
