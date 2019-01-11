@@ -15,6 +15,10 @@ import java.util.Objects;
 
 public class GoogleCloudVision {
 
+    public GoogleCloudVision() {
+        System.setProperty("http.agent", "Chrome");
+    }
+
     public List<EntityAnnotation> getLabelDetection(URL image) {
         try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
 
