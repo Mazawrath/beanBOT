@@ -112,7 +112,7 @@ public class AnalyzeCommand implements CommandExecutor {
                 emotionsSeen.append("surprise, ");
 
             if (emotionsSeen.length() != 0)
-                embed.addInlineField("Face " + (i + 1) + "'s Possible Emotions", emotionsSeen.substring(0, emotionsSeen.length() - 2));
+                embed.addInlineField("Face " + (i + 1) + "'s Possible Emotions", WordUtils.capitalizeFully(emotionsSeen.substring(0, emotionsSeen.length() - 2)));
             else
                 embed.addInlineField("Face " + (i + 1) + "'s Possible Emotions", "none");
         }
