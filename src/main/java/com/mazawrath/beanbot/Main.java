@@ -7,6 +7,7 @@ import com.mazawrath.beanbot.commands.beanmarket.BeanMarketCommand;
 import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
+import com.mazawrath.beanbot.commands.googlevision.AnalyzeCommand;
 import com.mazawrath.beanbot.utilities.*;
 import com.mazawrath.beanbot.commands.admin.*;
 import com.mazawrath.beanbot.utilities.jersey.RestServer;
@@ -26,6 +27,8 @@ public class Main {
         //BasicConfigurator.configure();
         // Enable debugging, if no slf4j logger was found
         //FallbackLoggerConfiguration.setDebug(false);
+
+        GoogleCloudVision cloudVision = new GoogleCloudVision();
 
         Connection conn = r.connection().hostname("localhost").port(28015).connect();
 
@@ -68,6 +71,8 @@ public class Main {
             cmdHandler.registerCommand(new BeanInvestCommand(points, stockMarket));
             // Bean Lottery Commands
             cmdHandler.registerCommand(new BeanLotteryCommand(points, lottery));
+            // Google Vision Commands
+            cmdHandler.registerCommand(new AnalyzeCommand(points, cloudVision));
             // Admin commands
             cmdHandler.registerCommand(new AdminPostChangeLogCommand());
             cmdHandler.registerCommand(new AdminDeleteMessageCommand());

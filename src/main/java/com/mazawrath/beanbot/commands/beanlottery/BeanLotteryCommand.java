@@ -42,13 +42,13 @@ public class BeanLotteryCommand implements CommandExecutor {
                         lottery.scheduleWeeklyDrawing(points, server, api, serverTextChannel);
                         return;
                     }
-                } else if (args[0].equalsIgnoreCase("draw")) {
-                    if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_DRAWING_COST)) {
-                        lottery.drawNumbers(points, server, api, serverTextChannel);
-                    } else
-                        serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
-                    return;
-                }
+                } //else if (args[0].equalsIgnoreCase("draw")) {
+//                    if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_DRAWING_COST)) {
+//                        lottery.drawNumbers(points, server, api, serverTextChannel);
+//                    } else
+//                        serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
+//                    return;
+//                }
                 if (Integer.parseInt(args[0]) > 200) {
                     serverTextChannel.sendMessage("You can only buy 200 tickets at a time.");
                     return;
