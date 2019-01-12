@@ -34,17 +34,19 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.2.0\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.1.1...v3.2.0\n" +
+                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.2.1\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.2.0...v3.2.1\n" +
                 "\n" +
-                "**v3.2.0**\n" +
-                "**New**\n" +
-                "\t- Added `.analyze`.\n" +
-                "\t\t- Using Google Cloud Vision, beanBOT can now examine a photo for objects, faces, emotions, and more.\n" +
+                "**v3.2.1**\n" +
+//                "**New**\n" +
+//                "\t- Added `.analyze`.\n" +
+//                "\t\t- Using Google Cloud Vision, beanBOT can now examine a photo for objects, faces, emotions, and more.\n" +
 //                "\t\t- Server owners can now type `.admintwitch add [twitch channel name]` to subscribe to live notifications for a twitch channel.\n" +
                 "**Changes**\n" +
-                "\t- Disabled `.beanlottery draw`.";
-//                "**Bug Fixes**\n" +
-//                "\t- Fixed an issue with `.beanlottery` not giving help information.\n";
+                "\t- Cleaned up analyze command.\n" +
+                "\t- Expanded lottery numbers that could be drawn from 20 to 40.\n" +
+                "\t- Raised price of beanLottery tickets from 20 beanCoin to 40 beanCoin.\n" +
+                "**Bug Fixes**\n" +
+                "\t- Fixed an issue with Discord not creating new thumbnail previews.\n";
     }
 }
