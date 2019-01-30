@@ -15,20 +15,33 @@ import com.rethinkdb.net.Connection;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 //import org.apache.log4j.BasicConfigurator;
+import io.sentry.Sentry;
+import io.sentry.SentryClient;
+import io.sentry.SentryClientFactory;
+import io.sentry.context.Context;
+import io.sentry.event.BreadcrumbBuilder;
+import io.sentry.event.UserBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.user.User;
+import org.javacord.api.util.logging.ExceptionLogger;
+import org.javacord.api.util.logging.FallbackLoggerConfiguration;
 
 import static com.rethinkdb.RethinkDB.r;
 
 public class Main {
     private static DiscordApi api;
+    private static SentryClient sentry;
 
     public static void main(String[] args) {
-        //BasicConfigurator.configure();
-        // Enable debugging, if no slf4j logger was found
-        //FallbackLoggerConfiguration.setDebug(false);
+        Sentry.init();
+        sentry = SentryClientFactory.sentryClient();
 
-        GoogleCloudVision cloudVision = new GoogleCloudVision();
+        FallbackLoggerConfiguration.setDebug(false);
 
         Connection conn = r.connection().hostname("localhost").port(28015).connect();
 
@@ -97,5 +110,4 @@ public class Main {
             cmdHandler.registerCommand(new EightBallCommand(points));
         });
     }
-
 }
