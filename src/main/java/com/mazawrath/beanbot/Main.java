@@ -10,36 +10,22 @@ import com.mazawrath.beanbot.commands.copypasta.*;
 import com.mazawrath.beanbot.commands.googlevision.AnalyzeCommand;
 import com.mazawrath.beanbot.utilities.*;
 import com.mazawrath.beanbot.commands.admin.*;
-import com.mazawrath.beanbot.utilities.jersey.RestServer;
 import com.rethinkdb.net.Connection;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 //import org.apache.log4j.BasicConfigurator;
-import io.sentry.Sentry;
-import io.sentry.SentryClient;
-import io.sentry.SentryClientFactory;
-import io.sentry.context.Context;
-import io.sentry.event.BreadcrumbBuilder;
-import io.sentry.event.UserBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.entity.user.User;
-import org.javacord.api.util.logging.ExceptionLogger;
 import org.javacord.api.util.logging.FallbackLoggerConfiguration;
 
 import static com.rethinkdb.RethinkDB.r;
 
 public class Main {
     private static DiscordApi api;
-    private static SentryClient sentry;
 
     public static void main(String[] args) {
-        Sentry.init();
-        sentry = SentryClientFactory.sentryClient();
+        System.setProperty("log4j2.loggerContextFactory", "org.apache.logging.log4j.core.impl.Log4jContextFactory");
+
 
         FallbackLoggerConfiguration.setDebug(false);
 
@@ -48,10 +34,9 @@ public class Main {
         Points points = new Points(conn);
         StockMarket stockMarket = new StockMarket(conn);
         Lottery lottery = new Lottery(conn);
-        Thread restServer = new Thread(new RestServer());
-        restServer.start();
-        Twitch twitch = new Twitch(args[1], args[2], conn);
-
+        //Thread restServer = new Thread(new RestServer());
+        //restServer.start();
+        //Twitch twitch = new Twitch(args[1], args[2], conn);
 
         new DiscordApiBuilder().setToken(args[0]).login().thenAccept(api -> {
             System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
@@ -64,6 +49,8 @@ public class Main {
 
             // Set the default prefix
             cmdHandler.setDefaultPrefix(".");
+
+            cmdHandler.getCommands();
 
             // Register commands
 
@@ -94,7 +81,7 @@ public class Main {
             cmdHandler.registerCommand(new AdminRemoveBeanCoinCommand(points));
             cmdHandler.registerCommand(new AdminPostMessageCommand());
             cmdHandler.registerCommand(new AdminPostHelpCommand(cmdHandler));
-            cmdHandler.registerCommand(new AdminTwitch(twitch));
+            //cmdHandler.registerCommand(new AdminTwitch(twitch));
             // Copypasta
             cmdHandler.registerCommand(new Top500Command(points));
             cmdHandler.registerCommand(new GiveModCommand(points));
