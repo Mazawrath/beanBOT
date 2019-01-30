@@ -53,6 +53,11 @@ public class BeanLotteryCommand implements CommandExecutor {
                     serverTextChannel.sendMessage("You can only buy 200 tickets at a time.");
                     return;
                 }
+
+                if (Integer.parseInt(args[0]) < 1) {
+                    serverTextChannel.sendMessage("You cannot buy less than 1 ticket.");
+                }
+
                 if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_TICKET_COST.multiply(new BigDecimal(Integer.parseInt(args[0]))))) {
                     ArrayList<ArrayList<Integer>> numbers = lottery.addEntry(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]));
 
