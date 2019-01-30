@@ -24,6 +24,8 @@ dependencies {
             'com.github.Mazawrath.sdcf4j:sdcf4j-core:v1.1.0',
             'com.github.Mazawrath.sdcf4j:sdcf4j-javacord:v1.1.0',
 
+            'commons-io:commons-io:2.6',
+
             'com.rethinkdb:rethinkdb-driver:2.3.3',
 
             'com.yahoofinance-api:YahooFinanceAPI:3.14.0',
@@ -31,8 +33,6 @@ dependencies {
             'com.vdurmont:emoji-java:4.0.0',
 
             'org.apache.commons:commons-lang3:3.8',
-
-            'com.github.twitch4j:twitch4j:v0.12.0',
 
             'org.slf4j:slf4j-api:1.7.25',
             'org.slf4j:slf4j-simple:1.7.25',

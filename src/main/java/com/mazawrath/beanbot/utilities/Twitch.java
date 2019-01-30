@@ -3,8 +3,6 @@ package com.mazawrath.beanbot.utilities;
 import com.rethinkdb.RethinkDB;
 import com.rethinkdb.net.Connection;
 import com.rethinkdb.net.Cursor;
-import me.philippheuer.twitch4j.TwitchClient;
-import me.philippheuer.twitch4j.TwitchClientBuilder;
 import org.apache.http.HttpResponse;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.MessageBuilder;
@@ -21,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 import static org.toilelibre.libe.curl.Curl.curl;
 
 public class Twitch {
-    private TwitchClient client;
     private static String clientId;
     private String ipAddress;
     private static DiscordApi api;
@@ -165,20 +162,6 @@ public class Twitch {
 
     public long[] getServers(String userId) {
         return r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).filter(r.array(r.hashMap("userId", userId))).getField(r.array("serverId", "channelId")).run(conn);
-    }
-
-    public void connectClient(String id, String secret, String credential) {
-        client = TwitchClientBuilder.init()
-                .withClientId(id)
-                .withClientSecret(secret)
-                .withAutoSaveConfiguration(true)
-                .withConfigurationDirectory(new File("config"))
-                .withCredential(credential) // Get your token at: https://twitchapps.com/tmi/
-                .connect();
-    }
-
-    public boolean checkIfLive(String channel) {
-        return client.getStreamEndpoint().isLive(client.getChannelEndpoint().getChannel(channel));
     }
 
     public static long getUserID(String user) {
