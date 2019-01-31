@@ -30,8 +30,9 @@ config/
 
 launch.sh
 
+libsentry_agent_windows-x86_64.dll
+sentry.properties
+
 # =========================
 # Operating System Files
 # =========================
-libsentry_agent_windows-x86_64.dll
-src/main/resources/
