@@ -23,7 +23,7 @@ public class Points {
     public static final BigDecimal FREE_POINTS = new BigDecimal("25.69").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST = new BigDecimal("2.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST_SPECIAL = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal LOTTERY_TICKET_COST = new BigDecimal("20.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal LOTTERY_TICKET_COST = new BigDecimal("40.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal LOTTERY_DRAWING_COST = new BigDecimal("20000.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal GOOGLE_VISION_COST = new BigDecimal("50.00").setScale(SCALE, ROUNDING_MODE);
     private Connection conn;
