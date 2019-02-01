@@ -40,17 +40,17 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.2.0\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.1.1...v3.2.0\n" +
+                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.3.0\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.2.0...v3.3.0\n" +
                 "\n" +
-                "**v3.2.0**\n" +
+                "**v3.3.0**\n" +
                 "**New**\n" +
-                "\t- Added `.analyze`.\n" +
-                "\t\t- Using Google Cloud Vision, beanBOT can now examine a photo for objects, faces, emotions, and more.\n" +
-//                "\t\t- Server owners can now type `.admintwitch add [twitch channel name]` to subscribe to live notifications for a twitch channel.\n" +
-                "**Changes**\n" +
-                "\t- Disabled `.beanlottery draw`.";
-//                "**Bug Fixes**\n" +
-//                "\t- Fixed an issue with `.beanlottery` not giving help information.\n";
+                "\t- Added `.adminlookupuser`.\n" +
+                "\t- Added Sentry to track and manage run time errors in production.\n" +
+//                "**Changes**\n" +
+//                "\t- Disabled `.beanlottery draw`." +
+                "**Bug Fixes**\n" +
+                "\t- Fixed an issue where users could buy less than one bean lottery ticket.\n" +
+                "\t- Fixed an issue with mentioning users with nicknames.";
     }
 }
