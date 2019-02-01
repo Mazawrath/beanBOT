@@ -29,7 +29,7 @@ public class BeanFreeCommand implements CommandExecutor {
     public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
         SentryLog.addContext(null, author, server);
 
-        long timeLeft = points.giveFreePoints(null, server.getIdAsString());
+        long timeLeft = points.giveFreePoints(author.getIdAsString(), server.getIdAsString());
 
         if (timeLeft == 0) {
             serverTextChannel.sendMessage("You have received " + Points.pointsToString(Points.FREE_POINTS) + ". You now have " + Points.pointsToString(points.getBalance(author.getIdAsString(), server.getIdAsString())) + ".");
