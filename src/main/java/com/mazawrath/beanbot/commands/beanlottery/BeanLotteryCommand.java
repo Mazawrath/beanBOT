@@ -2,8 +2,10 @@ package com.mazawrath.beanbot.commands.beanlottery;
 
 import com.mazawrath.beanbot.utilities.Lottery;
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.MessageBuilder;
@@ -27,15 +29,21 @@ public class BeanLotteryCommand implements CommandExecutor {
             aliases = {"beanlottery"},
             usage = "beanlottery [amount of tickets to buy/ 4 numbers >= 1 and <= 20]",
             description = "Buys a lottery ticket, either input a number saying how many tickets you want or enter a set of 4 numbers to manually create a ticket.",
-            privateMessages = false
+            privateMessages = false,
+            async = true
     )
 
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
-        try {
+        SentryLog.addContext(args, author, server);
+
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("start")) {
                     if (!author.isBotOwner() && !server.isOwner(author)) {
-                        serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
+                        try {
+                            serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
                         return;
                     } else {
                         serverTextChannel.sendMessage("Weekly drawings now active. When the bot has more than " + Points.pointsToString(Lottery.MIN_WEEKLY_VALUE) + " it will do an automatic drawing every 7 days.");
@@ -53,6 +61,12 @@ public class BeanLotteryCommand implements CommandExecutor {
                     serverTextChannel.sendMessage("You can only buy 200 tickets at a time.");
                     return;
                 }
+
+                if (Integer.parseInt(args[0]) < 1) {
+                    serverTextChannel.sendMessage("You cannot buy less than 1 ticket.");
+                    return;
+                }
+
                 if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_TICKET_COST.multiply(new BigDecimal(Integer.parseInt(args[0]))))) {
                     ArrayList<ArrayList<Integer>> numbers = lottery.addEntry(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]));
 
@@ -93,8 +107,7 @@ public class BeanLotteryCommand implements CommandExecutor {
                     serverTextChannel.sendMessage("You do not have enough beanCoin to buy a ticket.");
             } else
                 serverTextChannel.sendMessage("You must have 1 number with how many tickets you want to buy, " + Lottery.AMOUNT_DRAWN + " numbers >= " + Lottery.MIN_NUMBER + " and <= " + Lottery.MAX_NUMBER + ", or the word `draw` to have your own drawing.");
-        } catch (NumberFormatException | NullPointerException | InterruptedException | ExecutionException e) {
-            serverTextChannel.sendMessage("Invalid number(s) / bad things happened.");
-        }
+
+        Sentry.clearContext();
     }
 }

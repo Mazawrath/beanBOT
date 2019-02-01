@@ -15,8 +15,10 @@ import com.rethinkdb.net.Connection;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 //import org.apache.log4j.BasicConfigurator;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.util.logging.FallbackLoggerConfiguration;
 
 import static com.rethinkdb.RethinkDB.r;
 
@@ -24,11 +26,10 @@ public class Main {
     private static DiscordApi api;
 
     public static void main(String[] args) {
-        //BasicConfigurator.configure();
-        // Enable debugging, if no slf4j logger was found
-        //FallbackLoggerConfiguration.setDebug(false);
+        Sentry.init();
+        System.setProperty("log4j2.loggerContextFactory", "org.apache.logging.log4j.core.impl.Log4jContextFactory");
 
-        GoogleCloudVision cloudVision = new GoogleCloudVision();
+        FallbackLoggerConfiguration.setDebug(false);
 
         Connection conn = r.connection().hostname("localhost").port(28015).connect();
 
@@ -38,7 +39,6 @@ public class Main {
         Thread restServer = new Thread(new RestServer());
         restServer.start();
         Twitch twitch = new Twitch(args[1], args[2], conn);
-
 
         new DiscordApiBuilder().setToken(args[0]).login().thenAccept(api -> {
             System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
@@ -51,6 +51,8 @@ public class Main {
 
             // Set the default prefix
             cmdHandler.setDefaultPrefix(".");
+
+            cmdHandler.getCommands();
 
             // Register commands
 
@@ -81,6 +83,7 @@ public class Main {
             cmdHandler.registerCommand(new AdminRemoveBeanCoinCommand(points));
             cmdHandler.registerCommand(new AdminPostMessageCommand());
             cmdHandler.registerCommand(new AdminPostHelpCommand(cmdHandler));
+            cmdHandler.registerCommand(new AdminLookupUser());
             cmdHandler.registerCommand(new AdminTwitch(twitch));
             // Copypasta
             cmdHandler.registerCommand(new Top500Command(points));
@@ -97,5 +100,4 @@ public class Main {
             cmdHandler.registerCommand(new EightBallCommand(points));
         });
     }
-
 }

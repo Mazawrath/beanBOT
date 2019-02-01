@@ -1,11 +1,15 @@
 package com.mazawrath.beanbot.commands.beanmarket;
 
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.SentryLog;
 import com.mazawrath.beanbot.utilities.StockMarket;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -20,7 +24,9 @@ public class BeanMarketCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(String[] args, ServerTextChannel serverTextChannel) {
+    public void onCommand(String[] args, User author, Server server, ServerTextChannel serverTextChannel) {
+        SentryLog.addContext(args, author, server);
+
         if (args.length == 0) {
             final String[] symbol = {""};
             final String[] price = {""};
@@ -62,6 +68,7 @@ public class BeanMarketCommand implements CommandExecutor {
             } else
                 serverTextChannel.sendMessage("Symbol not found.");
         }
-    }
 
+        Sentry.clearContext();
+    }
 }

@@ -1,8 +1,10 @@
 package com.mazawrath.beanbot.commands.beancoin;
 
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.apache.commons.lang3.StringUtils;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
@@ -27,9 +29,14 @@ public class BeanTransferCommand implements CommandExecutor {
     )
 
     public void onCommand(String[] args, ServerTextChannel serverTextChannel, DiscordApi api, User author, Server server) {
+        SentryLog.addContext(args, author, server);
+
         if (args.length >= 2) {
             if (args[0].contains("@")) {
-                args[0] = args[0].substring(2,args[0].length() - 1);
+                if (args[0].contains("!"))
+                    args[0] = args[0].substring(3, args[0].length() - 1);
+                else
+                    args[0] = args[0].substring(2, args[0].length() - 1);
             } else if (args[0].contains("#")) {
                 api.getCachedUserByDiscriminatedNameIgnoreCase(args[0]).ifPresent(user -> args[0] = user.getIdAsString());
             } else {
@@ -53,5 +60,7 @@ public class BeanTransferCommand implements CommandExecutor {
             });
         } else
             serverTextChannel.sendMessage("Not enough arguments.");
+
+        Sentry.clearContext();
     }
 }

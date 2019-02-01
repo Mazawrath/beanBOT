@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer
+
 plugins {
     id 'com.github.johnrengelman.shadow' version '4.0.3'
 }
@@ -21,8 +23,13 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
 
     compile(
-            'com.github.Mazawrath.sdcf4j:sdcf4j-core:v1.1.0',
-            'com.github.Mazawrath.sdcf4j:sdcf4j-javacord:v1.1.0',
+            'com.github.Mazawrath.sdcf4j:sdcf4j-core:v1.2.0',
+            'com.github.Mazawrath.sdcf4j:sdcf4j-javacord:v1.2.0',
+
+            'org.apache.logging.log4j:log4j-api:2.11.1',
+            'org.apache.logging.log4j:log4j-core:2.11.1',
+
+            'commons-io:commons-io:2.6',
 
             'com.rethinkdb:rethinkdb-driver:2.3.3',
 
@@ -31,8 +38,6 @@ dependencies {
             'com.vdurmont:emoji-java:4.0.0',
 
             'org.apache.commons:commons-lang3:3.8',
-
-            'com.github.twitch4j:twitch4j:v0.12.0',
 
             'org.slf4j:slf4j-api:1.7.25',
             'org.slf4j:slf4j-simple:1.7.25',
@@ -54,7 +59,10 @@ dependencies {
             'com.google.api-client:google-api-client:1.24.1',
 
             'com.google.cloud:google-cloud-vision:1.55.0',
-            'com.google.cloud:google-cloud-storage:1.55.0'
+            'com.google.cloud:google-cloud-storage:1.55.0',
+
+            'io.sentry:sentry:1.7.16',
+            'io.sentry:sentry-log4j2:1.7.16'
     )
 
     runtime(
@@ -71,6 +79,7 @@ shadowJar {
     manifest {
         attributes 'Main-Class': 'com.mazawrath.beanbot.Main'
     }
+    transform(Log4j2PluginsCacheFileTransformer)
     archiveName = "${projectName}-${version}.${extension}"
 }
 

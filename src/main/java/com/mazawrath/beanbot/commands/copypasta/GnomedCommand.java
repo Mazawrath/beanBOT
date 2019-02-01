@@ -1,8 +1,10 @@
 package com.mazawrath.beanbot.commands.copypasta;
 
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -24,6 +26,8 @@ public class GnomedCommand implements CommandExecutor {
     )
 
     public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
+        SentryLog.addContext(null, author, server);
+
         if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {
             serverTextChannel.sendMessage("```                __\n" +
                     "             .-'  |\n" +
@@ -39,5 +43,7 @@ public class GnomedCommand implements CommandExecutor {
                     "            |____)_)```");
         } else
             serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
+
+        Sentry.clearContext();
     }
 }

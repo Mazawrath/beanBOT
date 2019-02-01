@@ -1,8 +1,10 @@
 package com.mazawrath.beanbot.commands.copypasta;
 
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
@@ -22,6 +24,8 @@ public class Top500Command implements CommandExecutor {
     )
 
     public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
+        SentryLog.addContext(null, author, server);
+
         if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {
             serverTextChannel.sendMessage("This is your friendly neighborhood Game Master Lograldon. I am sorry to hear that your account is not showing up on the top 500 leaderboards for " +
                     "Overwatch! I know how frustrating it can be when things in-game dont work like you expect >.<\n" +
@@ -30,5 +34,7 @@ public class Top500Command implements CommandExecutor {
                     " That being said, customer support does not have any visibility into the ranking system, so if you believe there is an error you will need to make a report on the Overwatch Bug Report forums.");
         } else
             serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
+
+        Sentry.clearContext();
     }
 }

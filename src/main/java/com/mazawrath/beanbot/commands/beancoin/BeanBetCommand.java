@@ -1,15 +1,19 @@
 package com.mazawrath.beanbot.commands.beancoin;
 
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
+import io.sentry.SentryClient;
+import io.sentry.event.Breadcrumb;
+import io.sentry.event.BreadcrumbBuilder;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.Random;
 
 public class BeanBetCommand implements CommandExecutor {
@@ -27,6 +31,8 @@ public class BeanBetCommand implements CommandExecutor {
     )
 
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
+        SentryLog.addContext(args, author, server);
+
         if (args.length != 0) {
             if (Points.isProperDecimal(args[0])) {
                 BigDecimal winningPoints = new BigDecimal(args[0]).setScale(Points.SCALE, Points.ROUNDING_MODE);
@@ -44,20 +50,41 @@ public class BeanBetCommand implements CommandExecutor {
                                 winningPoints = winningPoints.multiply(new BigDecimal(3).setScale(Points.SCALE, Points.ROUNDING_MODE));
                                 points.addPoints(author.getIdAsString(), server.getIdAsString(), winningPoints);
                                 serverTextChannel.sendMessage("Congrats, you got the x3 multiplier! You won " + Points.pointsToString(winningPoints) + "!");
+                                Sentry.getContext().recordBreadcrumb(
+                                        new BreadcrumbBuilder()
+                                                .setMessage("User won x3")
+                                                .setLevel(Breadcrumb.Level.INFO).build()
+                                );
                             } else {
                                 winningPoints = winningPoints.multiply(new BigDecimal(2).setScale(Points.SCALE, Points.ROUNDING_MODE));
                                 points.addPoints(author.getIdAsString(), server.getIdAsString(), winningPoints);
                                 serverTextChannel.sendMessage("Congrats, you won " + Points.pointsToString(winningPoints) + "!");
+                                Sentry.getContext().recordBreadcrumb(
+                                        new BreadcrumbBuilder()
+                                                .setMessage("User won x2")
+                                                .setLevel(Breadcrumb.Level.INFO).build()
+                                );
                             }
                         } else {
                             serverTextChannel.sendMessage("Sorry, you lost " + Points.pointsToString(winningPoints) + ".");
+                            Sentry.getContext().recordBreadcrumb(
+                                    new BreadcrumbBuilder()
+                                            .setMessage("User lost")
+                                            .setLevel(Breadcrumb.Level.INFO).build()
+                            );
                         }
                     } else
                         serverTextChannel.sendMessage("You don't have enough beanCoin to bet that much.");
+                    Sentry.getContext().recordBreadcrumb(
+                            new BreadcrumbBuilder()
+                                    .setMessage("User doesn't have enough")
+                                    .setLevel(Breadcrumb.Level.INFO).build()
+                    );
                 }
             } else
                 serverTextChannel.sendMessage("Invalid amount of beanCoin.");
-        } else
-            serverTextChannel.sendMessage("Invalid amount of beanCoin.");
+        }
+
+        Sentry.clearContext();
     }
 }

@@ -1,8 +1,10 @@
 package com.mazawrath.beanbot.commands.copypasta;
 
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
@@ -25,6 +27,8 @@ public class EightBallCommand implements CommandExecutor {
     )
 
     public void onCommand(DiscordApi api, String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
+        SentryLog.addContext(args, author, server);
+
         if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {
             if (args.length == 0) {
                 serverTextChannel.sendMessage("You didn't even ask me a question...");
@@ -51,13 +55,6 @@ public class EightBallCommand implements CommandExecutor {
                 response = "beanBOT thinks that is an absolute no";
             else if ( choice == 8 )
                 response = "NO\n" +
-                        "NO\n" +
-                        "NO\n" +
-                        "NO\n" +
-                        "NO\n" +
-                        "NO\n" +
-                        "NO\n" +
-                        "NO\n" +
                         "NO\n" +
                         "NO\n" +
                         "NO\n" +
@@ -100,66 +97,8 @@ public class EightBallCommand implements CommandExecutor {
             else if ( choice == 14 )
                 response = "If I say the answer is \"I don't know\" that doesn't mean you get to try the command again to get a different response.";
             else if ( choice == 15 )
-                response = "Stop being so lazy and just run this code yourself ```java\n" +
-                        "package com.mazawrath.beanbot.commands.copypasta;\n" +
-                        "\n" +
-                        "import com.mazawrath.beanbot.utilities.Points;\n" +
-                        "import de.btobastian.sdcf4j.Command;\n" +
-                        "import de.btobastian.sdcf4j.CommandExecutor;\n" +
-                        "import org.javacord.api.DiscordApi;\n" +
-                        "import java.util.Random;\n" +
-                        "\n" +
-                        "public class EightBallCommand implements CommandExecutor {\n" +
-                        " @Command(\n" +
-                        " aliases={\"beanBall\"},\n" +
-                        " usage=\"beanBall\",\n" +
-                        " )\n" +
-                        "\n" +
-                        " public void onCommand(DiscordApi api, ServerTextChannel serverTextChannel) {\n" +
-                        " if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {\n" +
-                        " Random r=new Random();\n" +
-                        "\n" +
-                        " int choice=1 + r.nextInt(15);\n" +
-                        " String response;\n" +
-                        "\n" +
-                        " if (choice=1)\n" +
-                        " response=\"The Bean Gods command it so.\";\n" +
-                        " else if (choice=2)\n" +
-                        " response=\"It is decidedly yes.\";\n" +
-                        " else if (choice=3)\n" +
-                        " response=\"I'm pretty sure yeah.\";\n" +
-                        " else if (choice=4)\n" +
-                        " response=\"Guaranteed the answer is yes.\";\n" +
-                        " else if (choice=5)\n" +
-                        " response=\"You may rely on it.\";\n" +
-                        " else if (choice=6)\n" +
-                        " response=\"No, why would you ever think that?\";\n" +
-                        " else if (choice=7)\n" +
-                        " response=\"beanBOT thinks that is an absolute no\";\n" +
-                        " else if (choice=8)\n" +
-                        " response=\"NO\\n\" +\n" +
-                        " \"NO\\n\" +\n" +
-                        " \"NO\";\n" +
-                        " else if (choice=9)\n" +
-                        " response=\"I'm thinking of a number between \\\"No\\\" and \\\"Absolutely no\\\"\";\n" +
-                        " else if (choice=10)\n" +
-                        " response=\"Yes\";\n" +
-                        " else if (choice=11)\n" +
-                        " response=\"Sorry, Maza is a terrible programmer and didn't expect this output to ever happen so I dunno the answer out yourself.\";\n" +
-                        " else if ( choice=12 )\n" +
-                        " response=\"there isn’t enough space for this response\";\n" +
-                        " else if ( choice=13 )\n" +
-                        " response=\"Screw that, I'm not even going to answer that.\";\n" +
-                        " else if ( choice=14 )\n" +
-                        " response=\"If I say the answer is \\\"I don't know\\\" that doesn't mean you magically get to try the command again to get a different response.\";\n" +
-                        " else if ( choice=15 )\n" +
-                        " response=\"Stop being so lazy and just run this code yourself\"\n" +
-                        " else\n" +
-                        " response=\"8-BALL ERROR!\";\n" +
-                        "\n" +
-                        " }\n" +
-                        " }\n" +
-                        "}```";
+                response = "*Notices `.beanball` request*\n" +
+                        "OwO whats this?";
             else if ( choice == 16 )
                 response = "```                __\n" +
                         "             .-'  |\n" +
@@ -179,5 +118,7 @@ public class EightBallCommand implements CommandExecutor {
             serverTextChannel.sendMessage( "MAGIC BEAN-BALL SAYS: " + response );
         } else
             serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
+
+        Sentry.clearContext();
     }
 }

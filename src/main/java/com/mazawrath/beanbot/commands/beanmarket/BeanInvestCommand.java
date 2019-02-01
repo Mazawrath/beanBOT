@@ -1,9 +1,11 @@
 package com.mazawrath.beanbot.commands.beanmarket;
 
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.SentryLog;
 import com.mazawrath.beanbot.utilities.StockMarket;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
@@ -29,6 +31,8 @@ public class BeanInvestCommand implements CommandExecutor {
     )
 
     public void onCommand(String[] args, ServerTextChannel serverTextChannel, User author, Server server) {
+        SentryLog.addContext(args, author, server);
+
         if (args.length == 0) {
             serverTextChannel.sendMessage("No arguments for this command are currently not supported. In the future this will be a way to look at your portfolio and all the shares you have invested in.\n" +
                     "Instructions for `.beaninvest`.\n" +
@@ -121,6 +125,8 @@ public class BeanInvestCommand implements CommandExecutor {
                     serverTextChannel.sendMessage("Symbol not found.");
             } else
                 serverTextChannel.sendMessage("You must have a symbol to check.");
+
+            Sentry.clearContext();
         }
     }
 }

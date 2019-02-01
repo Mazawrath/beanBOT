@@ -1,8 +1,10 @@
 package com.mazawrath.beanbot.commands.admin;
 
+import com.mazawrath.beanbot.utilities.SentryLog;
 import com.mazawrath.beanbot.utilities.Twitch;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
@@ -24,6 +26,8 @@ public class AdminTwitch implements CommandExecutor {
     )
 
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) throws ExecutionException, InterruptedException {
+        SentryLog.addContext(args, author, server);
+
         if (!author.isBotOwner() && !server.isOwner(author)) {
             serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
             return;
@@ -55,5 +59,7 @@ public class AdminTwitch implements CommandExecutor {
             } else
                 serverTextChannel.sendMessage("Invalid channel.");
         }
+
+        Sentry.clearContext();
     }
 }
