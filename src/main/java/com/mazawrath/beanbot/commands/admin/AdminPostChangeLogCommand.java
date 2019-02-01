@@ -1,8 +1,10 @@
 package com.mazawrath.beanbot.commands.admin;
 
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
@@ -20,6 +22,8 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
     )
 
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel2, User author, Server server) throws ExecutionException, InterruptedException {
+        SentryLog.addContext(args, author, server);
+
         if (!author.isBotOwner() && !server.isOwner(author)) {
             // There is no better var name than this and if you think otherwise you're wrong.
             serverTextChannel2.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
@@ -30,6 +34,8 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
             serverTextChannel.sendMessage(getRecentChangeLog());
             serverTextChannel2.sendMessage("Changelog sent to " + serverTextChannel.getName() + ".");
         });
+
+        Sentry.clearContext();
     }
 
     private String getRecentChangeLog() {

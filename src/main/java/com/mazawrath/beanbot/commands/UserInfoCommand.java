@@ -1,8 +1,10 @@
 package com.mazawrath.beanbot.commands;
 
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -29,6 +31,8 @@ public class UserInfoCommand implements CommandExecutor {
     )
 
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
+        SentryLog.addContext(args, author, server);
+
         final String[] roleList = {""};
         final String[] playing = {""};
         final String[] userName = new String[1];
@@ -83,8 +87,9 @@ public class UserInfoCommand implements CommandExecutor {
                     .addInlineField("beanCoin Balance", Points.pointsToString(points.getBalance(user.getIdAsString(), server.getIdAsString())))
                     .setFooter("User ID: " + user.getIdAsString());
             serverTextChannel.sendMessage(embed);
-
         });
+
+        Sentry.clearContext();
     }
 
 }

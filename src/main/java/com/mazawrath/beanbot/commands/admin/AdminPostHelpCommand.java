@@ -1,8 +1,10 @@
 package com.mazawrath.beanbot.commands.admin;
 
+import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import de.btobastian.sdcf4j.CommandHandler;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -28,6 +30,8 @@ public class AdminPostHelpCommand implements CommandExecutor {
             showInHelpPage = false
     )
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) throws ExecutionException, InterruptedException {
+        SentryLog.addContext(args, author, server);
+
         if (!author.isBotOwner() && !server.isOwner(author)) {
             serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
             return;
@@ -36,6 +40,8 @@ public class AdminPostHelpCommand implements CommandExecutor {
         String prefix = cmdHandler.getDefaultPrefix();
         buildDefaultHelp(api, server, args[0], prefix);
         serverTextChannel.sendMessage("Help command sent to " + serverTextChannel);
+
+        Sentry.clearContext();
     }
 
     public void buildDefaultHelp(DiscordApi api, Server server, String channel, String prefix) {

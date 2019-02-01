@@ -1,7 +1,9 @@
 package com.mazawrath.beanbot.commands;
 
+import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -21,7 +23,9 @@ public class ServerInfoCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(String command, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
+    public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
+        SentryLog.addContext(null, author, server);
+
         Date date = new Date(server.getCreationTimestamp().getEpochSecond() * 1000L);
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy KK:mm:ss a");
         format.setTimeZone(TimeZone.getTimeZone("EST"));
@@ -37,5 +41,7 @@ public class ServerInfoCommand implements CommandExecutor {
         if (server.getIcon().isPresent())
             embed.setThumbnail(server.getIcon().get());
         serverTextChannel.sendMessage(embed);
+
+        Sentry.clearContext();
     }
 }

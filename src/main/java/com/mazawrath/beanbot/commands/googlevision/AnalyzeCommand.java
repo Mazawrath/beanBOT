@@ -2,8 +2,10 @@ package com.mazawrath.beanbot.commands.googlevision;
 
 import com.mazawrath.beanbot.utilities.ImageRequest;
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
@@ -30,6 +32,8 @@ public class AnalyzeCommand implements CommandExecutor {
     )
 
     public void onCommand(String[] args, Message message, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
+        SentryLog.addContext(args, author, server);
+
         URL url;
         if (message.getAttachments().size() != 0)
             url = message.getAttachments().get(0).getUrl();
@@ -69,6 +73,8 @@ public class AnalyzeCommand implements CommandExecutor {
         }
 
         serverTextChannel.sendMessage(imageRequest.buildEmbed());
+
+        Sentry.clearContext();
     }
 
     private boolean urlContainsImage(URL url) {

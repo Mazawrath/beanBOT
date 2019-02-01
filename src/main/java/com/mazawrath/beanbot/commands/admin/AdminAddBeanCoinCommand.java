@@ -1,8 +1,10 @@
 package com.mazawrath.beanbot.commands.admin;
 
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
@@ -25,6 +27,8 @@ public class AdminAddBeanCoinCommand implements CommandExecutor {
     )
 
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) throws ExecutionException, InterruptedException {
+        SentryLog.addContext(args, author, server);
+
         if (!author.isBotOwner()) {
             serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " can use this command.");
             return;
@@ -36,5 +40,7 @@ public class AdminAddBeanCoinCommand implements CommandExecutor {
             serverTextChannel.sendMessage("Added " + Points.pointsToString(transferPoints) + " to " + args[0] + ".");
         } else
             serverTextChannel.sendMessage("Invalid amount of beanCoin.");
+
+        Sentry.clearContext();
     }
 }

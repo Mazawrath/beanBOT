@@ -1,8 +1,10 @@
 package com.mazawrath.beanbot.commands.beancoin;
 
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -25,7 +27,9 @@ public class BeanFreeCommand implements CommandExecutor {
     )
 
     public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
-        long timeLeft = points.giveFreePoints(author.getIdAsString(), server.getIdAsString());
+        SentryLog.addContext(null, author, server);
+
+        long timeLeft = points.giveFreePoints(null, server.getIdAsString());
 
         if (timeLeft == 0) {
             serverTextChannel.sendMessage("You have received " + Points.pointsToString(Points.FREE_POINTS) + ". You now have " + Points.pointsToString(points.getBalance(author.getIdAsString(), server.getIdAsString())) + ".");
@@ -69,7 +73,8 @@ public class BeanFreeCommand implements CommandExecutor {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
+
+        Sentry.clearContext();
     }
 }
