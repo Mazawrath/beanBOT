@@ -23,8 +23,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
 
     compile(
-            'com.github.Mazawrath.sdcf4j:sdcf4j-core:v1.1.0',
-            'com.github.Mazawrath.sdcf4j:sdcf4j-javacord:v1.1.0',
+            'com.github.Mazawrath.sdcf4j:sdcf4j-core:v1.2.0',
+            'com.github.Mazawrath.sdcf4j:sdcf4j-javacord:v1.2.0',
 
             'org.apache.logging.log4j:log4j-api:2.11.1',
             'org.apache.logging.log4j:log4j-core:2.11.1',
