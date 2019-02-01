@@ -33,7 +33,10 @@ public class BeanTransferCommand implements CommandExecutor {
 
         if (args.length >= 2) {
             if (args[0].contains("@")) {
-                args[0] = args[0].substring(2,args[0].length() - 1);
+                if (args[0].contains("!"))
+                    args[0] = args[0].substring(3, args[0].length() - 1);
+                else
+                    args[0] = args[0].substring(2, args[0].length() - 1);
             } else if (args[0].contains("#")) {
                 api.getCachedUserByDiscriminatedNameIgnoreCase(args[0]).ifPresent(user -> args[0] = user.getIdAsString());
             } else {
