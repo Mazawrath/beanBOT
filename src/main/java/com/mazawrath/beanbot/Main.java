@@ -26,6 +26,7 @@ public class Main {
     private static DiscordApi api;
 
     public static void main(String[] args) {
+
         Sentry.init();
         System.setProperty("log4j2.loggerContextFactory", "org.apache.logging.log4j.core.impl.Log4jContextFactory");
 
