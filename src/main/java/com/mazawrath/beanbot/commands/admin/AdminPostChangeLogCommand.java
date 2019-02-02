@@ -47,7 +47,7 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
 //                "**New**\n" +
 //                "\t- Added `.adminlookupuser`.\n" +
                 "**Changes**\n" +
-                "\t- Set limit to how many lottery tickets can be bought in a single drawing to 200\n" +
+                "\t- Set limit to how many lottery tickets can be bought in a single drawing to 200.\n" +
                 "\t- Set max lottery number to be drawn from 40 to 20.\n" +
                 "\t- Removed minimum amount required for automatic bean lottery drawings.\n" +
                 "\t- Bean coin from `.beanbet` will only go to the bot when the bet loses.\n" +
