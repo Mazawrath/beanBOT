@@ -6,6 +6,7 @@ import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import io.sentry.Sentry;
+import org.apache.commons.lang3.StringUtils;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.MessageBuilder;
@@ -91,6 +92,11 @@ public class BeanLotteryCommand implements CommandExecutor {
             } else
                 serverTextChannel.sendMessage("You don't have enough beanCoin to buy that many tickets.");
         } else if (args.length >= Lottery.AMOUNT_DRAWN) {
+            if (!StringUtils.isNumeric(args[0])) {
+                serverTextChannel.sendMessage("Invalid amount.");
+                return;
+            }
+
             if (!lottery.canBuyTickets(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]))) {
                 serverTextChannel.sendMessage("You can only buy " + Lottery.MAX_TICKETS + " tickets at a time for a bean lottery drawing. You have bought " + lottery.getTicketCount(author.getIdAsString(), server.getIdAsString()) + " tickets.");
                 return;
