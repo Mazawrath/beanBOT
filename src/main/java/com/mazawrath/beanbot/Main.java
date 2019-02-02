@@ -63,6 +63,7 @@ public class Main {
             cmdHandler.registerCommand(new ServerInfoCommand());
             cmdHandler.registerCommand(new ReactCommand(points));
             cmdHandler.registerCommand(new SourceCommand());
+            cmdHandler.registerCommand(new MinesweeperCommand(points));
             // beanCoin
             cmdHandler.registerCommand(new BeanBalanceCommand(points));
             cmdHandler.registerCommand(new BeanFreeCommand(points));
