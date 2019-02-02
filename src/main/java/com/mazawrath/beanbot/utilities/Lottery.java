@@ -19,8 +19,8 @@ import static com.rethinkdb.RethinkDB.r;
 public class Lottery {
     public static final int AMOUNT_DRAWN = 3;
     public static final int MIN_NUMBER = 1;
-    public static final int MAX_NUMBER = 40;
-    public static final BigDecimal MIN_WEEKLY_VALUE = new BigDecimal(50000);
+    public static final int MAX_NUMBER = 20;
+    public static final int MAX_TICKETS = 200;
     private static final String DB_NAME = "beanBotLottery";
 
     private Connection conn;
@@ -50,7 +50,20 @@ public class Lottery {
         if (r.db(DB_NAME).table(serverId).getField("id").contains(userId).run(conn)) {
         } else
             r.db(DB_NAME).table(serverId).insert(r.array(
-                    r.hashMap("id", userId))).run(conn);
+                    r.hashMap("id", userId)
+                            .with("TicketCount", 0))).run(conn);
+    }
+
+    public boolean canBuyTickets(String userId, String serverId, int amount) {
+        checkUser(userId, serverId);
+
+        return getTicketCount(userId, serverId) + amount <= 200;
+    }
+
+    public long getTicketCount(String userId, String serverId) {
+        checkUser(userId, serverId);
+
+        return r.db(DB_NAME).table(serverId).get(userId).getField("TicketCount").run(conn);
     }
 
     public void clearTickets(String serverId) {
@@ -75,6 +88,8 @@ public class Lottery {
             r.db(DB_NAME).table(serverId).filter(r.hashMap("id", userId))
                     .update(row -> r.hashMap("Lottery ticket", row.g("Lottery ticket").default_(r.array()).append(ticketArray.get(finalI)))).run(conn);
         }
+        r.db(DB_NAME).table(serverId).get(userId).update(r.hashMap("TicketCount", getTicketCount(userId, serverId) + amount)).run(conn);
+
         return ticketArray;
     }
 
@@ -82,6 +97,8 @@ public class Lottery {
         checkUser(userId, serverId);
         r.db(DB_NAME).table(serverId).filter(r.hashMap("id", userId))
                 .update(row -> r.hashMap("Lottery ticket", row.g("Lottery ticket").default_(r.array()).append(r.array(numbers[0], numbers[1], numbers[2])))).run(conn);
+
+        r.db(DB_NAME).table(serverId).get(userId).update(r.hashMap("TicketCount", getTicketCount(userId, serverId) + 1)).run(conn);
     }
 
     public ArrayList getWinner(String serverId, int[] winningNumbers) {
@@ -118,19 +135,17 @@ public class Lottery {
         stpe.scheduleAtFixedRate(new LotteryDrawing() {
             @Override
             public void run() {
-                if (points.getBalance(api.getYourself().getIdAsString(), server.getIdAsString()).compareTo(MIN_WEEKLY_VALUE) >= 1) {
-                    try {
-                        serverTextChannel.sendMessage("30 minutes until the weekly bean lottery drawing! Buy tickets using `.beanlottery` while you can!");
-                        Thread.sleep(1200000);
-                        serverTextChannel.sendMessage("Only 10 minutes until the weekly bean lottery drawing! Last chance to buy tickets using `.beanlottery`!");
-                        Thread.sleep(595000);
-                        serverTextChannel.sendMessage("Starting lottery drawing...");
-                        Thread.sleep(5000);
+                try {
+                    serverTextChannel.sendMessage("30 minutes until the weekly bean lottery drawing! Buy tickets using `.beanlottery` while you can!");
+                    Thread.sleep(1200000);
+                    serverTextChannel.sendMessage("Only 10 minutes until the weekly bean lottery drawing! Last chance to buy tickets using `.beanlottery`!");
+                    Thread.sleep(595000);
+                    serverTextChannel.sendMessage("Starting lottery drawing...");
+                    Thread.sleep(5000);
 
-                        drawNumbers(points, server, api, serverTextChannel);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    drawNumbers(points, server, api, serverTextChannel);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }, 0, 4280, TimeUnit.MINUTES);

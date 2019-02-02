@@ -39,7 +39,7 @@ public class BeanBetCommand implements CommandExecutor {
                 if (winningPoints.compareTo(BigDecimal.ZERO) == 0) {
                     serverTextChannel.sendMessage("You can't bet 0 beanCoin!");
                 } else {
-                    if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), winningPoints)) {
+                    if (points.removePoints(author.getIdAsString(), null, server.getIdAsString(), winningPoints)) {
                         Random rand = new Random();
                         int winningChance = rand.nextInt(100) + 1;
 
@@ -67,6 +67,7 @@ public class BeanBetCommand implements CommandExecutor {
                             }
                         } else {
                             serverTextChannel.sendMessage("Sorry, you lost " + Points.pointsToString(winningPoints) + ".");
+                            points.addPoints(api.getYourself().getIdAsString(), server.getIdAsString(), winningPoints);
                             Sentry.getContext().recordBreadcrumb(
                                     new BreadcrumbBuilder()
                                             .setMessage("User lost")

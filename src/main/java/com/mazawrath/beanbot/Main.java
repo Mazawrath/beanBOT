@@ -26,6 +26,7 @@ public class Main {
     private static DiscordApi api;
 
     public static void main(String[] args) {
+
         Sentry.init();
         System.setProperty("log4j2.loggerContextFactory", "org.apache.logging.log4j.core.impl.Log4jContextFactory");
 
@@ -62,6 +63,7 @@ public class Main {
             cmdHandler.registerCommand(new ServerInfoCommand());
             cmdHandler.registerCommand(new ReactCommand(points));
             cmdHandler.registerCommand(new SourceCommand());
+            cmdHandler.registerCommand(new MinesweeperCommand(points));
             // beanCoin
             cmdHandler.registerCommand(new BeanBalanceCommand(points));
             cmdHandler.registerCommand(new BeanFreeCommand(points));
