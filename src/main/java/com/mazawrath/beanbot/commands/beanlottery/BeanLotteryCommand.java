@@ -97,7 +97,7 @@ public class BeanLotteryCommand implements CommandExecutor {
                 return;
             }
 
-            if (!lottery.canBuyTickets(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]))) {
+            if (!lottery.canBuyTickets(author.getIdAsString(), server.getIdAsString(), 1)) {
                 serverTextChannel.sendMessage("You can only buy " + Lottery.MAX_TICKETS + " tickets at a time for a bean lottery drawing. You have bought " + lottery.getTicketCount(author.getIdAsString(), server.getIdAsString()) + " tickets.");
                 return;
             }
