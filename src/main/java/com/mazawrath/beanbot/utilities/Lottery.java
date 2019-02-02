@@ -21,7 +21,6 @@ public class Lottery {
     public static final int MIN_NUMBER = 1;
     public static final int MAX_NUMBER = 20;
     public static final int MAX_TICKETS = 200;
-    public static final BigDecimal MIN_WEEKLY_VALUE = new BigDecimal(50000);
     private static final String DB_NAME = "beanBotLottery";
 
     private Connection conn;
@@ -136,19 +135,17 @@ public class Lottery {
         stpe.scheduleAtFixedRate(new LotteryDrawing() {
             @Override
             public void run() {
-                if (points.getBalance(api.getYourself().getIdAsString(), server.getIdAsString()).compareTo(MIN_WEEKLY_VALUE) >= 1) {
-                    try {
-                        serverTextChannel.sendMessage("30 minutes until the weekly bean lottery drawing! Buy tickets using `.beanlottery` while you can!");
-                        Thread.sleep(1200000);
-                        serverTextChannel.sendMessage("Only 10 minutes until the weekly bean lottery drawing! Last chance to buy tickets using `.beanlottery`!");
-                        Thread.sleep(595000);
-                        serverTextChannel.sendMessage("Starting lottery drawing...");
-                        Thread.sleep(5000);
+                try {
+                    serverTextChannel.sendMessage("30 minutes until the weekly bean lottery drawing! Buy tickets using `.beanlottery` while you can!");
+                    Thread.sleep(1200000);
+                    serverTextChannel.sendMessage("Only 10 minutes until the weekly bean lottery drawing! Last chance to buy tickets using `.beanlottery`!");
+                    Thread.sleep(595000);
+                    serverTextChannel.sendMessage("Starting lottery drawing...");
+                    Thread.sleep(5000);
 
-                        drawNumbers(points, server, api, serverTextChannel);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    drawNumbers(points, server, api, serverTextChannel);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }, 0, 4280, TimeUnit.MINUTES);

@@ -46,7 +46,7 @@ public class BeanLotteryCommand implements CommandExecutor {
                     }
                     return;
                 } else {
-                    serverTextChannel.sendMessage("Automatic drawings now active. When the bot has more than " + Points.pointsToString(Lottery.MIN_WEEKLY_VALUE) + " it will do an automatic drawing every 3 days.");
+                    serverTextChannel.sendMessage("Automatic drawings now active. Drawing will happen at this time every 3 days.");
                     lottery.scheduleWeeklyDrawing(points, server, api, serverTextChannel);
                     return;
                 }
