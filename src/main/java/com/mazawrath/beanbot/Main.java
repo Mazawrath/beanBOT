@@ -8,6 +8,8 @@ import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
 import com.mazawrath.beanbot.commands.googlevision.AnalyzeCommand;
+import com.mazawrath.beanbot.commands.poll.PollCommand;
+import com.mazawrath.beanbot.commands.poll.StrawPollCommand;
 import com.mazawrath.beanbot.utilities.*;
 import com.mazawrath.beanbot.commands.admin.*;
 import com.mazawrath.beanbot.utilities.jersey.RestServer;
@@ -77,6 +79,9 @@ public class Main {
             cmdHandler.registerCommand(new BeanLotteryCommand(points, lottery));
             // Google Vision Commands
             cmdHandler.registerCommand(new AnalyzeCommand(points));
+            // Poll Commands
+            cmdHandler.registerCommand(new PollCommand(points));
+            cmdHandler.registerCommand(new StrawPollCommand(points));
             // Admin commands
             cmdHandler.registerCommand(new AdminPostChangeLogCommand());
             cmdHandler.registerCommand(new AdminDeleteMessageCommand());
