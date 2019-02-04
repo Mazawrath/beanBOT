@@ -85,7 +85,7 @@ public class StrawPollCommand implements CommandExecutor {
         }
 
         if (options.size() < 2) {
-            serverTextChannel.sendMessage("You must have at least two options. Options are seperated by `|`\n" +
+            serverTextChannel.sendMessage("You must have at least two options. Options are separated by `|`\n" +
                     "`.strawpoll Question | Option 1 | Option 2 | Option 3`\n" +
                     "If you would like to be able to select multiple options, put a `m` before your question\n" +
                     "`.strawpoll m Question | Option 1 | Option 2 | Option 3`");
