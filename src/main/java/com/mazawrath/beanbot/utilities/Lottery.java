@@ -20,8 +20,10 @@ public class Lottery {
     public static final int AMOUNT_DRAWN = 3;
     public static final int MIN_NUMBER = 1;
     public static final int MAX_NUMBER = 20;
-    public static final int MAX_TICKETS = 200;
+    public static final int STARTING_TICKET_AMOUNT = 100;
+    public static final int ADD_AFTER_DRAWING = 50;
     private static final String DB_NAME = "beanBotLottery";
+    private static final String MAX_TICKETS_TABLE = "maxTicketTracker";
 
     private Connection conn;
 
@@ -35,13 +37,18 @@ public class Lottery {
         if (r.dbList().contains(DB_NAME).run(conn)) {
         } else {
             r.dbCreate(DB_NAME).run(conn);
+            r.db(DB_NAME).tableCreate(MAX_TICKETS_TABLE).run(conn);
         }
     }
 
     private void checkServer(String serverId) {
         if (r.db(DB_NAME).tableList().contains(serverId).run(conn)) {
-        } else
+        } else {
             r.db(DB_NAME).tableCreate(serverId).run(conn);
+            r.db(DB_NAME).table(MAX_TICKETS_TABLE).insert(r.array(
+                    r.hashMap("id", serverId)
+                            .with("MaxTickets", STARTING_TICKET_AMOUNT))).run(conn);
+        }
     }
 
     private void checkUser(String userId, String serverId) {
@@ -54,10 +61,14 @@ public class Lottery {
                             .with("TicketCount", 0))).run(conn);
     }
 
+    public long getMaxTickets(String serverId) {
+        return r.db(DB_NAME).table(MAX_TICKETS_TABLE).get(serverId).getField("MaxTickets").run(conn);
+    }
+
     public boolean canBuyTickets(String userId, String serverId, int amount) {
         checkUser(userId, serverId);
 
-        return getTicketCount(userId, serverId) + amount <= 200;
+        return getTicketCount(userId, serverId) + amount <= getMaxTickets(serverId);
     }
 
     public long getTicketCount(String userId, String serverId) {
@@ -102,6 +113,8 @@ public class Lottery {
     }
 
     public ArrayList getWinner(String serverId, int[] winningNumbers) {
+        checkServer(serverId);
+
         ArrayList<Integer> ticket = new ArrayList<>();
 
         for (int i = 0; i < winningNumbers.length; i++)
@@ -161,9 +174,10 @@ public class Lottery {
         for (int i = 0; i < winningNumbers.length; i++)
             message.append(winningNumbers[i] + " ");
         message.append("\n");
-        if (winners.size() == 0)
-            message.append("No one has won. All bean lottery tickets have been saved until the next drawing.");
-        else {
+        if (winners.size() == 0) {
+            message.append("No one has won. Everyone can now buy " + ADD_AFTER_DRAWING + " more tickets. All bean lottery tickets have been saved until the next drawing.");
+            r.db(DB_NAME).table(MAX_TICKETS_TABLE).get(server.getIdAsString()).update(r.hashMap("MaxTickets", getMaxTickets(server.getIdAsString() + ADD_AFTER_DRAWING))).run(conn);
+        } else {
             BigDecimal prizePool = points.getBalance(api.getYourself().getIdAsString(), server.getIdAsString());
             BigDecimal amountWon = prizePool.divide(new BigDecimal(winners.size())).setScale(Points.SCALE, Points.ROUNDING_MODE);
             points.removePoints(api.getYourself().getIdAsString(), null, server.getIdAsString(), points.getBalance(api.getYourself().getIdAsString(), server.getIdAsString()));

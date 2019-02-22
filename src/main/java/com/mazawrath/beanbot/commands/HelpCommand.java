@@ -27,6 +27,7 @@ public class HelpCommand implements CommandExecutor {
             async = true,
             showInHelpPage = true
     )
+
     public void onCommand(String[] args, ServerTextChannel channel, User author, Server server) {
         SentryLog.addContext(args, author, server);
 

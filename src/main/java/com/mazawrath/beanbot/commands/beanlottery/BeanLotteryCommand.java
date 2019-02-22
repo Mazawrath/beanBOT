@@ -12,10 +12,12 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
+import org.javacord.api.util.NonThrowingAutoCloseable;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class BeanLotteryCommand implements CommandExecutor {
     private Points points;
@@ -69,16 +71,19 @@ public class BeanLotteryCommand implements CommandExecutor {
             }
 
             if (!lottery.canBuyTickets(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]))) {
-                serverTextChannel.sendMessage("You can only buy " + Lottery.MAX_TICKETS + " tickets at a time for a bean lottery drawing. You have bought " + lottery.getTicketCount(author.getIdAsString(), server.getIdAsString()) + " tickets.");
+                serverTextChannel.sendMessage("You can only buy " + lottery.getMaxTickets(server.getIdAsString()) + " tickets at a time for a bean lottery drawing. You have bought " + lottery.getTicketCount(author.getIdAsString(), server.getIdAsString()) + " tickets.");
                 return;
             }
 
             if (points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.LOTTERY_TICKET_COST.multiply(new BigDecimal(Integer.parseInt(args[0]))))) {
+                ArrayList<ArrayList<Integer>> numbers;
 
-                ArrayList<ArrayList<Integer>> numbers = lottery.addEntry(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]));
+                try (NonThrowingAutoCloseable typingIndicator = serverTextChannel.typeContinuouslyAfter(1, TimeUnit.SECONDS)) {
+                  numbers = lottery.addEntry(author.getIdAsString(), server.getIdAsString(), Integer.parseInt(args[0]));
 
-                serverTextChannel.sendMessage(args[0] + " tickets bought.\n" +
-                        "The numbers generated have been sent to you in a private message.");
+                    serverTextChannel.sendMessage(args[0] + " tickets bought.\n" +
+                            "The numbers generated have been sent to you in a private message.");
+                }
                 author.sendMessage(args[0] + " tickets bought.\n" +
                         "Your numbers are:");
                 MessageBuilder message = new MessageBuilder();
@@ -98,7 +103,7 @@ public class BeanLotteryCommand implements CommandExecutor {
             }
 
             if (!lottery.canBuyTickets(author.getIdAsString(), server.getIdAsString(), 1)) {
-                serverTextChannel.sendMessage("You can only buy " + Lottery.MAX_TICKETS + " tickets at a time for a bean lottery drawing. You have bought " + lottery.getTicketCount(author.getIdAsString(), server.getIdAsString()) + " tickets.");
+                serverTextChannel.sendMessage("You can only buy " + lottery.getMaxTickets(server.getIdAsString()) + " tickets at the moment. After every drawing you will be able to buy " + Lottery.ADD_AFTER_DRAWING  + " more tickets. You have bought " + lottery.getTicketCount(author.getIdAsString(), server.getIdAsString()) + " tickets.");
                 return;
             }
 

@@ -56,6 +56,7 @@ public class AnalyzeCommand implements CommandExecutor {
         }
 
         serverTextChannel.sendMessage("Analyzing image...");
+        serverTextChannel.type();
 
         ImageRequest imageRequest;
 

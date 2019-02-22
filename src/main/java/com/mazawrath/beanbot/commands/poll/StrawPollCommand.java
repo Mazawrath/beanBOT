@@ -73,7 +73,7 @@ public class StrawPollCommand implements CommandExecutor {
                 } else if (args[k].startsWith("|"))
                     option.append(args[k].substring(1)).append(" ");
                 else if (args[k].endsWith("|")) {
-                    option.append(args[k], 1, args[k].length() - 1).append(" ");
+                    option.append(args[k], 0, args[k].length() - 1).append(" ");
                     k++;
                     break;
                 } else
