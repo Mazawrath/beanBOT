@@ -14,12 +14,10 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class MarvinRequest {
-    BufferedImage buffImage;
-    MarvinImage image;
+    private MarvinImage image;
 
     public MarvinRequest(URL url) throws IOException {
-        buffImage = ImageIO.read(new ByteArrayInputStream(downloadFile(url)));
-        image = new MarvinImage(buffImage);
+        image = new MarvinImage(ImageIO.read(new ByteArrayInputStream(downloadFile(url))));
     }
 
     public File getDeepFry() throws IOException {
@@ -29,7 +27,7 @@ public class MarvinRequest {
         MarvinPluginCollection.colorChannel(image, 100, 10, 10);
         image.update();
 
-        File output = new File("Output.png");
+        File output = new File("deepfry.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }
@@ -38,7 +36,7 @@ public class MarvinRequest {
         MarvinPluginCollection.emboss(image, image);
         image.update();
 
-        File output = new File("Output.png");
+        File output = new File("emboss.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }
@@ -47,7 +45,7 @@ public class MarvinRequest {
         MarvinPluginCollection.invertColors(image);
         image.update();
 
-        File output = new File("Output.png");
+        File output = new File("invert.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }
@@ -56,7 +54,7 @@ public class MarvinRequest {
         MarvinPluginCollection.sobel(image,image);
         image.update();
 
-        File output = new File("Output.png");
+        File output = new File("edge.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }
