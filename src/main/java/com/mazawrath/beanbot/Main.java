@@ -8,6 +8,7 @@ import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
 import com.mazawrath.beanbot.commands.googlevision.AnalyzeCommand;
+import com.mazawrath.beanbot.commands.image.DeepFryCommand;
 import com.mazawrath.beanbot.utilities.*;
 import com.mazawrath.beanbot.commands.admin.*;
 import com.mazawrath.beanbot.utilities.jersey.RestServer;
@@ -75,6 +76,8 @@ public class Main {
             cmdHandler.registerCommand(new BeanInvestCommand(points, stockMarket));
             // Bean Lottery Commands
             cmdHandler.registerCommand(new BeanLotteryCommand(points, lottery));
+            // Image Manipulation Commands
+            cmdHandler.registerCommand(new DeepFryCommand(points));
             // Google Vision Commands
             cmdHandler.registerCommand(new AnalyzeCommand(points));
             // Admin commands
