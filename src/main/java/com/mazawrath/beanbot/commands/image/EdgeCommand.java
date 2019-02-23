@@ -17,17 +17,17 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class InvertCommand implements CommandExecutor {
+public class EdgeCommand implements CommandExecutor {
     private Points points;
 
-    public InvertCommand(Points points) {
+    public EdgeCommand(Points points) {
         this.points = points;
     }
 
     @Command(
-            aliases = {"invert"},
-            usage = "invert [url]",
-            description = "Inverts the colors of an image",
+            aliases = {"edge"},
+            usage = "edge [url]",
+            description = "Creates a deep fried image with custom options to decide the brightness and contrast.",
             privateMessages = false
     )
 
@@ -53,7 +53,7 @@ public class InvertCommand implements CommandExecutor {
         if (urlContainsImage(url)) {
             try {
                 MarvinRequest request = new MarvinRequest(url);
-                serverTextChannel.sendMessage(request.getInvert());
+                serverTextChannel.sendMessage(request.getEdges());
             } catch (Exception e) {
                 e.printStackTrace();
                 serverTextChannel.sendMessage("Something went wrong.");

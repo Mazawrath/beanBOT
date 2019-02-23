@@ -5,6 +5,7 @@ import com.mazawrath.beanbot.utilities.SentryLog;
 import com.mazawrath.beanbot.utilities.photo.MarvinRequest;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
@@ -52,13 +53,15 @@ public class EmbossCommand implements CommandExecutor {
         if (urlContainsImage(url)) {
             try {
                 MarvinRequest request = new MarvinRequest(url);
-                serverTextChannel.sendMessage(request.embossImage());
+                serverTextChannel.sendMessage(request.getEmboss());
             } catch (Exception e) {
                 e.printStackTrace();
                 serverTextChannel.sendMessage("Something went wrong.");
                 return;
             }
         }
+
+        Sentry.clearContext();
     }
 
     private boolean urlContainsImage(URL url) {
