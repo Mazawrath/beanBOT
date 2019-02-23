@@ -5,9 +5,11 @@ import com.mazawrath.beanbot.utilities.SentryLog;
 import com.mazawrath.beanbot.utilities.photo.MarvinRequest;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
@@ -33,7 +35,7 @@ public class DeepFryCommand implements CommandExecutor {
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server, Message message) {
         SentryLog.addContext(args, author, server);
 
-        URL url;
+        URL url = null;
         if (message.getAttachments().size() != 0)
             url = message.getAttachments().get(0).getUrl();
         else if (args.length > 0) {
@@ -45,14 +47,29 @@ public class DeepFryCommand implements CommandExecutor {
                 return;
             }
         } else {
-            serverTextChannel.sendMessage("You must either have a URL in your message or an attachment.");
-            return;
+            MessageSet previousMessages = message.getMessagesBefore(20).join();
+
+            for (Message previousMessage: previousMessages.descendingSet()) {
+                URL urlTest;
+                if (previousMessage.getAttachments().size() != 0) {
+                    urlTest = previousMessage.getAttachments().get(0).getUrl();
+                    if (urlContainsImage(urlTest)) {
+                        url = urlTest;
+                        break;
+                    }
+                }
+            }
+
+            if (url == null) {
+                serverTextChannel.sendMessage("You must either have a URL in your message or an attachment.");
+                return;
+            }
         }
 
         if (urlContainsImage(url)) {
             try {
                 MarvinRequest request = new MarvinRequest(url);
-                serverTextChannel.sendMessage(request.deepFryImage());
+                serverTextChannel.sendMessage(request.getDeepFry());
             } catch (Exception e) {
                 e.printStackTrace();
                 serverTextChannel.sendMessage("Something went wrong.");
@@ -60,6 +77,7 @@ public class DeepFryCommand implements CommandExecutor {
             }
         }
 
+        Sentry.clearContext();
     }
 
     private boolean urlContainsImage(URL url) {
