@@ -16,16 +16,16 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class DeepFryCommand implements CommandExecutor {
+public class EmbossCommand implements CommandExecutor {
     private Points points;
 
-    public DeepFryCommand(Points points) {
+    public EmbossCommand(Points points) {
         this.points = points;
     }
 
     @Command(
-            aliases = {"deepfry"},
-            usage = "deepfry [url] [[brightness] [contrast]]",
+            aliases = {"emboss"},
+            usage = "emboss [url]",
             description = "Creates a deep fried image with custom options to decide the brightness and contrast.",
             privateMessages = false
     )
@@ -52,14 +52,13 @@ public class DeepFryCommand implements CommandExecutor {
         if (urlContainsImage(url)) {
             try {
                 MarvinRequest request = new MarvinRequest(url);
-                serverTextChannel.sendMessage(request.deepFryImage());
+                serverTextChannel.sendMessage(request.embossImage());
             } catch (Exception e) {
                 e.printStackTrace();
                 serverTextChannel.sendMessage("Something went wrong.");
                 return;
             }
         }
-
     }
 
     private boolean urlContainsImage(URL url) {
