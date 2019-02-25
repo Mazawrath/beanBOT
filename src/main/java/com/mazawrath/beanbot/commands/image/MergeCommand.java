@@ -13,6 +13,8 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
 import javax.activation.MimetypesFileTypeMap;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -66,9 +68,6 @@ public class MergeCommand implements CommandExecutor {
     }
 
     private boolean urlContainsImage(URL url) {
-        File f = new File(url.toString());
-        String mimetype = new MimetypesFileTypeMap().getContentType(f);
-        String type = mimetype.split("/")[0];
-        return type.equals("image");
+        return new ImageIcon(url).getImage().getWidth(null) != -1;
     }
 }

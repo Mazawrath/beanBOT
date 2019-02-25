@@ -9,11 +9,12 @@ import io.sentry.Sentry;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
-import javax.activation.MimetypesFileTypeMap;
-import java.io.File;
+import javax.swing.*;
+import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -34,18 +35,24 @@ public class InvertCommand implements CommandExecutor {
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server, Message message) {
         SentryLog.addContext(args, author, server);
 
-        URL url;
+        URL url = null;
         if (message.getAttachments().size() != 0)
             url = message.getAttachments().get(0).getUrl();
-        else if (args.length > 0) {
-            try {
-                url = new URL(args[0]);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                serverTextChannel.sendMessage("URL is not valid.");
-                return;
+        else {
+            MessageSet previousMessages = message.getMessagesBefore(20).join();
+
+            for (Message previousMessage: previousMessages.descendingSet()) {
+                URL urlTest;
+                if (previousMessage.getAttachments().size() != 0) {
+                    urlTest = previousMessage.getAttachments().get(0).getUrl();
+                    if (urlContainsImage(urlTest)) {
+                        url = urlTest;
+                        break;
+                    }
+                }
             }
-        } else {
+        }
+        if (url == null) {
             serverTextChannel.sendMessage("You must either have a URL in your message or an attachment.");
             return;
         }
@@ -65,9 +72,6 @@ public class InvertCommand implements CommandExecutor {
     }
 
     private boolean urlContainsImage(URL url) {
-        File f = new File(url.toString());
-        String mimetype = new MimetypesFileTypeMap().getContentType(f);
-        String type = mimetype.split("/")[0];
-        return type.equals("image");
+        return new ImageIcon(url).getImage().getWidth(null) != -1;
     }
 }
