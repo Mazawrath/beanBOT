@@ -65,10 +65,6 @@ public class Lottery {
         return r.db(DB_NAME).table(MAX_TICKETS_TABLE).get(serverId).getField("MaxTickets").run(conn);
     }
 
-    public void resetMaxTickets(String serverId) {
-        r.db(DB_NAME).table(MAX_TICKETS_TABLE).get(serverId).delete().run(conn);
-    }
-
     public boolean canBuyTickets(String userId, String serverId, int amount) {
         checkUser(userId, serverId);
 
@@ -81,8 +77,9 @@ public class Lottery {
         return r.db(DB_NAME).table(serverId).get(userId).getField("TicketCount").run(conn);
     }
 
-    public void clearTickets(String serverId) {
-        r.db(DB_NAME).table(serverId).delete().run(conn);
+    private void clearTickets(String serverId) {
+        r.db(DB_NAME).tableDrop(serverId).delete().run(conn);
+        r.db(DB_NAME).table(MAX_TICKETS_TABLE).get(serverId).delete().run(conn);
     }
 
     public ArrayList<ArrayList<Integer>> addEntry(String userId, String serverId, int amount) {
@@ -169,6 +166,8 @@ public class Lottery {
     }
 
     public void drawNumbers(Points points, Server server, DiscordApi api, ServerTextChannel serverTextChannel) {
+        checkServer(server.getIdAsString());
+
         int[] winningNumbers = generateNumbers();
 
         ArrayList winners = getWinner(server.getIdAsString(), winningNumbers);
@@ -200,7 +199,6 @@ public class Lottery {
                 message.append(" winners, each gets " + Points.pointsToString(amountWon) + "!");
             message.append("\nAll bean lottery tickets have been deleted for the next bean lottery drawing.");
             clearTickets(server.getIdAsString());
-            resetMaxTickets(server.getIdAsString());
         }
         message.send(serverTextChannel);
     }
