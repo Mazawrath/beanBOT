@@ -176,7 +176,7 @@ public class Lottery {
         message.append("\n");
         if (winners.size() == 0) {
             message.append("No one has won. Everyone can now buy " + ADD_AFTER_DRAWING + " more tickets. All bean lottery tickets have been saved until the next drawing.");
-            r.db(DB_NAME).table(MAX_TICKETS_TABLE).get(server.getIdAsString()).update(r.hashMap("MaxTickets", getMaxTickets(server.getIdAsString() + ADD_AFTER_DRAWING))).run(conn);
+            r.db(DB_NAME).table(MAX_TICKETS_TABLE).get(server.getIdAsString()).update(r.hashMap("MaxTickets", getMaxTickets(server.getIdAsString()) + ADD_AFTER_DRAWING)).run(conn);
         } else {
             BigDecimal prizePool = points.getBalance(api.getYourself().getIdAsString(), server.getIdAsString());
             BigDecimal amountWon = prizePool.divide(new BigDecimal(winners.size())).setScale(Points.SCALE, Points.ROUNDING_MODE);
