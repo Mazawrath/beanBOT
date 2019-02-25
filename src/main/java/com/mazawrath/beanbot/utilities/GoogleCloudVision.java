@@ -13,12 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class GoogleCloudVision {
-
-    public GoogleCloudVision() {
-        System.setProperty("http.agent", "Chrome");
-    }
-
+class GoogleCloudVision {
     List<EntityAnnotation> getLabelDetection(URL image) {
         try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
 

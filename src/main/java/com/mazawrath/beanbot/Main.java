@@ -28,11 +28,12 @@ public class Main {
     private static DiscordApi api;
 
     public static void main(String[] args) {
-
         Sentry.init();
         System.setProperty("log4j2.loggerContextFactory", "org.apache.logging.log4j.core.impl.Log4jContextFactory");
 
         FallbackLoggerConfiguration.setDebug(false);
+
+        System.setProperty("http.agent", "Chrome");
 
         Connection conn = r.connection().hostname("localhost").port(28015).connect();
 
