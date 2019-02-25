@@ -23,7 +23,7 @@ public class Lottery {
     public static final int STARTING_TICKET_AMOUNT = 100;
     public static final int ADD_AFTER_DRAWING = 50;
     private static final String DB_NAME = "beanBotLottery";
-    private static final String MAX_TICKETS_TABLE = "maxTicketTracker";
+    private static final String MAX_TICKETS_TABLE = "maxTickets";
 
     private Connection conn;
 
@@ -63,6 +63,10 @@ public class Lottery {
 
     public long getMaxTickets(String serverId) {
         return r.db(DB_NAME).table(MAX_TICKETS_TABLE).get(serverId).getField("MaxTickets").run(conn);
+    }
+
+    public void resetMaxTickets(String serverId) {
+        r.db(DB_NAME).table(MAX_TICKETS_TABLE).get(serverId).delete().run(conn);
     }
 
     public boolean canBuyTickets(String userId, String serverId, int amount) {
@@ -196,6 +200,7 @@ public class Lottery {
                 message.append(" winners, each gets " + Points.pointsToString(amountWon) + "!");
             message.append("\nAll bean lottery tickets have been deleted for the next bean lottery drawing.");
             clearTickets(server.getIdAsString());
+            resetMaxTickets(server.getIdAsString());
         }
         message.send(serverTextChannel);
     }
