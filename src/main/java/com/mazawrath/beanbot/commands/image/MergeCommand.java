@@ -37,6 +37,11 @@ public class MergeCommand implements CommandExecutor {
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server, Message message) {
         SentryLog.addContext(args, author, server);
 
+        if (!points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {
+            serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
+            return;
+        }
+
         URL[] urls = new URL[args.length];
         if (args.length > 1) {
             for (int i = 0; i < args.length; i++) {

@@ -33,6 +33,11 @@ public class DiffuseCommand implements CommandExecutor {
     public void onCommand(String[] args, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server, Message message) {
         SentryLog.addContext(args, author, server);
 
+        if (!points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.COMMAND_COST)) {
+            serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
+            return;
+        }
+
         URL url = null;
         if (message.getAttachments().size() != 0)
             url = message.getAttachments().get(0).getUrl();
