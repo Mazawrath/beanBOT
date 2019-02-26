@@ -86,6 +86,8 @@ public class Main {
             cmdHandler.registerCommand(new MergeCommand(points));
             cmdHandler.registerCommand(new DiffuseCommand(points));
             cmdHandler.registerCommand(new MosaicCommand(points));
+            cmdHandler.registerCommand(new SepiaCommand(points));
+            cmdHandler.registerCommand(new HistogramCommand(points));
             // Google Vision Commands
             cmdHandler.registerCommand(new AnalyzeCommand(points));
             // Admin commands
