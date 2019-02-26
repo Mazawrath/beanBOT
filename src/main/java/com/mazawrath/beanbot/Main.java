@@ -17,6 +17,7 @@ import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 //import org.apache.log4j.BasicConfigurator;
 import io.sentry.Sentry;
+import marvin.MarvinDefinitions;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.util.logging.FallbackLoggerConfiguration;
@@ -49,6 +50,8 @@ public class Main {
 
             Main.api = api;
             Twitch.setApi(api);
+
+            MarvinDefinitions.setImagePluginPath(".\\ext\\marvin\\plugins\\image\\");
 
             // Instantiate command handler
             CommandHandler cmdHandler = new JavacordHandler(api);
