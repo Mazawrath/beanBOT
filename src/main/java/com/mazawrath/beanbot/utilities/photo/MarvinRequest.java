@@ -2,6 +2,7 @@ package com.mazawrath.beanbot.utilities.photo;
 
 import marvin.MarvinPluginCollection;
 import marvin.image.MarvinImage;
+import marvin.image.MarvinImageMask;
 import org.apache.commons.io.IOUtils;
 
 import javax.imageio.ImageIO;
@@ -36,7 +37,7 @@ public class MarvinRequest {
         MarvinPluginCollection.emboss(image, image);
         image.update();
 
-        File output = new File("emboss.png");
+        File output = new File("/ext/out/emboss.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }
@@ -54,7 +55,34 @@ public class MarvinRequest {
         MarvinPluginCollection.sobel(image,image);
         image.update();
 
-        File output = new File("edge.png");
+        File output = new File("/ext/out/edge.png");
+        ImageIO.write(image.getBufferedImage(), "png", output);
+        return output;
+    }
+
+    public File getErrorDiffusion() throws IOException {
+        MarvinPluginCollection.halftoneErrorDiffusion(image,image);
+        image.update();
+
+        File output = new File("errorTone.png");
+        ImageIO.write(image.getBufferedImage(), "png", output);
+        return output;
+    }
+
+    public File getMosaic() throws IOException {
+        MarvinPluginCollection.mosaic(image,image, "triangles", 10, true);
+        image.update();
+
+        File output = new File("mosaic.png");
+        ImageIO.write(image.getBufferedImage(), "png", output);
+        return output;
+    }
+
+    public File getSepia() throws IOException {
+        MarvinPluginCollection.sepia(image, 100);
+        image.update();
+
+        File output = new File("mosaic.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }

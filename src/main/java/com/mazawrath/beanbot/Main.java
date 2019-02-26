@@ -8,10 +8,7 @@ import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
 import com.mazawrath.beanbot.commands.googlevision.AnalyzeCommand;
-import com.mazawrath.beanbot.commands.image.DeepFryCommand;
-import com.mazawrath.beanbot.commands.image.EdgeCommand;
-import com.mazawrath.beanbot.commands.image.EmbossCommand;
-import com.mazawrath.beanbot.commands.image.InvertCommand;
+import com.mazawrath.beanbot.commands.image.*;
 import com.mazawrath.beanbot.utilities.*;
 import com.mazawrath.beanbot.commands.admin.*;
 import com.mazawrath.beanbot.utilities.jersey.RestServer;
@@ -33,6 +30,8 @@ public class Main {
 
         Sentry.init();
         System.setProperty("log4j2.loggerContextFactory", "org.apache.logging.log4j.core.impl.Log4jContextFactory");
+
+        System.setProperty("http.agent", "Chrome");
 
         FallbackLoggerConfiguration.setDebug(false);
 
@@ -84,6 +83,9 @@ public class Main {
             cmdHandler.registerCommand(new EdgeCommand(points));
             cmdHandler.registerCommand(new EmbossCommand(points));
             cmdHandler.registerCommand(new InvertCommand(points));
+            cmdHandler.registerCommand(new MergeCommand(points));
+            cmdHandler.registerCommand(new DiffuseCommand(points));
+            cmdHandler.registerCommand(new MosaicCommand(points));
             // Google Vision Commands
             cmdHandler.registerCommand(new AnalyzeCommand(points));
             // Admin commands
