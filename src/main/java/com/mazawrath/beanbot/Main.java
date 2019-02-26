@@ -80,10 +80,10 @@ public class Main {
             cmdHandler.registerCommand(new BeanLotteryCommand(points, lottery));
             // Image Manipulation Commands
             cmdHandler.registerCommand(new DeepFryCommand(points));
-            cmdHandler.registerCommand(new EdgeCommand(points));
+            //cmdHandler.registerCommand(new EdgeCommand(points));
             cmdHandler.registerCommand(new EmbossCommand(points));
             cmdHandler.registerCommand(new InvertCommand(points));
-            cmdHandler.registerCommand(new MergeCommand(points));
+            //cmdHandler.registerCommand(new MergeCommand(points));
             cmdHandler.registerCommand(new DiffuseCommand(points));
             cmdHandler.registerCommand(new MosaicCommand(points));
             cmdHandler.registerCommand(new SepiaCommand(points));
