@@ -28,7 +28,7 @@ public class MarvinRequest {
         MarvinPluginCollection.colorChannel(image, 100, 10, 10);
         image.update();
 
-        File output = new File("deepfry.png");
+        File output = new File(".\\ext\\out\\deepfry.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }
@@ -37,7 +37,7 @@ public class MarvinRequest {
         MarvinPluginCollection.emboss(image, image);
         image.update();
 
-        File output = new File("/ext/out/emboss.png");
+        File output = new File(".\\ext\\out\\emboss.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }
@@ -46,7 +46,7 @@ public class MarvinRequest {
         MarvinPluginCollection.invertColors(image);
         image.update();
 
-        File output = new File("invert.png");
+        File output = new File(".\\ext\\out\\invert.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }
@@ -55,7 +55,7 @@ public class MarvinRequest {
         MarvinPluginCollection.sobel(image,image);
         image.update();
 
-        File output = new File("edge.png");
+        File output = new File(".\\ext\\out\\edge.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }
@@ -64,7 +64,7 @@ public class MarvinRequest {
         MarvinPluginCollection.halftoneErrorDiffusion(image,image);
         image.update();
 
-        File output = new File("errorTone.png");
+        File output = new File(".\\ext\\out\\errorTone.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }
@@ -73,7 +73,7 @@ public class MarvinRequest {
         MarvinPluginCollection.mosaic(image,image, "triangles", 10, true);
         image.update();
 
-        File output = new File("mosaic.png");
+        File output = new File(".\\ext\\out\\mosaic.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }
@@ -82,7 +82,7 @@ public class MarvinRequest {
         MarvinPluginCollection.sepia(image, 100);
         image.update();
 
-        File output = new File("sepia.png");
+        File output = new File(".\\ext\\out\\sepia.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }
@@ -91,7 +91,7 @@ public class MarvinRequest {
         MarvinPluginCollection.histogramEqualization(image, image);
         image.update();
 
-        File output = new File("histogram.png");
+        File output = new File(".\\ext\\out\\histogram.png");
         ImageIO.write(image.getBufferedImage(), "png", output);
         return output;
     }
