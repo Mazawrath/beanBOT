@@ -8,6 +8,7 @@ import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
 import com.mazawrath.beanbot.commands.googlevision.AnalyzeCommand;
+import com.mazawrath.beanbot.commands.image.*;
 import com.mazawrath.beanbot.commands.poll.PollCommand;
 import com.mazawrath.beanbot.commands.poll.StrawPollCommand;
 import com.mazawrath.beanbot.utilities.*;
@@ -18,6 +19,7 @@ import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 //import org.apache.log4j.BasicConfigurator;
 import io.sentry.Sentry;
+import marvin.MarvinDefinitions;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.util.logging.FallbackLoggerConfiguration;
@@ -50,6 +52,8 @@ public class Main {
             Main.api = api;
             Twitch.setApi(api);
 
+            MarvinDefinitions.setImagePluginPath(".\\ext\\marvin\\plugins\\image\\");
+
             // Instantiate command handler
             CommandHandler cmdHandler = new JavacordHandler(api);
 
@@ -78,6 +82,16 @@ public class Main {
             cmdHandler.registerCommand(new BeanInvestCommand(points, stockMarket));
             // Bean Lottery Commands
             cmdHandler.registerCommand(new BeanLotteryCommand(points, lottery));
+            // Image Manipulation Commands
+            cmdHandler.registerCommand(new DeepFryCommand(points));
+            //cmdHandler.registerCommand(new EdgeCommand(points));
+            cmdHandler.registerCommand(new EmbossCommand(points));
+            cmdHandler.registerCommand(new InvertCommand(points));
+            //cmdHandler.registerCommand(new MergeCommand(points));
+            cmdHandler.registerCommand(new DiffuseCommand(points));
+            cmdHandler.registerCommand(new MosaicCommand(points));
+            cmdHandler.registerCommand(new SepiaCommand(points));
+            cmdHandler.registerCommand(new HistogramCommand(points));
             // Google Vision Commands
             cmdHandler.registerCommand(new AnalyzeCommand(points));
             // Poll Commands

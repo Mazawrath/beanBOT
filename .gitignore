@@ -28,6 +28,9 @@ out/
 # Twitch Files
 config/
 
+# Image Output
+ext/out
+
 launch.sh
 
 libsentry_agent_windows-x86_64.dll
