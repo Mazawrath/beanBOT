@@ -11,11 +11,13 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
+import org.javacord.api.util.NonThrowingAutoCloseable;
 
-import javax.activation.MimetypesFileTypeMap;
-import java.io.File;
+import javax.swing.*;
+import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 public class AnalyzeCommand implements CommandExecutor {
     private Points points;
@@ -41,7 +43,6 @@ public class AnalyzeCommand implements CommandExecutor {
             try {
                 url = new URL(args[0]);
             } catch (MalformedURLException e) {
-                e.printStackTrace();
                 serverTextChannel.sendMessage("URL is not valid.");
                 return;
             }
@@ -55,32 +56,31 @@ public class AnalyzeCommand implements CommandExecutor {
             return;
         }
 
-        serverTextChannel.sendMessage("Analyzing image...");
-
         ImageRequest imageRequest;
+        try (NonThrowingAutoCloseable typingIndicator = serverTextChannel.typeContinuouslyAfter(5, TimeUnit.MICROSECONDS)) {
 
-        if (urlContainsImage(url)) {
-            try {
-               imageRequest = new ImageRequest(url);
-            } catch (Exception e) {
-                e.printStackTrace();
-                serverTextChannel.sendMessage("Something went wrong.");
+
+            if (urlContainsImage(url)) {
+                try {
+                    imageRequest = new ImageRequest(url);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    serverTextChannel.sendMessage("Something went wrong.");
+                    return;
+                }
+            } else {
+                serverTextChannel.sendMessage("URL must be an image.");
                 return;
             }
-        } else {
-            serverTextChannel.sendMessage("URL must be an image.");
-            return;
         }
 
-        serverTextChannel.sendMessage(imageRequest.buildEmbed());
+            serverTextChannel.sendMessage(imageRequest.buildEmbed());
 
         Sentry.clearContext();
     }
 
     private boolean urlContainsImage(URL url) {
-        File f = new File(url.toString());
-        String mimetype = new MimetypesFileTypeMap().getContentType(f);
-        String type = mimetype.split("/")[0];
-        return type.equals("image");
+        Image image = new ImageIcon(url).getImage();
+        return image.getWidth(null) != -1;
     }
 }

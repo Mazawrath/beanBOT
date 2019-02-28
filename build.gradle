@@ -62,8 +62,12 @@ dependencies {
             'com.google.cloud:google-cloud-storage:1.55.0',
 
             'io.sentry:sentry:1.7.16',
-            'io.sentry:sentry-log4j2:1.7.16'
+            'io.sentry:sentry-log4j2:1.7.16',
+            
+            'com.github.Samuel-Maddock:StrawPoll-Java-API:1.0.4'
     )
+	
+	compile files('ext/marvin/framework/marvin_1.5.5.jar')
 
     runtime(
             'org.glassfish.jersey.media:jersey-media-json-jackson:2.27'
