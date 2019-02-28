@@ -52,7 +52,7 @@ public class Main {
             Main.api = api;
             Twitch.setApi(api);
 
-            MarvinDefinitions.setImagePluginPath(".\\ext\\marvin\\plugins\\image\\");
+            MarvinDefinitions.setImagePluginPath("./ext/marvin/plugins/image/");
 
             // Instantiate command handler
             CommandHandler cmdHandler = new JavacordHandler(api);
