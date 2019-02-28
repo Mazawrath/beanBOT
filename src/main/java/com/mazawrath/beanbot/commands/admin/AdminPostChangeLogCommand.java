@@ -40,19 +40,26 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.4.0\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.3.0...v3.4.0\n" +
+                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.5.0\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.4.0...v3.5.0\n" +
                 "\n" +
-                "**v3.4.0**\n" +
+                "**v3.5.0**\n" +
                 "**New**\n" +
-                "\t- Added `.minesweeper`.\n" +
+                "\t- Added photo manipulation.\n" +
+                "\t\t- Added `.deepfry`.\n" +
+                "\t\t- Added `.emboss`.\n" +
+                "\t\t- Added `.invert`.\n" +
+                "\t\t- Added `.diffuse`.\n" +
+                "\t\t- Added `.mosaic`.\n" +
+                "\t\t- Added `.sepia`.\n" +
+                "\t- Added polling.\n" +
+                "\t\t- Added `.poll`.\n" +
+                "\t\t- Added `.strawpoll`.\n" +
                 "**Changes**\n" +
-                "\t- Set limit to how many lottery tickets can be bought in a single drawing to 200.\n" +
-                "\t- Set max lottery number to be drawn from 40 to 20.\n" +
-                "\t- Removed minimum amount required for automatic bean lottery drawings.\n" +
-                "\t- Bean coin from `.beanbet` will only go to the bot when the bet loses.\n" +
+                "\t- Changed limit to how many lottery tickets can be bought at the start of a new drawing from 200 to 100.\n" +
+                "\t\t- After every drawing without a winner users will be able to buy up to 50 more tickets.\n" +
                 "**Bug Fixes**\n" +
-                "\t- Fixed outdated info with `.beanlottery draw`.\n" +
-                "\t- Fixed an issue with integer checks with `.beanlottery`.";
+                "\t- Fixed a file reading issue with `.analyze`.\n" +
+                "\t- Fixed a issue with records getting added to the lottery database when they did not buy a ticket.";
     }
 }
