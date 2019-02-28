@@ -42,6 +42,8 @@ public class MergeCommand implements CommandExecutor {
             return;
         }
 
+        serverTextChannel.type();
+
         URL[] urls = new URL[args.length];
         if (args.length > 1) {
             for (int i = 0; i < args.length; i++) {

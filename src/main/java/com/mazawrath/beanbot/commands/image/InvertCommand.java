@@ -40,6 +40,8 @@ public class InvertCommand implements CommandExecutor {
             return;
         }
 
+        serverTextChannel.type();
+
         URL url = null;
         if (message.getAttachments().size() != 0)
             url = message.getAttachments().get(0).getUrl();
