@@ -11,6 +11,7 @@ import org.javacord.api.entity.user.User;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class BeanFreeCommand implements CommandExecutor {
     private Points points;
@@ -41,7 +42,7 @@ public class BeanFreeCommand implements CommandExecutor {
             String dateStart = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
                     .format(new java.util.Date(System.currentTimeMillis()));
             String dateStop = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
-                    .format(new java.util.Date(timeLeft + 24 * 60 * 60 * 1000));
+                    .format(new java.util.Date(timeLeft + Points.FREE_COIN_TIME_LIMIT));
 
             //HH converts hour in 24 hours format (0-23), day calculation
             SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
@@ -56,17 +57,16 @@ public class BeanFreeCommand implements CommandExecutor {
                 //in milliseconds
                 long diff = d2.getTime() - d1.getTime();
 
-                long diffMinutes = diff / (60 * 1000) % 60;
-                long diffHours = diff / (60 * 60 * 1000) % 24;
+                long days = TimeUnit.MILLISECONDS.toDays(diff);
+                diff -= TimeUnit.DAYS.toMillis(days);
+                long hours = TimeUnit.MILLISECONDS.toHours(diff);
+                diff -= TimeUnit.HOURS.toMillis(hours);
+                long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
+                diff -= TimeUnit.MINUTES.toMillis(minutes);
+                long seconds = TimeUnit.MILLISECONDS.toSeconds(diff);
 
-                if (diffHours == 1)
-                    message.append(diffHours).append(" hour ");
-                else
-                    message.append(diffHours).append(" hours ");
-                if (diffMinutes == 1)
-                    message.append(diffMinutes).append(" minute.");
-                else
-                    message.append(diffMinutes).append(" minutes.");
+                message.append(String.format("%d days, %d hours, %d mins, and %d seconds.",
+                        days, hours, minutes, seconds));
 
                 serverTextChannel.sendMessage(message.toString());
 
