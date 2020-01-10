@@ -84,18 +84,40 @@ public class Points {
         ).run(conn);
     }
 
+    @Deprecated
     public BigDecimal getBalance(String userID, String serverID) {
         checkUser(userID, serverID);
 
         return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(serverID).get(userID).getField("Points").run(conn))).setScale(SCALE, ROUNDING_MODE);
     }
 
+    public boolean canMakePurchase(PointsUser user, BigDecimal points) {
+        checkUser(user.getUserId(), user.getServerId());
+        return getBalance(user.getUserId(), user.getServerId()).compareTo(points) >= 0;
+    }
+
+    public void makePurchase(PointsUser user, BigDecimal points) {
+        r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Points", buildValueForDB(getBalance(user.getUserId(), user.getServerId()).subtract(points)))).run(conn);
+    }
+
+    public BigDecimal checkBalance(PointsUser user) {
+        return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(user.getServerId()).get(user.getUserId()).getField("Points").run(conn))).setScale(SCALE, ROUNDING_MODE);
+    }
+
+    public void depositCoins(PointsUser user, BigDecimal points) {
+        checkUser(user.getUserId(), user.getServerId());
+
+        r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Points", buildValueForDB(getBalance(user.getUserId(), user.getServerId()).add(points)))).run(conn);
+    }
+
+    @Deprecated
     public void addPoints(String userID, String serverID, BigDecimal points) {
         checkUser(userID, serverID);
 
         r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).add(points)))).run(conn);
     }
 
+    @Deprecated
     public boolean removePoints(String userID, String botUserID, String serverID, BigDecimal points) {
         checkUser(userID, serverID);
         if (botUserID != null && !botUserID.isEmpty()) {
