@@ -44,7 +44,7 @@ public class BeanTriviaCommand implements CommandExecutor {
     public void onCommand(ServerTextChannel serverTextChannel, DiscordApi api, User author, Server server) {
         SentryLog.addContext(null, author, server);
 
-        long timeLeft = points.useTriviaQuestion(author.getIdAsString(), server.getIdAsString());
+        long timeLeft = points.useTriviaQuestion(new PointsUser(author, server));
 
         if (timeLeft == 0) {
             String emojiCorrectAnswer;
