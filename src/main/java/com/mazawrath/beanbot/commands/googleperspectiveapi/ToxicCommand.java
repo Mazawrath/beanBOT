@@ -73,10 +73,10 @@ public class ToxicCommand implements CommandExecutor {
                     message.append(previousMessage.getContent());
                     break;
                 }
-                if (message.toString().isEmpty()) {
-                    serverTextChannel.sendMessage("Could not find any recent messages.");
-                    return;
-                }
+            }
+            if (message.toString().isEmpty()) {
+                serverTextChannel.sendMessage("Could not find any recent messages.");
+                return;
             }
         }
 
