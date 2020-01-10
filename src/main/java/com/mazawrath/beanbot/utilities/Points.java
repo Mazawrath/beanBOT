@@ -4,8 +4,6 @@ import com.rethinkdb.RethinkDB;
 import com.rethinkdb.net.Connection;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -21,12 +19,15 @@ public class Points {
     public static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
     public static final int FREE_COIN_TIME_LIMIT = 168 * 60 * 60 * 1000;
     public static final BigDecimal ZERO_POINTS = (BigDecimal.ZERO).setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal FREE_POINTS = new BigDecimal("25.69").setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal COMMAND_COST = new BigDecimal("2.00").setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal COMMAND_COST_SPECIAL = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal LOTTERY_TICKET_COST = new BigDecimal("40.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal STARTING_POINTS = (new BigDecimal("1000")).setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal TRIVIA_CORRECT_ANSWER = (new BigDecimal("10")).setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal TRIVIA_CHEAT_FINE = (new BigDecimal("200")).setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal FREE_POINTS = new BigDecimal("50").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal COMMAND_COST = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal COMMAND_COST_SPECIAL = new BigDecimal("15.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal LOTTERY_TICKET_COST = new BigDecimal("45.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal LOTTERY_DRAWING_COST = new BigDecimal("20000.00").setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal GOOGLE_VISION_COST = new BigDecimal("50.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal GOOGLE_VISION_COST = new BigDecimal("20.00").setScale(SCALE, ROUNDING_MODE);
     private Connection conn;
 
     private static final BigDecimal NUMBER_TO_PERCENT = new BigDecimal(.01);
@@ -57,7 +58,7 @@ public class Points {
         } else
             r.db(DB_NAME).table(serverID).insert(r.array(
                     r.hashMap("id", userID)
-                            .with("Points", Points.STARTING_POINTS)
+                            .with("Points", buildValueForDB(Points.STARTING_POINTS))
                             .with("Last Received Free Points", 0)
             )).run(conn);
     }
