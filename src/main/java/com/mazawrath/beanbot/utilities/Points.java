@@ -165,11 +165,11 @@ public class Points {
         return timeLeft;
     }
 
-    public long useTriviaQuestion(PointsUser user) {
+    public long useTriviaQuestion(PointsUser user, boolean cheaterPunishment) {
         checkUser(user.getUserId(), user.getServerId());
         long timeLeft = r.db(DB_NAME).table(user.getServerId()).get(user.getUserId()).getField("Last Used Trivia Question").run(conn);
 
-        if (System.currentTimeMillis() - timeLeft > TRIVIA_QUESTION_TIME_LIMIT) {
+        if (System.currentTimeMillis() - timeLeft > TRIVIA_QUESTION_TIME_LIMIT || cheaterPunishment) {
             r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Last Used Trivia Question", System.currentTimeMillis())).run(conn);
             return 0;
         }

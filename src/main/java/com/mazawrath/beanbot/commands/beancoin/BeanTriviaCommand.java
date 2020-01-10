@@ -37,14 +37,14 @@ public class BeanTriviaCommand implements CommandExecutor {
     @Command(
             aliases = {"beantrivia", "cointrivia"},
             usage = "beantrivia",
-            description = "Get 25 beanCoin every 24 hours.",
+            description = "Post a trivia question that anyone can answer to earn beanCoin",
             privateMessages = false
     )
 
     public void onCommand(ServerTextChannel serverTextChannel, DiscordApi api, User author, Server server) {
         SentryLog.addContext(null, author, server);
 
-        long timeLeft = points.useTriviaQuestion(new PointsUser(author, server));
+        long timeLeft = points.useTriviaQuestion(new PointsUser(author, server), false);
 
         if (timeLeft == 0) {
             String emojiCorrectAnswer;
@@ -163,6 +163,8 @@ public class BeanTriviaCommand implements CommandExecutor {
                         points.makePurchase(new PointsUser(cheaters.get(i), server), new PointsUser(api.getYourself(), server), points.checkBalance(new PointsUser(cheaters.get(i), server)));
                     else
                         points.makePurchase(new PointsUser(cheaters.get(i), server), new PointsUser(api.getYourself(), server), Points.TRIVIA_CHEAT_FINE);
+                    // Reset their trivia too.
+                    points.useTriviaQuestion(new PointsUser(author, server), true);
                 }
                 if (cheaters.size() != 0)
                     winnersMessage.append("\n");
