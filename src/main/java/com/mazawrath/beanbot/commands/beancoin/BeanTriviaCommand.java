@@ -53,7 +53,7 @@ public class BeanTriviaCommand implements CommandExecutor {
             JSONArray results = (JSONArray) jsonObject.get("results");
             JSONObject questionObject = (JSONObject) results.get(0);
 
-            String quetsion = new String(Base64.getDecoder().decode(questionObject.get("question").toString()));
+            String question = new String(Base64.getDecoder().decode(questionObject.get("question").toString()));
             String difficulty = new String(Base64.getDecoder().decode(questionObject.get("difficulty").toString()));
             String category = new String(Base64.getDecoder().decode(questionObject.get("category").toString()));
             String correctAnswer = new String(Base64.getDecoder().decode(questionObject.get("correct_answer").toString()));
@@ -87,7 +87,7 @@ public class BeanTriviaCommand implements CommandExecutor {
                     return;
             }
             EmbedBuilder embed = new EmbedBuilder()
-                    .setTitle(quetsion)
+                    .setTitle(question)
                     .setDescription("Category: " + category)
                     .setFooter("Difficulty: " + difficulty);
             for (int i = 0; i < answers.size(); i++)
