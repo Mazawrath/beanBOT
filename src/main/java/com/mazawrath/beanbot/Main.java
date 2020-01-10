@@ -77,7 +77,7 @@ public class Main {
             // beanCoin
             cmdHandler.registerCommand(new BeanBalanceCommand(points));
             cmdHandler.registerCommand(new BeanFreeCommand(points));
-            cmdHandler.registerCommand(new BeanBetCommand(points));
+//            cmdHandler.registerCommand(new BeanBetCommand(points));
             cmdHandler.registerCommand(new BeanTransferCommand(points));
             cmdHandler.registerCommand(new BeanBoardCommand(points));
             cmdHandler.registerCommand(new BeanTriviaCommand(points, new Trivia()));
