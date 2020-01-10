@@ -2,6 +2,7 @@ package com.mazawrath.beanbot.commands.googlevision;
 
 import com.mazawrath.beanbot.utilities.ImageRequest;
 import com.mazawrath.beanbot.utilities.Points;
+import com.mazawrath.beanbot.utilities.PointsUser;
 import com.mazawrath.beanbot.utilities.SentryLog;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
@@ -36,6 +37,8 @@ public class AnalyzeCommand implements CommandExecutor {
     public void onCommand(String[] args, Message message, DiscordApi api, ServerTextChannel serverTextChannel, User author, Server server) {
         SentryLog.addContext(args, author, server);
 
+        PointsUser user = new PointsUser(author, server);
+
         URL url;
         if (message.getAttachments().size() != 0)
             url = message.getAttachments().get(0).getUrl();
@@ -51,10 +54,12 @@ public class AnalyzeCommand implements CommandExecutor {
             return;
         }
 
-        if (!points.removePoints(author.getIdAsString(), api.getYourself().getIdAsString(), server.getIdAsString(), Points.GOOGLE_VISION_COST)) {
+        if (!points.canMakePurchase(user, Points.GOOGLE_VISION_COST)) {
             serverTextChannel.sendMessage("You do not have enough beanCoin for this command");
             return;
         }
+
+        points.makePurchase(user, api.getYourself().getIdAsString(), Points.GOOGLE_VISION_COST);
 
         ImageRequest imageRequest;
         try (NonThrowingAutoCloseable typingIndicator = serverTextChannel.typeContinuouslyAfter(5, TimeUnit.MICROSECONDS)) {
