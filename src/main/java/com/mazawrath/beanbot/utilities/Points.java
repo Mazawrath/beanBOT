@@ -19,6 +19,7 @@ public class Points {
     private static final String DB_VALUE_PREFIX = "P_";
     public static final int SCALE = 2;
     public static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
+    public static final int FREE_COIN_TIME_LIMIT = 168 * 60 * 60 * 1000;
     public static final BigDecimal ZERO_POINTS = (BigDecimal.ZERO).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal FREE_POINTS = new BigDecimal("25.69").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST = new BigDecimal("2.00").setScale(SCALE, ROUNDING_MODE);
@@ -56,7 +57,7 @@ public class Points {
         } else
             r.db(DB_NAME).table(serverID).insert(r.array(
                     r.hashMap("id", userID)
-                            .with("Points", buildValueForDB(ZERO_POINTS))
+                            .with("Points", Points.STARTING_POINTS)
                             .with("Last Received Free Points", 0)
             )).run(conn);
     }
@@ -119,7 +120,7 @@ public class Points {
         checkUser(userID, serverID);
         long timeLeft = r.db(DB_NAME).table(serverID).get(userID).getField("Last Received Free Points").run(conn);
 
-        if (System.currentTimeMillis() - timeLeft > 24 * 60 * 60 * 1000) {
+        if (System.currentTimeMillis() - timeLeft > FREE_COIN_TIME_LIMIT) {
             r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).add(FREE_POINTS)))).run(conn);
             r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Last Received Free Points", System.currentTimeMillis())).run(conn);
             return 0;
