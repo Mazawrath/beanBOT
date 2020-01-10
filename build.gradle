@@ -55,6 +55,8 @@ dependencies {
             'javax.activation:activation:1.1',
             
             'org.toile-libre.libe:curl:0.0.23',
+
+            'com.github.origma:Google-PerspectiveAPI-Java-Client:0.0.5',
             
             'com.google.api-client:google-api-client:1.24.1',
 

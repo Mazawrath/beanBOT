@@ -18,6 +18,7 @@ public class Points {
     public static final int SCALE = 2;
     public static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
     public static final int FREE_COIN_TIME_LIMIT = 168 * 60 * 60 * 1000;
+    public static final int TRIVIA_QUESTION_TIME_LIMIT = 24 * 60 * 60 * 1000;
     public static final BigDecimal ZERO_POINTS = (BigDecimal.ZERO).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal STARTING_POINTS = (new BigDecimal("1000")).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal TRIVIA_CORRECT_ANSWER = (new BigDecimal("10")).setScale(SCALE, ROUNDING_MODE);
@@ -60,6 +61,7 @@ public class Points {
                     r.hashMap("id", userID)
                             .with("Points", buildValueForDB(Points.STARTING_POINTS))
                             .with("Last Received Free Points", 0)
+                            .with("Last Used Trivia Question", 0)
             )).run(conn);
     }
 
@@ -97,11 +99,15 @@ public class Points {
         return getBalance(user.getUserId(), user.getServerId()).compareTo(points) >= 0;
     }
 
-    public void makePurchase(PointsUser user, BigDecimal points) {
+    public void makePurchase(PointsUser user, String botUserId, BigDecimal points) {
+        checkUser(user.getUserId(), user.getServerId());
+
         r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Points", buildValueForDB(getBalance(user.getUserId(), user.getServerId()).subtract(points)))).run(conn);
     }
 
     public BigDecimal checkBalance(PointsUser user) {
+        checkUser(user.getUserId(), user.getServerId());
+
         return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(user.getServerId()).get(user.getUserId()).getField("Points").run(conn))).setScale(SCALE, ROUNDING_MODE);
     }
 
@@ -146,6 +152,17 @@ public class Points {
         if (System.currentTimeMillis() - timeLeft > FREE_COIN_TIME_LIMIT) {
             r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).add(FREE_POINTS)))).run(conn);
             r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Last Received Free Points", System.currentTimeMillis())).run(conn);
+            return 0;
+        }
+        return timeLeft;
+    }
+
+    public long useTriviaQuestion(String userID, String serverID) {
+        checkUser(userID, serverID);
+        long timeLeft = r.db(DB_NAME).table(serverID).get(userID).getField("Last Used Trivia Question").run(conn);
+
+        if (System.currentTimeMillis() - timeLeft > TRIVIA_QUESTION_TIME_LIMIT) {
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Last Used Trivia Question", System.currentTimeMillis())).run(conn);
             return 0;
         }
         return timeLeft;
