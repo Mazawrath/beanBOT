@@ -93,7 +93,7 @@ public class ToxicCommand implements CommandExecutor {
                 .addInlineField("Sexually Explicit Probability", String.format("%.0f%%", messageAnalysis.getSexuallyExplicitProb() * 100));
         serverTextChannel.sendMessage(embed);
 
-        points.makePurchase(user, api.getYourself().getIdAsString(), Points.COMMAND_COST);
+        points.makePurchase(user, new PointsUser(api.getYourself(), server), Points.COMMAND_COST);
         Sentry.clearContext();
     }
 }

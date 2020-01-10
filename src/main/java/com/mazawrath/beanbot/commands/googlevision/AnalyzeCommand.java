@@ -59,7 +59,7 @@ public class AnalyzeCommand implements CommandExecutor {
             return;
         }
 
-        points.makePurchase(user, api.getYourself().getIdAsString(), Points.GOOGLE_VISION_COST);
+        points.makePurchase(user, new PointsUser(api.getYourself(), server), Points.GOOGLE_VISION_COST);
 
         ImageRequest imageRequest;
         try (NonThrowingAutoCloseable typingIndicator = serverTextChannel.typeContinuouslyAfter(5, TimeUnit.MICROSECONDS)) {

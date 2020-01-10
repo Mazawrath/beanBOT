@@ -160,9 +160,9 @@ public class BeanTriviaCommand implements CommandExecutor {
                 for (int i = 0; i < cheaters.size(); i++) {
                     winnersMessage.append(cheaters.get(i).getDisplayName(server)).append(" has cheated and has been fined ").append(Points.pointsToString(Points.TRIVIA_CHEAT_FINE)).append("!\n");
                     if (points.checkBalance(new PointsUser(author, server)).compareTo(Points.TRIVIA_CHEAT_FINE) <= 0)
-                        points.makePurchase(new PointsUser(author, server), api.getYourself().getIdAsString(), points.checkBalance(new PointsUser(author, server)));
+                        points.makePurchase(new PointsUser(author, server), new PointsUser(api.getYourself(), server), points.checkBalance(new PointsUser(author, server)));
                     else
-                        points.makePurchase(new PointsUser(author, server), api.getYourself().getIdAsString(), Points.TRIVIA_CHEAT_FINE);
+                        points.makePurchase(new PointsUser(author, server), new PointsUser(api.getYourself(), server), Points.TRIVIA_CHEAT_FINE);
                 }
                 if (cheaters.size() != 0)
                     winnersMessage.append("\n");

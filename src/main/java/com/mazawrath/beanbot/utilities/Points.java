@@ -99,8 +99,16 @@ public class Points {
         return getBalance(user.getUserId(), user.getServerId()).compareTo(points) >= 0;
     }
 
-    public void makePurchase(PointsUser user, String botUserId, BigDecimal points) {
+    public void makePurchase(PointsUser user, PointsUser bot, BigDecimal points) {
         checkUser(user.getUserId(), user.getServerId());
+
+        if (bot != null && !bot.getUserId().isEmpty()) {
+            Random r = new Random();
+            BigDecimal blackHolePercent = new BigDecimal(r.nextInt(25 - 8 + 1) + 8).multiply(NUMBER_TO_PERCENT);
+            BigDecimal mysteriousTax = points.multiply(blackHolePercent);
+
+            depositCoins(bot, points.subtract(mysteriousTax));
+        }
 
         r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Points", buildValueForDB(getBalance(user.getUserId(), user.getServerId()).subtract(points)))).run(conn);
     }
