@@ -58,7 +58,8 @@ public class Lottery {
         } else
             r.db(DB_NAME).table(serverId).insert(r.array(
                     r.hashMap("id", userId)
-                            .with("TicketCount", 0))).run(conn);
+                            .with("TicketCount", 0)
+                            .with("Lottery ticket", null))).run(conn);
     }
 
     public long getMaxTickets(String serverId) {

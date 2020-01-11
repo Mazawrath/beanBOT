@@ -7,6 +7,7 @@ import com.mazawrath.beanbot.commands.beanmarket.BeanMarketCommand;
 import com.mazawrath.beanbot.commands.copypasta.GiveModCommand;
 import com.mazawrath.beanbot.commands.beancoin.*;
 import com.mazawrath.beanbot.commands.copypasta.*;
+import com.mazawrath.beanbot.commands.googleperspectiveapi.ToxicCommand;
 import com.mazawrath.beanbot.commands.googlevision.AnalyzeCommand;
 import com.mazawrath.beanbot.commands.image.*;
 import com.mazawrath.beanbot.commands.poll.PollCommand;
@@ -14,6 +15,7 @@ import com.mazawrath.beanbot.commands.poll.StrawPollCommand;
 import com.mazawrath.beanbot.utilities.*;
 import com.mazawrath.beanbot.commands.admin.*;
 import com.mazawrath.beanbot.utilities.jersey.RestServer;
+import com.mazawrath.beanbot.utilities.pesrspectiveapi_requests.MessageRequest;
 import com.rethinkdb.net.Connection;
 import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
@@ -45,6 +47,7 @@ public class Main {
         Thread restServer = new Thread(new RestServer());
         restServer.start();
         Twitch twitch = new Twitch(args[1], args[2], conn);
+        MessageRequest.apiKey = args[3];
 
         new DiscordApiBuilder().setToken(args[0]).login().thenAccept(api -> {
             System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
@@ -74,9 +77,10 @@ public class Main {
             // beanCoin
             cmdHandler.registerCommand(new BeanBalanceCommand(points));
             cmdHandler.registerCommand(new BeanFreeCommand(points));
-            cmdHandler.registerCommand(new BeanBetCommand(points));
+//            cmdHandler.registerCommand(new BeanBetCommand(points));
             cmdHandler.registerCommand(new BeanTransferCommand(points));
             cmdHandler.registerCommand(new BeanBoardCommand(points));
+            cmdHandler.registerCommand(new BeanTriviaCommand(points, new Trivia()));
             // Bean Market
             cmdHandler.registerCommand(new BeanMarketCommand());
             cmdHandler.registerCommand(new BeanInvestCommand(points, stockMarket));
@@ -94,6 +98,8 @@ public class Main {
             cmdHandler.registerCommand(new HistogramCommand(points));
             // Google Vision Commands
             cmdHandler.registerCommand(new AnalyzeCommand(points));
+            // Perspective AI Commands
+            cmdHandler.registerCommand(new ToxicCommand(points));
             // Poll Commands
             cmdHandler.registerCommand(new PollCommand(points));
             cmdHandler.registerCommand(new StrawPollCommand(points));

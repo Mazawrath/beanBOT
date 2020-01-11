@@ -4,8 +4,6 @@ import com.rethinkdb.RethinkDB;
 import com.rethinkdb.net.Connection;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -19,13 +17,18 @@ public class Points {
     private static final String DB_VALUE_PREFIX = "P_";
     public static final int SCALE = 2;
     public static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
+    public static final int FREE_COIN_TIME_LIMIT = 168 * 60 * 60 * 1000;
+    public static final int TRIVIA_QUESTION_TIME_LIMIT = 24 * 60 * 60 * 1000;
     public static final BigDecimal ZERO_POINTS = (BigDecimal.ZERO).setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal FREE_POINTS = new BigDecimal("25.69").setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal COMMAND_COST = new BigDecimal("2.00").setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal COMMAND_COST_SPECIAL = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal LOTTERY_TICKET_COST = new BigDecimal("40.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal STARTING_POINTS = (new BigDecimal("1000")).setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal TRIVIA_CORRECT_ANSWER = (new BigDecimal("10")).setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal TRIVIA_CHEAT_FINE = (new BigDecimal("200")).setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal FREE_POINTS = new BigDecimal("50").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal COMMAND_COST = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal COMMAND_COST_SPECIAL = new BigDecimal("15.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal LOTTERY_TICKET_COST = new BigDecimal("45.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal LOTTERY_DRAWING_COST = new BigDecimal("20000.00").setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal GOOGLE_VISION_COST = new BigDecimal("50.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal GOOGLE_VISION_COST = new BigDecimal("20.00").setScale(SCALE, ROUNDING_MODE);
     private Connection conn;
 
     private static final BigDecimal NUMBER_TO_PERCENT = new BigDecimal(.01);
@@ -56,8 +59,9 @@ public class Points {
         } else
             r.db(DB_NAME).table(serverID).insert(r.array(
                     r.hashMap("id", userID)
-                            .with("Points", buildValueForDB(ZERO_POINTS))
+                            .with("Points", buildValueForDB(Points.STARTING_POINTS))
                             .with("Last Received Free Points", 0)
+                            .with("Last Used Trivia Question", 0)
             )).run(conn);
     }
 
@@ -83,18 +87,52 @@ public class Points {
         ).run(conn);
     }
 
+    @Deprecated
     public BigDecimal getBalance(String userID, String serverID) {
         checkUser(userID, serverID);
 
         return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(serverID).get(userID).getField("Points").run(conn))).setScale(SCALE, ROUNDING_MODE);
     }
 
+    public boolean canMakePurchase(PointsUser user, BigDecimal points) {
+        checkUser(user.getUserId(), user.getServerId());
+        return getBalance(user.getUserId(), user.getServerId()).compareTo(points) >= 0;
+    }
+
+    public void makePurchase(PointsUser user, PointsUser bot, BigDecimal points) {
+        checkUser(user.getUserId(), user.getServerId());
+
+        if (bot != null && !bot.getUserId().isEmpty()) {
+            Random r = new Random();
+            BigDecimal blackHolePercent = new BigDecimal(r.nextInt(25 - 8 + 1) + 8).multiply(NUMBER_TO_PERCENT);
+            BigDecimal mysteriousTax = points.multiply(blackHolePercent);
+
+            depositCoins(bot, points.subtract(mysteriousTax));
+        }
+
+        r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Points", buildValueForDB(getBalance(user.getUserId(), user.getServerId()).subtract(points)))).run(conn);
+    }
+
+    public BigDecimal checkBalance(PointsUser user) {
+        checkUser(user.getUserId(), user.getServerId());
+
+        return new BigDecimal(parseValueFromDB(r.db(DB_NAME).table(user.getServerId()).get(user.getUserId()).getField("Points").run(conn))).setScale(SCALE, ROUNDING_MODE);
+    }
+
+    public void depositCoins(PointsUser user, BigDecimal points) {
+        checkUser(user.getUserId(), user.getServerId());
+
+        r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Points", buildValueForDB(getBalance(user.getUserId(), user.getServerId()).add(points)))).run(conn);
+    }
+
+    @Deprecated
     public void addPoints(String userID, String serverID, BigDecimal points) {
         checkUser(userID, serverID);
 
         r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).add(points)))).run(conn);
     }
 
+    @Deprecated
     public boolean removePoints(String userID, String botUserID, String serverID, BigDecimal points) {
         checkUser(userID, serverID);
         if (botUserID != null && !botUserID.isEmpty()) {
@@ -119,9 +157,20 @@ public class Points {
         checkUser(userID, serverID);
         long timeLeft = r.db(DB_NAME).table(serverID).get(userID).getField("Last Received Free Points").run(conn);
 
-        if (System.currentTimeMillis() - timeLeft > 24 * 60 * 60 * 1000) {
+        if (System.currentTimeMillis() - timeLeft > FREE_COIN_TIME_LIMIT) {
             r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).add(FREE_POINTS)))).run(conn);
             r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Last Received Free Points", System.currentTimeMillis())).run(conn);
+            return 0;
+        }
+        return timeLeft;
+    }
+
+    public long useTriviaQuestion(PointsUser user, boolean cheaterPunishment) {
+        checkUser(user.getUserId(), user.getServerId());
+        long timeLeft = r.db(DB_NAME).table(user.getServerId()).get(user.getUserId()).getField("Last Used Trivia Question").run(conn);
+
+        if (System.currentTimeMillis() - timeLeft > TRIVIA_QUESTION_TIME_LIMIT || cheaterPunishment) {
+            r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Last Used Trivia Question", System.currentTimeMillis())).run(conn);
             return 0;
         }
         return timeLeft;
