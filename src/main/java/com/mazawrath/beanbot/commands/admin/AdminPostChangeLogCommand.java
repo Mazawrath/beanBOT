@@ -40,26 +40,24 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
 
     private String getRecentChangeLog() {
         return "**New beanBOT update released.**\n" +
-                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.5.0\n" +
-                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.4.0...v3.5.0\n" +
+                "Release can be found on https://github.com/Mazawrath/beanBOT/releases/tag/v3.6.0\n" +
+                "Detailed changelog can be found on https://github.com/Mazawrath/beanBOT/compare/v3.5.0...v3.6.0\n" +
                 "\n" +
-                "**v3.5.0**\n" +
+                "**v3.6.0**\n" +
                 "**New**\n" +
-                "\t- Added photo manipulation.\n" +
-                "\t\t- Added `.deepfry`.\n" +
-                "\t\t- Added `.emboss`.\n" +
-                "\t\t- Added `.invert`.\n" +
-                "\t\t- Added `.diffuse`.\n" +
-                "\t\t- Added `.mosaic`.\n" +
-                "\t\t- Added `.sepia`.\n" +
-                "\t- Added polling.\n" +
-                "\t\t- Added `.poll`.\n" +
-                "\t\t- Added `.strawpoll`.\n" +
+                "\t- Added `.beantrivia`.\n" +
+                "\t\t- Earn beanCoin by answering trivia questions! After using the command you will have 8 seconds to react to the correct answer, anyone can participate and win beanCoin. Don't try to cheat, you will regret it!\n" +
+                "\t- Added `.toxic`.\n" +
+                "\t\t- Analyze messages to measure their toxicity. Leave the command blank to analyze the most recent message. Enter text in to analyze that text. Or mention a user with `@` to analyze their most recent message.\n" +
                 "**Changes**\n" +
-                "\t- Changed limit to how many lottery tickets can be bought at the start of a new drawing from 200 to 100.\n" +
-                "\t\t- After every drawing without a winner users will be able to buy up to 50 more tickets.\n" +
+                "\t- Disabled `.beanbet`.\n" +
+                "\t- User now start with ß1000.00 when they use a command that uses beanCoin.\n" +
+                "\t- Changed amount users received from `.beanfree` from ß25.69 to ß50.00.\n" +
+                "\t- Changed the cooldown of `.beanfree` from 24 hours to 7 days.\n" +
+                "\t- Changed price of standard commands from ß2.00 to ß10.00.\n" +
+                "\t- Changed price of special commands from ß10 to ß15.\n" +
+                "\t- Changed price of bean lottery tickets from ß40 to ß45.\n" +
                 "**Bug Fixes**\n" +
-                "\t- Fixed a file reading issue with `.analyze`.\n" +
-                "\t- Fixed a issue with records getting added to the lottery database when they did not buy a ticket.";
+                "\t- Fixed an issue with bean lottery crashing if someone tried buying too many tickets when they didn't have any in the first place.";
     }
 }
