@@ -96,7 +96,7 @@ public class BeanTriviaCommand implements CommandExecutor {
                 triviaMessage.addReaction(EmojiParser.parseToUnicode(":three:"));
                 triviaMessage.addReaction(EmojiParser.parseToUnicode(":four:"));
 
-                Thread.sleep(8000);
+                Thread.sleep(10000);
                 List<Reaction> reactions = triviaMessage.getReactions();
 
                 ArrayList<User> contestants = new ArrayList<>();
