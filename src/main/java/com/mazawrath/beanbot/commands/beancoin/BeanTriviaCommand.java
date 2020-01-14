@@ -20,6 +20,7 @@ import org.json.simple.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class BeanTriviaCommand implements CommandExecutor {
@@ -85,7 +86,7 @@ public class BeanTriviaCommand implements CommandExecutor {
             }
             EmbedBuilder embed = new EmbedBuilder()
                     .setTitle(question)
-                    .setDescription("Category: " + category)
+                    .setDescription(category)
                     .setFooter("Difficulty: " + difficulty);
             for (int i = 0; i < answers.size(); i++)
                 embed.addField("Answer " + (i + 1), answers.get(i));
@@ -96,86 +97,87 @@ public class BeanTriviaCommand implements CommandExecutor {
                 triviaMessage.addReaction(EmojiParser.parseToUnicode(":three:"));
                 triviaMessage.addReaction(EmojiParser.parseToUnicode(":four:"));
 
-                Thread.sleep(8000);
-                List<Reaction> reactions = triviaMessage.getReactions();
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(10500);
+                        List<Reaction> reactions = triviaMessage.getReactions();
 
-                ArrayList<User> contestants = new ArrayList<>();
-                ArrayList<User> winners = new ArrayList<>();
-                ArrayList<User> cheaters = new ArrayList<>();
+                        ArrayList<User> contestants = new ArrayList<>();
+                        ArrayList<User> winners = new ArrayList<>();
+                        ArrayList<User> cheaters = new ArrayList<>();
 
-                // Get the winners
-                for (int i = 0; i < reactions.size(); i++) {
-                    if (reactions.get(i).getEmoji().equalsEmoji(EmojiParser.parseToUnicode(emojiCorrectAnswer))) {
-                        Reaction correctEmoji = reactions.get(i);
-                        for (int j = 0; j < correctEmoji.getUsers().get().size(); j++) {
-                            if (correctEmoji.getUsers().get().get(j) != api.getYourself())
-                                winners.add(correctEmoji.getUsers().get().get(j));
+                        // Get the winners
+                        for (int i = 0; i < reactions.size(); i++) {
+                            if (reactions.get(i).getEmoji().equalsEmoji(EmojiParser.parseToUnicode(emojiCorrectAnswer))) {
+                                getUsersReacted(api, reactions, winners, i);
+                            } else if (reactions.get(i).getUsers().get().contains(api.getYourself())) {
+                                getUsersReacted(api, reactions, contestants, i);
+                            }
                         }
-                    } else if (reactions.get(i).getUsers().get().contains(api.getYourself())) {
-                        Reaction incorrectEmoji = reactions.get(i);
-                        for (int j = 0; j < incorrectEmoji.getUsers().get().size(); j++) {
-                            if (incorrectEmoji.getUsers().get().get(j) != api.getYourself())
-                                contestants.add(incorrectEmoji.getUsers().get().get(j));
-                        }
-                    }
-                }
 
-                // Check for cheaters
-                for (int i = 0; i < reactions.size(); i++) {
-                    if (!reactions.get(i).getEmoji().equalsEmoji(EmojiParser.parseToUnicode(emojiCorrectAnswer)) && reactions.get(i).getUsers().get().contains(api.getYourself())) {
-                        Reaction correctEmoji = reactions.get(i);
-                        for (int j = 0; j < correctEmoji.getUsers().get().size(); j++) {
-                            for (int k = 0; k < winners.size(); k++) {
-                                // Found a cheater!
-                                if (correctEmoji.getUsers().get().get(j) == winners.get(k)) {
-                                    winners.remove(winners.get(k));
-                                    cheaters.add(correctEmoji.getUsers().get().get(j));
+                        // Check for cheaters
+                        for (int i = 0; i < reactions.size(); i++) {
+                            if (!reactions.get(i).getEmoji().equalsEmoji(EmojiParser.parseToUnicode(emojiCorrectAnswer)) && reactions.get(i).getUsers().get().contains(api.getYourself())) {
+                                Reaction correctEmoji = reactions.get(i);
+                                for (int j = 0; j < correctEmoji.getUsers().get().size(); j++) {
+                                    for (int k = 0; k < winners.size(); k++) {
+                                        // Found a cheater!
+                                        if (correctEmoji.getUsers().get().get(j) == winners.get(k)) {
+                                            winners.remove(winners.get(k));
+                                            cheaters.add(correctEmoji.getUsers().get().get(j));
+                                        }
+                                    }
                                 }
                             }
                         }
+                        // Anyone who reacted more then once but got it wrong also cheated
+                        ArrayList<User> duplicates = (ArrayList<User>) getDuplicate(contestants);
+                        for (User duplicate : duplicates) {
+                            if (!cheaters.contains(duplicate))
+                                cheaters.add(duplicate);
+                        }
+
+                        StringBuilder winnersMessage = new StringBuilder();
+
+                        if (winners.size() == 0) {
+                            winnersMessage.append("No one got the answer correct!\n");
+                        } else {
+                            winnersMessage.append("The following users have won:\n");
+                            for (int i = 0; i < winners.size(); i++) {
+                                winnersMessage.append(winners.get(i).getDisplayName(server)).append(" got the correct answer!\n");
+                                points.depositCoins(new PointsUser(author, server), Points.TRIVIA_CORRECT_ANSWER);
+                            }
+                        }
+                        winnersMessage.append("\n");
+                        for (int i = 0; i < cheaters.size(); i++) {
+                            winnersMessage.append(cheaters.get(i).getDisplayName(server)).append(" has cheated and has been fined ").append(Points.pointsToString(Points.TRIVIA_CHEAT_FINE)).append("!\n");
+                            if (points.checkBalance(new PointsUser(cheaters.get(i), server)).compareTo(Points.TRIVIA_CHEAT_FINE) <= 0)
+                                points.makePurchase(new PointsUser(cheaters.get(i), server), new PointsUser(api.getYourself(), server), points.checkBalance(new PointsUser(cheaters.get(i), server)));
+                            else
+                                points.makePurchase(new PointsUser(cheaters.get(i), server), new PointsUser(api.getYourself(), server), Points.TRIVIA_CHEAT_FINE);
+                            // Reset their trivia too.
+                            points.useTriviaQuestion(new PointsUser(author, server), true);
+                        }
+                        if (cheaters.size() != 0)
+                            winnersMessage.append("\n");
+                        winnersMessage.append("The correct answer was: ").append(correctAnswer).append(".\nAnyone who answered correctly received ").append(Points.pointsToString(Points.TRIVIA_CORRECT_ANSWER)).append(".");
+
+                        serverTextChannel.sendMessage(winnersMessage.toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Sentry.capture(e);
+                        serverTextChannel.sendMessage("Attempted to send trivia message but failed.");
                     }
-                }
-                // Anyone who reacted more then once but got it wrong also cheated
-                ArrayList<User> duplicates = (ArrayList<User>) getDuplicate(contestants);
-                for (User duplicate : duplicates) {
-                    if (!cheaters.contains(duplicate))
-                        cheaters.add(duplicate);
-                }
-
-                StringBuilder winnersMessage = new StringBuilder();
-
-                if (winners.size() == 0) {
-                    winnersMessage.append("No one got the answer correct!\n");
-                } else {
-                    winnersMessage.append("The following users have won:\n");
-                    for (int i = 0; i < winners.size(); i++) {
-                        winnersMessage.append(winners.get(i).getDisplayName(server)).append(" got the correct answer!\n");
-                        points.depositCoins(new PointsUser(author, server), Points.TRIVIA_CORRECT_ANSWER);
-                    }
-                }
-                winnersMessage.append("\n");
-                for (int i = 0; i < cheaters.size(); i++) {
-                    winnersMessage.append(cheaters.get(i).getDisplayName(server)).append(" has cheated and has been fined ").append(Points.pointsToString(Points.TRIVIA_CHEAT_FINE)).append("!\n");
-                    if (points.checkBalance(new PointsUser(cheaters.get(i), server)).compareTo(Points.TRIVIA_CHEAT_FINE) <= 0)
-                        points.makePurchase(new PointsUser(cheaters.get(i), server), new PointsUser(api.getYourself(), server), points.checkBalance(new PointsUser(cheaters.get(i), server)));
-                    else
-                        points.makePurchase(new PointsUser(cheaters.get(i), server), new PointsUser(api.getYourself(), server), Points.TRIVIA_CHEAT_FINE);
-                    // Reset their trivia too.
-                    points.useTriviaQuestion(new PointsUser(author, server), true);
-                }
-                if (cheaters.size() != 0)
-                    winnersMessage.append("\n");
-                winnersMessage.append("The correct answer was: ").append(correctAnswer).append(".\nAnyone who answered correctly received ").append(Points.pointsToString(Points.TRIVIA_CORRECT_ANSWER)).append(".");
-
-                serverTextChannel.sendMessage(winnersMessage.toString());
+                }).start();
             } catch (Exception e) {
                 serverTextChannel.sendMessage("Attempted to send trivia message but failed.");
+                Sentry.capture(e);
                 return;
             }
         } else {
             StringBuilder message = new StringBuilder();
 
-            message.append("You have already did trivia today. You can use your trivia again in ");
+            message.append("You have already done your " + Points.MAX_TRIVIA_QUESTIONS_PER_DAY + " trivia questions today. You can use your trivia again in ");
 
             String dateStart = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
                     .format(new java.util.Date(System.currentTimeMillis()));
@@ -214,6 +216,14 @@ public class BeanTriviaCommand implements CommandExecutor {
         }
 
         Sentry.clearContext();
+    }
+
+    private void getUsersReacted(DiscordApi api, List<Reaction> reactions, ArrayList<User> winners, int i) throws InterruptedException, java.util.concurrent.ExecutionException {
+        Reaction emote = reactions.get(i);
+        for (int j = 0; j < emote.getUsers().get().size(); j++) {
+            if (emote.getUsers().get().get(j) != api.getYourself())
+                winners.add(emote.getUsers().get().get(j));
+        }
     }
 
     public static <T> List getDuplicate(Collection<T> list) {

@@ -19,11 +19,12 @@ public class Points {
     public static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
     public static final int FREE_COIN_TIME_LIMIT = 168 * 60 * 60 * 1000;
     public static final int TRIVIA_QUESTION_TIME_LIMIT = 24 * 60 * 60 * 1000;
+    public static final int MAX_TRIVIA_QUESTIONS_PER_DAY = 5;
     public static final BigDecimal ZERO_POINTS = (BigDecimal.ZERO).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal STARTING_POINTS = (new BigDecimal("1000")).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal TRIVIA_CORRECT_ANSWER = (new BigDecimal("10")).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal TRIVIA_CHEAT_FINE = (new BigDecimal("200")).setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal FREE_POINTS = new BigDecimal("50").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal FREE_POINTS = new BigDecimal("100.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST_SPECIAL = new BigDecimal("15.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal LOTTERY_TICKET_COST = new BigDecimal("45.00").setScale(SCALE, ROUNDING_MODE);
@@ -62,6 +63,7 @@ public class Points {
                             .with("Points", buildValueForDB(Points.STARTING_POINTS))
                             .with("Last Received Free Points", 0)
                             .with("Last Used Trivia Question", 0)
+                            .with("Trivia questions answered", 0)
             )).run(conn);
     }
 
@@ -168,9 +170,20 @@ public class Points {
     public long useTriviaQuestion(PointsUser user, boolean cheaterPunishment) {
         checkUser(user.getUserId(), user.getServerId());
         long timeLeft = r.db(DB_NAME).table(user.getServerId()).get(user.getUserId()).getField("Last Used Trivia Question").run(conn);
+        long triviaAnswered = r.db(DB_NAME).table(user.getServerId()).get(user.getUserId()).getField("Trivia questions answered").run(conn);
 
-        if (System.currentTimeMillis() - timeLeft > TRIVIA_QUESTION_TIME_LIMIT || cheaterPunishment) {
+        if (cheaterPunishment) {
             r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Last Used Trivia Question", System.currentTimeMillis())).run(conn);
+            r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Trivia questions answered", Points.MAX_TRIVIA_QUESTIONS_PER_DAY)).run(conn);
+            return System.currentTimeMillis();
+        }
+
+        if (System.currentTimeMillis() - timeLeft > TRIVIA_QUESTION_TIME_LIMIT) {
+            r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Last Used Trivia Question", System.currentTimeMillis())).run(conn);
+            r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Trivia questions answered", 1)).run(conn);
+            return 0;
+        } else if (triviaAnswered < MAX_TRIVIA_QUESTIONS_PER_DAY) {
+            r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Trivia questions answered", triviaAnswered + 1)).run(conn);
             return 0;
         }
         return timeLeft;
