@@ -24,7 +24,7 @@ public class Points {
     public static final BigDecimal STARTING_POINTS = (new BigDecimal("1000")).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal TRIVIA_CORRECT_ANSWER = (new BigDecimal("10")).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal TRIVIA_CHEAT_FINE = (new BigDecimal("200")).setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal FREE_POINTS = new BigDecimal("50").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal FREE_POINTS = new BigDecimal("100.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST_SPECIAL = new BigDecimal("15.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal LOTTERY_TICKET_COST = new BigDecimal("45.00").setScale(SCALE, ROUNDING_MODE);
