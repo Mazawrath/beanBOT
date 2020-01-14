@@ -85,7 +85,7 @@ public class BeanTriviaCommand implements CommandExecutor {
             }
             EmbedBuilder embed = new EmbedBuilder()
                     .setTitle(question)
-                    .setDescription("Category: " + category)
+                    .setDescription(category)
                     .setFooter("Difficulty: " + difficulty);
             for (int i = 0; i < answers.size(); i++)
                 embed.addField("Answer " + (i + 1), answers.get(i));
