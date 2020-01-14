@@ -163,14 +163,15 @@ public class BeanTriviaCommand implements CommandExecutor {
                         winnersMessage.append("The correct answer was: ").append(correctAnswer).append(".\nAnyone who answered correctly received ").append(Points.pointsToString(Points.TRIVIA_CORRECT_ANSWER)).append(".");
 
                         serverTextChannel.sendMessage(winnersMessage.toString());
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
+                        Sentry.capture(e);
+                        serverTextChannel.sendMessage("Attempted to send trivia message but failed.");
                     }
                 }).start();
             } catch (Exception e) {
                 serverTextChannel.sendMessage("Attempted to send trivia message but failed.");
+                Sentry.capture(e);
                 return;
             }
         } else {
