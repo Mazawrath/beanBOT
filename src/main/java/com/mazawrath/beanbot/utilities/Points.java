@@ -175,13 +175,14 @@ public class Points {
         if (cheaterPunishment) {
             r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Last Used Trivia Question", System.currentTimeMillis())).run(conn);
             r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Trivia questions answered", Points.MAX_TRIVIA_QUESTIONS_PER_DAY)).run(conn);
+            return System.currentTimeMillis();
         }
 
         if (System.currentTimeMillis() - timeLeft > TRIVIA_QUESTION_TIME_LIMIT) {
             r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Last Used Trivia Question", System.currentTimeMillis())).run(conn);
             r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Trivia questions answered", 1)).run(conn);
             return 0;
-        } else if (triviaAnswered <= MAX_TRIVIA_QUESTIONS_PER_DAY) {
+        } else if (triviaAnswered < MAX_TRIVIA_QUESTIONS_PER_DAY) {
             r.db(DB_NAME).table(user.getServerId()).filter(r.hashMap("id", user.getUserId())).update(r.hashMap("Trivia questions answered", triviaAnswered + 1)).run(conn);
             return 0;
         }
