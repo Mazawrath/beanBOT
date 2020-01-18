@@ -151,9 +151,9 @@ public class Lottery {
             @Override
             public void run() {
                 try {
-                    serverTextChannel.sendMessage("30 minutes until the weekly bean lottery drawing! Buy tickets using `.beanlottery` while you can!");
+                    serverTextChannel.sendMessage("30 minutes until the automated bean lottery drawing! Buy tickets using `.beanlottery` while you can!");
                     Thread.sleep(1200000);
-                    serverTextChannel.sendMessage("Only 10 minutes until the weekly bean lottery drawing! Last chance to buy tickets using `.beanlottery`!");
+                    serverTextChannel.sendMessage("Only 10 minutes until the automated bean lottery drawing! Last chance to buy tickets using `.beanlottery`!");
                     Thread.sleep(595000);
                     serverTextChannel.sendMessage("Starting lottery drawing...");
                     Thread.sleep(5000);

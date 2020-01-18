@@ -37,7 +37,7 @@ public class BeanFreeCommand implements CommandExecutor {
         } else {
             StringBuilder message = new StringBuilder();
 
-            message.append("You have already received free beanCoin today. You can receive beanCoin in ");
+            message.append("You have already received free beanCoin. You can receive beanCoin in ");
 
             String dateStart = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
                     .format(new java.util.Date(System.currentTimeMillis()));

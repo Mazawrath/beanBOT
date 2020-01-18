@@ -177,7 +177,7 @@ public class BeanTriviaCommand implements CommandExecutor {
         } else {
             StringBuilder message = new StringBuilder();
 
-            message.append("You have already done your " + Points.MAX_TRIVIA_QUESTIONS_PER_DAY + " trivia questions today. You can use your trivia again in ");
+            message.append("You have already done your " + Points.MAX_TRIVIA_QUESTIONS_PER_DAY + " trivia questions. You can use your trivia again in ");
 
             String dateStart = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
                     .format(new java.util.Date(System.currentTimeMillis()));
