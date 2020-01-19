@@ -100,6 +100,9 @@ public class BeanTriviaCommand implements CommandExecutor {
                 new Thread(() -> {
                     try {
                         Thread.sleep(10500);
+                        Message checkMessage = serverTextChannel.sendMessage("Checking answers...").get();
+                        serverTextChannel.type();
+
                         List<Reaction> reactions = triviaMessage.getReactions();
 
                         ArrayList<User> contestants = new ArrayList<>();
@@ -161,6 +164,7 @@ public class BeanTriviaCommand implements CommandExecutor {
                             winnersMessage.append("\n");
                         winnersMessage.append("The correct answer was: ").append(correctAnswer).append(".\nAnyone who answered correctly received ").append(Points.pointsToString(Points.TRIVIA_CORRECT_ANSWER)).append(".");
 
+                        checkMessage.delete();
                         serverTextChannel.sendMessage(winnersMessage.toString());
                     } catch (Exception e) {
                         e.printStackTrace();
