@@ -147,7 +147,7 @@ public class BeanTriviaCommand implements CommandExecutor {
                             winnersMessage.append("The following users have won:\n");
                             for (User winner : winners) {
                                 winnersMessage.append(winner.getDisplayName(server)).append(" got the correct answer!\n");
-                                points.depositCoins(new PointsUser(author, server), Points.TRIVIA_CORRECT_ANSWER);
+                                points.depositCoins(new PointsUser(winner, server), Points.TRIVIA_CORRECT_ANSWER);
                             }
                         }
                         winnersMessage.append("\n");
