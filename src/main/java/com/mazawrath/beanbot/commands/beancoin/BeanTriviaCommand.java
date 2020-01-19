@@ -100,6 +100,9 @@ public class BeanTriviaCommand implements CommandExecutor {
                 new Thread(() -> {
                     try {
                         Thread.sleep(10500);
+                        Message checkMessage = serverTextChannel.sendMessage("Checking answers...").get();
+                        serverTextChannel.type();
+
                         List<Reaction> reactions = triviaMessage.getReactions();
 
                         ArrayList<User> contestants = new ArrayList<>();
@@ -116,15 +119,14 @@ public class BeanTriviaCommand implements CommandExecutor {
                         }
 
                         // Check for cheaters
-                        for (int i = 0; i < reactions.size(); i++) {
-                            if (!reactions.get(i).getEmoji().equalsEmoji(EmojiParser.parseToUnicode(emojiCorrectAnswer)) && reactions.get(i).getUsers().get().contains(api.getYourself())) {
-                                Reaction correctEmoji = reactions.get(i);
-                                for (int j = 0; j < correctEmoji.getUsers().get().size(); j++) {
+                        for (Reaction reaction : reactions) {
+                            if (!reaction.getEmoji().equalsEmoji(EmojiParser.parseToUnicode(emojiCorrectAnswer)) && reaction.getUsers().get().contains(api.getYourself())) {
+                                for (int j = 0; j < reaction.getUsers().get().size(); j++) {
                                     for (int k = 0; k < winners.size(); k++) {
                                         // Found a cheater!
-                                        if (correctEmoji.getUsers().get().get(j) == winners.get(k)) {
+                                        if (reaction.getUsers().get().get(j) == winners.get(k)) {
                                             winners.remove(winners.get(k));
-                                            cheaters.add(correctEmoji.getUsers().get().get(j));
+                                            cheaters.add(reaction.getUsers().get().get(j));
                                         }
                                     }
                                 }
@@ -143,18 +145,18 @@ public class BeanTriviaCommand implements CommandExecutor {
                             winnersMessage.append("No one got the answer correct!\n");
                         } else {
                             winnersMessage.append("The following users have won:\n");
-                            for (int i = 0; i < winners.size(); i++) {
-                                winnersMessage.append(winners.get(i).getDisplayName(server)).append(" got the correct answer!\n");
+                            for (User winner : winners) {
+                                winnersMessage.append(winner.getDisplayName(server)).append(" got the correct answer!\n");
                                 points.depositCoins(new PointsUser(author, server), Points.TRIVIA_CORRECT_ANSWER);
                             }
                         }
                         winnersMessage.append("\n");
-                        for (int i = 0; i < cheaters.size(); i++) {
-                            winnersMessage.append(cheaters.get(i).getDisplayName(server)).append(" has cheated and has been fined ").append(Points.pointsToString(Points.TRIVIA_CHEAT_FINE)).append("!\n");
-                            if (points.checkBalance(new PointsUser(cheaters.get(i), server)).compareTo(Points.TRIVIA_CHEAT_FINE) <= 0)
-                                points.makePurchase(new PointsUser(cheaters.get(i), server), new PointsUser(api.getYourself(), server), points.checkBalance(new PointsUser(cheaters.get(i), server)));
+                        for (User cheater : cheaters) {
+                            winnersMessage.append(cheater.getDisplayName(server)).append(" has cheated and has been fined ").append(Points.pointsToString(Points.TRIVIA_CHEAT_FINE)).append("!\n");
+                            if (points.checkBalance(new PointsUser(cheater, server)).compareTo(Points.TRIVIA_CHEAT_FINE) <= 0)
+                                points.makePurchase(new PointsUser(cheater, server), new PointsUser(api.getYourself(), server), points.checkBalance(new PointsUser(cheater, server)));
                             else
-                                points.makePurchase(new PointsUser(cheaters.get(i), server), new PointsUser(api.getYourself(), server), Points.TRIVIA_CHEAT_FINE);
+                                points.makePurchase(new PointsUser(cheater, server), new PointsUser(api.getYourself(), server), Points.TRIVIA_CHEAT_FINE);
                             // Reset their trivia too.
                             points.useTriviaQuestion(new PointsUser(author, server), true);
                         }
@@ -162,6 +164,7 @@ public class BeanTriviaCommand implements CommandExecutor {
                             winnersMessage.append("\n");
                         winnersMessage.append("The correct answer was: ").append(correctAnswer).append(".\nAnyone who answered correctly received ").append(Points.pointsToString(Points.TRIVIA_CORRECT_ANSWER)).append(".");
 
+                        checkMessage.delete();
                         serverTextChannel.sendMessage(winnersMessage.toString());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -177,7 +180,7 @@ public class BeanTriviaCommand implements CommandExecutor {
         } else {
             StringBuilder message = new StringBuilder();
 
-            message.append("You have already done your " + Points.MAX_TRIVIA_QUESTIONS_PER_DAY + " trivia questions today. You can use your trivia again in ");
+            message.append("You have already done your " + Points.MAX_TRIVIA_QUESTIONS_PER_DAY + " trivia questions. You can use your trivia again in ");
 
             String dateStart = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
                     .format(new java.util.Date(System.currentTimeMillis()));
@@ -238,9 +241,7 @@ public class BeanTriviaCommand implements CommandExecutor {
                 return super.add(e);
             }
         };
-        for (T t : list) {
-            set.add(t);
-        }
+        set.addAll(list);
         return duplicatedObjects;
     }
 }
