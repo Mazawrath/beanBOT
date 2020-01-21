@@ -18,7 +18,7 @@ public class Points {
     public static final int SCALE = 2;
     public static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
     public static final int FREE_COIN_TIME_LIMIT = 168 * 60 * 60 * 1000;
-    public static final int TRIVIA_QUESTION_TIME_LIMIT = 24 * 60 * 60 * 1000;
+    public static final int TRIVIA_QUESTION_TIME_LIMIT = 20 * 60 * 60 * 1000;
     public static final int MAX_TRIVIA_QUESTIONS_PER_DAY = 5;
     public static final BigDecimal ZERO_POINTS = (BigDecimal.ZERO).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal STARTING_POINTS = (new BigDecimal("1000")).setScale(SCALE, ROUNDING_MODE);
