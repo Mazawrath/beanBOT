@@ -23,7 +23,7 @@ public class BeanTalkCommand implements CommandExecutor {
     @Command(
             aliases = {"beantalk", "beanfree", "coinfree"},
             usage = "beantalk",
-            description = "Get 25 beanCoin every 24 hours.",
+            description = "Earn a maximum amount of beanCoin by participating in the server.",
             privateMessages = false
     )
 
