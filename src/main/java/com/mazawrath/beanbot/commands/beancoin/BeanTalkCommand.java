@@ -13,16 +13,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-public class BeanFreeCommand implements CommandExecutor {
+public class BeanTalkCommand implements CommandExecutor {
     private Points points;
 
-    public BeanFreeCommand(Points points) {
+    public BeanTalkCommand(Points points) {
         this.points = points;
     }
 
     @Command(
-            aliases = {"beanfree", "coinfree"},
-            usage = "beanfree",
+            aliases = {"beantalk", "beanfree", "coinfree"},
+            usage = "beantalk",
             description = "Get 25 beanCoin every 24 hours.",
             privateMessages = false
     )
@@ -30,21 +30,22 @@ public class BeanFreeCommand implements CommandExecutor {
     public void onCommand(ServerTextChannel serverTextChannel, User author, Server server) {
         SentryLog.addContext(null, author, server);
 
-        long timeLeft = points.giveFreePoints(author.getIdAsString(), server.getIdAsString());
+        long[] beanTalkInfo = points.giveFreePoints(author.getIdAsString(), server.getIdAsString());
+        long timeLeft = beanTalkInfo[0];
 
-        if (timeLeft == 0) {
-            serverTextChannel.sendMessage("You have received " + Points.pointsToString(Points.FREE_POINTS) + ". You now have " + Points.pointsToString(points.getBalance(author.getIdAsString(), server.getIdAsString())) + ".");
-        } else {
-            StringBuilder message = new StringBuilder();
+//        if (timeLeft == 0) {
+//            serverTextChannel.sendMessage("You have received " + Points.pointsToString(Points.FREE_POINTS) + ". You now have " + Points.pointsToString(points.getBalance(author.getIdAsString(), server.getIdAsString())) + ".");
+//        } else {
+        StringBuilder message = new StringBuilder();
 
-            message.append("You have already received free beanCoin. You can receive beanCoin in ");
+        message.append("You have already sent ").append(beanTalkInfo[1]).append(" messages. You can send up to ").append(Points.MAX_PARTICIPATION_MESSAGES).append(" messages. Your beanTalk participation counter will reset in ");
 
-            String dateStart = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
-                    .format(new java.util.Date(System.currentTimeMillis()));
-            String dateStop = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
-                    .format(new java.util.Date(timeLeft + Points.FREE_COIN_TIME_LIMIT));
+        String dateStart = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
+                .format(new java.util.Date(System.currentTimeMillis()));
+        String dateStop = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
+                .format(new java.util.Date(timeLeft + Points.FREE_COIN_TIME_LIMIT));
 
-            //HH converts hour in 24 hours format (0-23), day calculation
+        //HH converts hour in 24 hours format (0-23), day calculation
             SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
             Date d1;
@@ -73,7 +74,7 @@ public class BeanFreeCommand implements CommandExecutor {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+//        }
 
         Sentry.clearContext();
     }

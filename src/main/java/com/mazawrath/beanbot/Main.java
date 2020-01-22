@@ -52,6 +52,8 @@ public class Main {
         new DiscordApiBuilder().setToken(args[0]).login().thenAccept(api -> {
             System.out.println("You can invite the bot by using the following url: " + api.createBotInvite());
 
+            BeanTalk.createListener(api, points);
+
             Main.api = api;
             Twitch.setApi(api);
 
@@ -76,7 +78,7 @@ public class Main {
             cmdHandler.registerCommand(new MinesweeperCommand(points));
             // beanCoin
             cmdHandler.registerCommand(new BeanBalanceCommand(points));
-            cmdHandler.registerCommand(new BeanFreeCommand(points));
+            cmdHandler.registerCommand(new BeanTalkCommand(points));
 //            cmdHandler.registerCommand(new BeanBetCommand(points));
             cmdHandler.registerCommand(new BeanTransferCommand(points));
             cmdHandler.registerCommand(new BeanBoardCommand(points));
