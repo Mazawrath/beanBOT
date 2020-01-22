@@ -185,7 +185,7 @@ public class BeanTriviaCommand implements CommandExecutor {
             String dateStart = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
                     .format(new java.util.Date(System.currentTimeMillis()));
             String dateStop = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
-                    .format(new java.util.Date(timeLeft + Points.FREE_COIN_TIME_LIMIT));
+                    .format(new java.util.Date(timeLeft + Points.TRIVIA_QUESTION_TIME_LIMIT));
 
             //HH converts hour in 24 hours format (0-23), day calculation
             SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
