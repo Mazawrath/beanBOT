@@ -18,13 +18,16 @@ public class Points {
     public static final int SCALE = 2;
     public static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
     public static final int FREE_COIN_TIME_LIMIT = 168 * 60 * 60 * 1000;
-    public static final int TRIVIA_QUESTION_TIME_LIMIT = 24 * 60 * 60 * 1000;
+    public static final int PARTICIPATION_TIME_LIMIT = 60 * 1000;
+    public static final int MAX_PARTICIPATION_MESSAGES = 100;
+    public static final int TRIVIA_QUESTION_TIME_LIMIT = 20 * 60 * 60 * 1000;
     public static final int MAX_TRIVIA_QUESTIONS_PER_DAY = 5;
     public static final BigDecimal ZERO_POINTS = (BigDecimal.ZERO).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal STARTING_POINTS = (new BigDecimal("1000")).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal TRIVIA_CORRECT_ANSWER = (new BigDecimal("10")).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal TRIVIA_CHEAT_FINE = (new BigDecimal("200")).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal FREE_POINTS = new BigDecimal("100.00").setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal PARTICIPATION_POINTS = new BigDecimal("1.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST = new BigDecimal("10.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal COMMAND_COST_SPECIAL = new BigDecimal("15.00").setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal LOTTERY_TICKET_COST = new BigDecimal("45.00").setScale(SCALE, ROUNDING_MODE);
@@ -62,6 +65,8 @@ public class Points {
                     r.hashMap("id", userID)
                             .with("Points", buildValueForDB(Points.STARTING_POINTS))
                             .with("Last Received Free Points", 0)
+                            .with("Messages Sent This Week", 0)
+                            .with("Time Last Message Sent", 0)
                             .with("Last Used Trivia Question", 0)
                             .with("Trivia questions answered", 0)
             )).run(conn);
@@ -155,16 +160,28 @@ public class Points {
             return false;
     }
 
-    public long giveFreePoints(String userID, String serverID) {
+    public long[] giveFreePoints(String userID, String serverID) {
+        long retArr[] = new long[2];
+
         checkUser(userID, serverID);
         long timeLeft = r.db(DB_NAME).table(serverID).get(userID).getField("Last Received Free Points").run(conn);
+        long totalMessagesSent = r.db(DB_NAME).table(serverID).get(userID).getField("Messages Sent This Week").run(conn);
+        long lastSentMessage = r.db(DB_NAME).table(serverID).get(userID).getField("Time Last Message Sent").run(conn);
+        retArr[0] = timeLeft;
+        retArr[1] = totalMessagesSent;
 
         if (System.currentTimeMillis() - timeLeft > FREE_COIN_TIME_LIMIT) {
-            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).add(FREE_POINTS)))).run(conn);
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).add(PARTICIPATION_POINTS)))).run(conn);
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Messages Sent This Week", 1)).run(conn);
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Time Last Message Sent", System.currentTimeMillis())).run(conn);
             r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Last Received Free Points", System.currentTimeMillis())).run(conn);
-            return 0;
+        } else if (totalMessagesSent < MAX_PARTICIPATION_MESSAGES && System.currentTimeMillis() - lastSentMessage > PARTICIPATION_TIME_LIMIT) {
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Points", buildValueForDB(getBalance(userID, serverID).add(PARTICIPATION_POINTS)))).run(conn);
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Messages Sent This Week", totalMessagesSent + 1)).run(conn);
+            r.db(DB_NAME).table(serverID).filter(r.hashMap("id", userID)).update(r.hashMap("Time Last Message Sent", System.currentTimeMillis())).run(conn);
         }
-        return timeLeft;
+
+        return retArr;
     }
 
     public long useTriviaQuestion(PointsUser user, boolean cheaterPunishment) {
