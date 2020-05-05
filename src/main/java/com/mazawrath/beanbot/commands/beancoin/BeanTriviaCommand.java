@@ -158,7 +158,7 @@ public class BeanTriviaCommand implements CommandExecutor {
                             else
                                 points.makePurchase(new PointsUser(cheater, server), new PointsUser(api.getYourself(), server), Points.TRIVIA_CHEAT_FINE);
                             // Reset their trivia too.
-                            points.useTriviaQuestion(new PointsUser(author, server), true);
+                            points.useTriviaQuestion(new PointsUser(cheater, server), true);
                         }
                         if (cheaters.size() != 0)
                             winnersMessage.append("\n");
