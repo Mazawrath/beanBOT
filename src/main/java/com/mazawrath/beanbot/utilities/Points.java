@@ -23,7 +23,7 @@ public class Points {
     public static final int TRIVIA_QUESTION_TIME_LIMIT = 20 * 60 * 60 * 1000;
     public static final int MAX_TRIVIA_QUESTIONS_PER_DAY = 5;
     public static final BigDecimal ZERO_POINTS = (BigDecimal.ZERO).setScale(SCALE, ROUNDING_MODE);
-    public static final BigDecimal STARTING_POINTS = (new BigDecimal("1000")).setScale(SCALE, ROUNDING_MODE);
+    public static final BigDecimal STARTING_POINTS = (new BigDecimal("0")).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal TRIVIA_CORRECT_ANSWER = (new BigDecimal("10")).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal TRIVIA_CHEAT_FINE = (new BigDecimal("200")).setScale(SCALE, ROUNDING_MODE);
     public static final BigDecimal FREE_POINTS = new BigDecimal("100.00").setScale(SCALE, ROUNDING_MODE);
