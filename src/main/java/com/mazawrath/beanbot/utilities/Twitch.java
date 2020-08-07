@@ -215,7 +215,7 @@ public class Twitch {
     }
 
     public static String getUserName(long userId) {
-        HttpResponse response = curl("-H 'Client-ID: " + clientId + "' https://api.twitch.tv/helix/users?id=" + userId);
+        HttpResponse response = curl("-H 'Client-ID: " + clientId + "' -H 'Authorization: Bearer " + token + "' https://api.twitch.tv/helix/users?id=" + userId);
         String retVal = null;
 
         if (response.getStatusLine().getStatusCode() == 200) {
@@ -238,7 +238,7 @@ public class Twitch {
     }
 
     public static String getGameName(String gameId) {
-        HttpResponse response = curl("-H 'Client-ID: " + clientId + "' https://api.twitch.tv/helix/games?id=" + gameId);
+        HttpResponse response = curl("-H 'Client-ID: " + clientId + "' -H 'Authorization: Bearer " + token + "' https://api.twitch.tv/helix/games?id=" + gameId);
         String retVal = null;
 
         if (response.getStatusLine().getStatusCode() == 200) {
@@ -386,14 +386,14 @@ public class Twitch {
     }
 
     private boolean subscribeToLiveNotifications(long userId) {
-        return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
+        return curl("-H 'Client-ID: " + clientId + "' -H 'Authorization: Bearer " + token + "' -H 'Content-Type: application/json' -X POST -d " +
                 "'{\"hub.mode\":\"subscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
                 " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/stream_changed?username=" + getUserName(userId) + "&password=" + checkPassword(userId) + "\"," +
                 " \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"" + checkHubSecret(userId) + "\"}'" + " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
     }
 
     private boolean unsubscribeFromLiveNotifications(long userId) {
-        return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
+        return curl("-H 'Client-ID: " + clientId + "' -H 'Authorization: Bearer " + token + "' -H 'Content-Type: application/json' -X POST -d " +
                 "'{\"hub.mode\":\"unsubscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
                 " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/stream_changed?username=" + getUserName(userId) + "&password=" + Twitch.getPassword(userId) + "\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"" + Twitch.getHubSecret(userId) + "\"}'" +
                 " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
