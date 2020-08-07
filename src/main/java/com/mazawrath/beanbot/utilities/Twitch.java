@@ -192,7 +192,7 @@ public class Twitch {
     }
 
     public static long getUserID(String user) {
-        HttpResponse response = curl("-H 'Client-ID: " + clientId + "' -H 'Authorization: Bearer " + clientSecret + "' https://api.twitch.tv/helix/users?login=" + user);
+        HttpResponse response = curl("-H 'Client-ID: " + clientId + "' -H 'Authorization: Bearer " + token + "' https://api.twitch.tv/helix/users?login=" + user);
         long retVal = -1;
 
         if (response.getStatusLine().getStatusCode() == 200) {
