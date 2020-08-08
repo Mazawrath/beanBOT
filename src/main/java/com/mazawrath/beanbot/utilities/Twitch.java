@@ -20,6 +20,8 @@ import static org.toilelibre.libe.curl.Curl.curl;
 
 public class Twitch {
     private static String clientId;
+    private static String clientSecret;
+    private static String token;
     private String ipAddress;
     private static DiscordApi api;
 
@@ -30,9 +32,10 @@ public class Twitch {
     private static final String SERVER_SUBSCRIPTION_LIST_TABLE = "ServerSubscriptionList";
     private static final String TWITCH_CHANNEL_LIST_TABLE = "TwitchChannelList";
 
-    public Twitch(String clientId, String ipAddress, Connection conn) {
+    public Twitch(String clientId, String ipAddress, String clientSecret, Connection conn) {
         Twitch.clientId = clientId;
         this.ipAddress = ipAddress;
+        Twitch.clientSecret = clientSecret;
         Twitch.conn = conn;
 
         checkDatabase();
@@ -65,6 +68,30 @@ public class Twitch {
             r.db(DB_NAME).table(SERVER_SUBSCRIPTION_LIST_TABLE).insert(r.array(
                     r.hashMap("id", serverID)
             )).run(conn);
+    }
+
+    public static String getToken() {
+        HttpResponse response = curl("-X POST https://id.twitch.tv/oauth2/token?client_id=" + clientId + "&grant_type=client_credentials&client_secret=" + clientSecret);
+        token = "-1";
+
+        if (response.getStatusLine().getStatusCode() == 200) {
+            BufferedReader streamReader;
+            try {
+                streamReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8));
+                StringBuilder responseStrBuilder = new StringBuilder();
+
+                String inputStr;
+                while ((inputStr = streamReader.readLine()) != null)
+                    responseStrBuilder.append(inputStr);
+                JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
+                if (jsonObject.getString("access_token").length() != 0)
+                    token = jsonObject.getString("access_token");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return token;
     }
 
     public int addServer(String user, String serverId, String channelId) {
@@ -165,7 +192,7 @@ public class Twitch {
     }
 
     public static long getUserID(String user) {
-        HttpResponse response = curl("-H 'Client-ID: " + clientId + "' https://api.twitch.tv/helix/users?login=" + user);
+        HttpResponse response = curl("-H 'Client-ID: " + clientId + "' -H 'Authorization: Bearer " + token + "' https://api.twitch.tv/helix/users?login=" + user);
         long retVal = -1;
 
         if (response.getStatusLine().getStatusCode() == 200) {
@@ -188,7 +215,7 @@ public class Twitch {
     }
 
     public static String getUserName(long userId) {
-        HttpResponse response = curl("-H 'Client-ID: " + clientId + "' https://api.twitch.tv/helix/users?id=" + userId);
+        HttpResponse response = curl("-H 'Client-ID: " + clientId + "' -H 'Authorization: Bearer " + token + "' https://api.twitch.tv/helix/users?id=" + userId);
         String retVal = null;
 
         if (response.getStatusLine().getStatusCode() == 200) {
@@ -211,7 +238,7 @@ public class Twitch {
     }
 
     public static String getGameName(String gameId) {
-        HttpResponse response = curl("-H 'Client-ID: " + clientId + "' https://api.twitch.tv/helix/games?id=" + gameId);
+        HttpResponse response = curl("-H 'Client-ID: " + clientId + "' -H 'Authorization: Bearer " + token + "' https://api.twitch.tv/helix/games?id=" + gameId);
         String retVal = null;
 
         if (response.getStatusLine().getStatusCode() == 200) {
@@ -359,14 +386,14 @@ public class Twitch {
     }
 
     private boolean subscribeToLiveNotifications(long userId) {
-        return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
+        return curl("-H 'Client-ID: " + clientId + "' -H 'Authorization: Bearer " + token + "' -H 'Content-Type: application/json' -X POST -d " +
                 "'{\"hub.mode\":\"subscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
                 " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/stream_changed?username=" + getUserName(userId) + "&password=" + checkPassword(userId) + "\"," +
                 " \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"" + checkHubSecret(userId) + "\"}'" + " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;
     }
 
     private boolean unsubscribeFromLiveNotifications(long userId) {
-        return curl("-H 'Client-ID: " + clientId + "' -H 'Content-Type: application/json' -X POST -d " +
+        return curl("-H 'Client-ID: " + clientId + "' -H 'Authorization: Bearer " + token + "' -H 'Content-Type: application/json' -X POST -d " +
                 "'{\"hub.mode\":\"unsubscribe\", \"hub.topic\":\"https://api.twitch.tv/helix/streams?user_id=" + userId + "\"," +
                 " \"hub.callback\":\"http://" + ipAddress + ":8081/api/twitchapi/stream_changed?username=" + getUserName(userId) + "&password=" + Twitch.getPassword(userId) + "\", \"hub.lease_seconds\":\"864000\", \"hub.secret\":\"" + Twitch.getHubSecret(userId) + "\"}'" +
                 " https://api.twitch.tv/helix/webhooks/hub").getStatusLine().getStatusCode() == 202;

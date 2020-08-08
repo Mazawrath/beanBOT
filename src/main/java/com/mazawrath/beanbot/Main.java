@@ -46,7 +46,8 @@ public class Main {
         Lottery lottery = new Lottery(conn);
         Thread restServer = new Thread(new RestServer());
         restServer.start();
-        Twitch twitch = new Twitch(args[1], args[2], conn);
+        Twitch twitch = new Twitch(args[1], args[2], args[4], conn);
+        Twitch.getToken();
         MessageRequest.apiKey = args[3];
 
         new DiscordApiBuilder().setToken(args[0]).login().thenAccept(api -> {
