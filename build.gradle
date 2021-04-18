@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.javacord:javacord:3.0.5'
+UY    implementation 'org.javacord:javacord:3.3.0'
 
     compileOnly('org.projectlombok:lombok:1.18.4')
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
