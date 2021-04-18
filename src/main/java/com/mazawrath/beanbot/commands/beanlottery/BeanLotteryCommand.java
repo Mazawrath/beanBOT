@@ -43,11 +43,11 @@ public class BeanLotteryCommand implements CommandExecutor {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("start")) {
                     if (!author.isBotOwner() && !server.isOwner(author)) {
-                        try {
-                            serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
-                        }
+//                        try {
+//                            serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
+//                        } catch (InterruptedException | ExecutionException e) {
+//                            e.printStackTrace();
+//                        }
                         return;
                     } else {
                         serverTextChannel.sendMessage("Automatic drawings now active. Drawing will happen at this time every 3 days.");
