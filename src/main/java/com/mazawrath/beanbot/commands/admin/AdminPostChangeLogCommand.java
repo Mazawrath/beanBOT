@@ -26,7 +26,7 @@ public class AdminPostChangeLogCommand implements CommandExecutor {
 
         if (!author.isBotOwner() && !server.isOwner(author)) {
             // There is no better var name than this and if you think otherwise you're wrong.
-            serverTextChannel2.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
+//            serverTextChannel2.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
             return;
         }
 

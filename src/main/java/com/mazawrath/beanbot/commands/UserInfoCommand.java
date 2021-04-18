@@ -62,18 +62,18 @@ public class UserInfoCommand implements CommandExecutor {
                         roleList[0] = roleList[0] + user.getRoles(server).get(i).getName();
                 }
             }
-            user.getActivity().ifPresent(activity -> {
-                if (user.getActivity().isPresent()) {
-                    if (activity.getName().equalsIgnoreCase("Spotify")) {
-                        playing[0] = "Listening to " + activity.getDetails().get();
-                    } else {
-                        playing[0] = "Playing " + activity.getName();
-                    }
-                }
-            });
-            if (!user.getActivity().isPresent()) {
-                playing[0] = "Currently " + user.getStatus().getStatusString();
-            }
+//            user.getActivity().ifPresent(activity -> {
+//                if (user.getActivity().isPresent()) {
+//                    if (activity.getName().equalsIgnoreCase("Spotify")) {
+//                        playing[0] = "Listening to " + activity.getDetails().get();
+//                    } else {
+//                        playing[0] = "Playing " + activity.getName();
+//                    }
+//                }
+//            });
+//            if (!user.getActivity().isPresent()) {
+//                playing[0] = "Currently " + user.getStatus().getStatusString();
+//            }
 
             Date date = new Date(user.getJoinedAtTimestamp(server).get().getEpochSecond() * 1000L);
             DateFormat format = new SimpleDateFormat("MM/dd/yyyy KK:mm:ss a");

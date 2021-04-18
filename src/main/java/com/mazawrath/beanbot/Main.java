@@ -72,7 +72,7 @@ public class Main {
 
             // Standard
             cmdHandler.registerCommand(new HelpCommand(cmdHandler));
-            cmdHandler.registerCommand(new UserInfoCommand(points));
+//            cmdHandler.registerCommand(new UserInfoCommand(points));
             cmdHandler.registerCommand(new ServerInfoCommand());
             cmdHandler.registerCommand(new ReactCommand(points));
             cmdHandler.registerCommand(new SourceCommand());

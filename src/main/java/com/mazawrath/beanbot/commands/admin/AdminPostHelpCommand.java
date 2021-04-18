@@ -33,7 +33,7 @@ public class AdminPostHelpCommand implements CommandExecutor {
         SentryLog.addContext(args, author, server);
 
         if (!author.isBotOwner() && !server.isOwner(author)) {
-            serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
+//            serverTextChannel.sendMessage("Only " + api.getOwner().get().getDiscriminatedName() + " or " + server.getOwner().getDisplayName(server) + " can use this command.");
             return;
         }
 
