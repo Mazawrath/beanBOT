@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.concurrent.ExecutionException;
 
 public class BeanBoardCommand implements CommandExecutor {
     private Points points;
@@ -30,7 +31,7 @@ public class BeanBoardCommand implements CommandExecutor {
             privateMessages = false
     )
 
-    public void onCommand(ServerTextChannel serverTextChannel, User author, Server server, DiscordApi api) {
+    public void onCommand(ServerTextChannel serverTextChannel, User author, Server server, DiscordApi api) throws ExecutionException, InterruptedException {
         SentryLog.addContext(null, author, server);
 
         final String[] users = {""};
@@ -41,11 +42,10 @@ public class BeanBoardCommand implements CommandExecutor {
         for (int i = 0; i < mJSONArray.length(); i++) {
             JSONObject obj = new JSONObject(mJSONArray.get(i).toString());
 
-            api.getCachedUserById(obj.getString("id")).ifPresent(user -> {
-                users[0] += user.getDisplayName(server) + "\n";
-                BigDecimal userPoints = new BigDecimal(Points.parseValueFromDB(obj.getString("Points"))).setScale(Points.SCALE, Points.ROUNDING_MODE);
-                beanBalance[0] += Points.pointsToString(userPoints) + "\n";
-            });
+            User user = api.getUserById(obj.getString("id")).get();
+            users[0] += user.getDisplayName(server) + "\n";
+            BigDecimal userPoints = new BigDecimal(Points.parseValueFromDB(obj.getString("Points"))).setScale(Points.SCALE, Points.ROUNDING_MODE);
+            beanBalance[0] += Points.pointsToString(userPoints) + "\n";
         }
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("beanCoin Leaderboard")
