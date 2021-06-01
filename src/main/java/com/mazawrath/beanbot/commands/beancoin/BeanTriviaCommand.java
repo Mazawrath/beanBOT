@@ -135,7 +135,7 @@ public class BeanTriviaCommand implements CommandExecutor {
                         // Anyone who reacted more then once but got it wrong also cheated
                         ArrayList<User> duplicates = (ArrayList<User>) getDuplicate(contestants);
                         for (User duplicate : duplicates) {
-                            if (!cheaters.contains(duplicate))
+                            if (!cheaters.contains(duplicate) && duplicate != api.getYourself())
                                 cheaters.add(duplicate);
                         }
 
@@ -224,7 +224,7 @@ public class BeanTriviaCommand implements CommandExecutor {
     private void getUsersReacted(DiscordApi api, List<Reaction> reactions, ArrayList<User> winners, int i) throws InterruptedException, java.util.concurrent.ExecutionException {
         Reaction emote = reactions.get(i);
         for (int j = 0; j < emote.getUsers().get().size(); j++) {
-            if (emote.getUsers().get().get(j) != api.getYourself())
+            if (!emote.getUsers().get().get(j).getIdAsString().equals(api.getYourself().getIdAsString()))
                 winners.add(emote.getUsers().get().get(j));
         }
     }
